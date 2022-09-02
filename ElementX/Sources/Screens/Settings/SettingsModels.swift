@@ -21,6 +21,7 @@ import Foundation
 // MARK: View model
 
 enum SettingsViewModelAction {
+    case toggleAnalytics
     case reportBug
     case crash
     case logout
@@ -32,9 +33,12 @@ struct SettingsViewState: BindableState {
     var bindings: SettingsViewStateBindings
 }
 
-struct SettingsViewStateBindings { }
+struct SettingsViewStateBindings {
+    var enableAnalytics = ElementSettings.shared.enableAnalytics
+}
 
 enum SettingsViewAction {
+    case toggleAnalytics
     case reportBug
     case crash
     case logout
