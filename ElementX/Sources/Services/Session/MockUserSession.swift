@@ -20,7 +20,7 @@ struct MockUserSession: UserSessionProtocol {
     let callbacks = PassthroughSubject<UserSessionCallback, Never>()
     let sessionVerificationController: SessionVerificationControllerProxyProtocol? = nil
     
-    let userID = "@mock:usersession.com"
+    var userID: String { clientProxy.userIdentifier }
     let clientProxy: ClientProxyProtocol
     let mediaProvider: MediaProviderProtocol
 }
