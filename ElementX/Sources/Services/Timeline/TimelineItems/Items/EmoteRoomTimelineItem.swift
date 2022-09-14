@@ -28,4 +28,6 @@ struct EmoteRoomTimelineItem: EventBasedTimelineItemProtocol, Identifiable, Equa
     let senderId: String
     var senderDisplayName: String?
     var senderAvatar: UIImage?
+    
+    let properties: RoomTimelineItemProperties
 }
