@@ -14,7 +14,6 @@
 // limitations under the License.
 //
 
-import Foundation
 import SwiftUI
 
 struct SeparatorRoomTimelineView: View {
@@ -24,7 +23,6 @@ struct SeparatorRoomTimelineView: View {
         Text(timelineItem.text)
             .font(.element.footnote)
             .foregroundColor(.element.secondaryContent)
-            .id(timelineItem.id)
             .padding(.vertical, 24)
             .frame(maxWidth: .infinity)
     }
@@ -32,7 +30,7 @@ struct SeparatorRoomTimelineView: View {
 
 struct SeparatorRoomTimelineView_Previews: PreviewProvider {
     static var previews: some View {
-        let item = SeparatorRoomTimelineItem(id: UUID().uuidString, text: "This is a separator")
+        let item = SeparatorRoomTimelineItem(text: "This is a separator")
         SeparatorRoomTimelineView(timelineItem: item)
     }
 }

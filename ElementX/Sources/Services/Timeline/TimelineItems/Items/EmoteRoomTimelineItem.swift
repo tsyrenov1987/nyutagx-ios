@@ -22,7 +22,7 @@ struct EmoteRoomTimelineItem: EventBasedTimelineItemProtocol, Identifiable, Hash
     let text: String
     var attributedComponents: [AttributedStringBuilderComponent]?
     let timestamp: String
-    let inGroupState: TimelineItemInGroupState
+    let groupState: TimelineItemGroupState
     let isOutgoing: Bool
     let isEditable: Bool
     
