@@ -29,11 +29,3 @@ struct TextRoomTimelineItem: EventBasedTimelineItemProtocol, Identifiable, Hasha
     
     var properties = RoomTimelineItemProperties()
 }
-
-// MARK: - Redact content from logs
-
-extension TextRoomTimelineItem: CustomStringConvertible {
-    var description: String {
-        "\(String(describing: Self.self)): id: \(id), timestamp: \(timestamp), isOutgoing: \(isOutgoing), properties: \(properties)"
-    }
-}
