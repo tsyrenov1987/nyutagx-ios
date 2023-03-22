@@ -25,7 +25,7 @@ struct StartChatViewState: BindableState {
     var bindings = StartChatScreenViewStateBindings()
     
     // TODO: bind with real service, and mock data only in preview
-    var suggestedUsers: [RoomMemberProxy] = [.mockAlice, .mockBob, .mockCharlie]
+    var suggestedUsers: [RoomMemberProxyMock] = [.mockAlice, .mockBob, .mockCharlie]
 }
 
 struct StartChatScreenViewStateBindings {
