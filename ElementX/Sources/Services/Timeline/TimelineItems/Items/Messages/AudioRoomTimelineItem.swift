@@ -15,19 +15,21 @@
 //
 
 import Foundation
-import UniformTypeIdentifiers
 
-struct AudioRoomTimelineItem: EventBasedTimelineItemProtocol, Identifiable, Hashable {
+struct AudioRoomTimelineItem: EventBasedMessageTimelineItemProtocol, Identifiable, Hashable {
     let id: String
-    let body: String
     let timestamp: String
     let isOutgoing: Bool
     let isEditable: Bool
     let sender: TimelineItemSender
-
-    let duration: UInt64
-    let source: MediaSourceProxy?
-    var contentType: UTType?
+    
+    let content: AudioRoomTimelineItemContent
+    
+    var replyDetails: TimelineItemReplyDetails?
 
     var properties = RoomTimelineItemProperties()
+    
+    var body: String {
+        content.body
+    }
 }
