@@ -20,6 +20,11 @@ import XCTest
 class CreateRoomScreenUITests: XCTestCase {
     func testLanding() {
         let app = Application.launch(.createRoom)
-        app.assertScreenshot(.createRoom)
+        app.assertScreenshot(.createRoom, step: 0)
+    }
+
+    func testLandingWithoutUsers() {
+        let app = Application.launch(.createRoomNoUsers)
+        app.assertScreenshot(.createRoom, step: 1)
     }
 }
