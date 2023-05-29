@@ -12,10 +12,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>Aucun membre</string>
 			<key>one</key>
-			<string>%1$d member</string>
+			<string>%1$d membre</string>
+			<key>two</key>
+			<string>%1$d membres</string>
+			<key>few</key>
+			<string>%1$d membres</string>
+			<key>many</key>
+			<string>%1$d membres</string>
 			<key>other</key>
-			<string>%1$d members</string>
+			<string>%1$d membres</string>
 		</dict>
 	</dict>
 	<key>notification_compat_summary_line_for_room</key>
@@ -28,8 +36,16 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>%1$@: %2$d message</string>
 			<key>one</key>
 			<string>%1$@: %2$d message</string>
+			<key>two</key>
+			<string>%1$@: %2$d messages</string>
+			<key>few</key>
+			<string>%1$@: %2$d messages</string>
+			<key>many</key>
+			<string>%1$@: %2$d messages</string>
 			<key>other</key>
 			<string>%1$@: %2$d messages</string>
 		</dict>
@@ -44,10 +60,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>%d notification</string>
 			<key>one</key>
 			<string>%d notification</string>
-			<key>other</key>
+			<key>two</key>
 			<string>%d notifications</string>
+			<key>few</key>
+			<string>%d notification</string>
+			<key>many</key>
+			<string>%d notification</string>
+			<key>other</key>
+			<string>%d notification</string>
 		</dict>
 	</dict>
 	<key>notification_invitations</key>
@@ -60,8 +84,16 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>%d invitation</string>
 			<key>one</key>
 			<string>%d invitation</string>
+			<key>two</key>
+			<string>%d invitations</string>
+			<key>few</key>
+			<string>%d invitations</string>
+			<key>many</key>
+			<string>%d invitations</string>
 			<key>other</key>
 			<string>%d invitations</string>
 		</dict>
@@ -76,10 +108,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>Aucun nouveau message</string>
 			<key>one</key>
-			<string>%d new message</string>
+			<string>%d nouveaux message</string>
+			<key>two</key>
+			<string>%d nouveaux message</string>
+			<key>few</key>
+			<string>%d nouveaux message</string>
+			<key>many</key>
+			<string>%d nouveaux message</string>
 			<key>other</key>
-			<string>%d new messages</string>
+			<string>%d nouveaux message</string>
 		</dict>
 	</dict>
 	<key>notification_unread_notified_messages</key>
@@ -92,10 +132,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>Aucun message notifié non lu</string>
 			<key>one</key>
-			<string>%d unread notified message</string>
+			<string>%d message notifié non lu</string>
+			<key>two</key>
+			<string>%d messages notifiés non lus</string>
+			<key>few</key>
+			<string>%d messages notifiés non lus</string>
+			<key>many</key>
+			<string>%d messages notifiés non lus</string>
 			<key>other</key>
-			<string>%d unread notified messages</string>
+			<string>%d messages notifiés non lus</string>
 		</dict>
 	</dict>
 	<key>notification_unread_notified_messages_in_room_rooms</key>
@@ -108,10 +156,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>%d salle</string>
 			<key>one</key>
-			<string>%d room</string>
+			<string>%d salle</string>
+			<key>two</key>
+			<string>%d salles</string>
+			<key>few</key>
+			<string>%d salles</string>
+			<key>many</key>
+			<string>%d salles</string>
 			<key>other</key>
-			<string>%d rooms</string>
+			<string>%d salles</string>
 		</dict>
 	</dict>
 	<key>room_timeline_state_changes</key>
@@ -124,10 +180,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>Aucun changement dans la salle</string>
 			<key>one</key>
-			<string>%1$d room change</string>
+			<string>%1$d changement dans la salle</string>
+			<key>two</key>
+			<string>%1$d changements dans la salle</string>
+			<key>few</key>
+			<string>%1$d changements dans la salle</string>
+			<key>many</key>
+			<string>%1$d changements dans la salle</string>
 			<key>other</key>
-			<string>%1$d room changes</string>
+			<string>%1$d changements dans la salle</string>
 		</dict>
 	</dict>
 	<key>screen_room_member_list_header_title</key>
@@ -140,10 +204,18 @@
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
+			<key>zero</key>
+			<string>vide</string>
 			<key>one</key>
-			<string>1 person</string>
+			<string>1 personne</string>
+			<key>two</key>
+			<string>%1$d personnes</string>
+			<key>few</key>
+			<string>%1$d personnes</string>
+			<key>many</key>
+			<string>%1$d personnes</string>
 			<key>other</key>
-			<string>%1$d people</string>
+			<string>%1$d personnes</string>
 		</dict>
 	</dict>
 </dict>
