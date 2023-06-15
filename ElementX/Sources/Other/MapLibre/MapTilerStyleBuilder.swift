@@ -16,10 +16,6 @@
 
 import Foundation
 
-protocol MapTilerStyleBuilderProtocol {
-    func dynamicMapURL(for style: MapTilerStyle) -> URL?
-}
-
 struct MapTilerStyleBuilder: MapTilerStyleBuilderProtocol {
     let lightURL: String
     let darkURL: String
@@ -36,6 +32,6 @@ struct MapTilerStyleBuilder: MapTilerStyleBuilderProtocol {
         
         guard let url = URL(string: path) else { return nil }
         let authorization = MapTilerAuthorization(key: key)
-        return authorization.authorizateURL(url)
+        return authorization.authorizeURL(url)
     }
 }
