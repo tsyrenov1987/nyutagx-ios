@@ -18,7 +18,7 @@ import Foundation
 import MatrixRustSDK
 
 struct RoomNotificationSettingsProxyMockConfiguration {
-    var mode: RoomNotificationMode = .allMessages
+    var mode: RoomNotificationModeProxy = .allMessages
     var isDefault = true
 }
 
