@@ -31,9 +31,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>1 vote</string>
+			<string>1 hlas</string>
+			<key>few</key>
+			<string>%d hlasy</string>
 			<key>other</key>
-			<string>%d votes</string>
+			<string>%d hlasov</string>
 		</dict>
 	</dict>
 	<key>notification_compat_summary_line_for_room</key>
