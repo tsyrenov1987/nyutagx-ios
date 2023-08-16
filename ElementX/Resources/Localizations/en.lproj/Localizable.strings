@@ -1,4 +1,5 @@
 "Notification" = "Notification";
+"Use an identity server to invite by email. <default>Use the default (%(defaultIdentityServerName)s)</default> or manage in <settings>Settings</settings>._web" = "Use an identity server to invite by email. <default>Use the default (%(defaultIdentityServerName)s)</default> or manage in <settings>Settings</settings>.";
 "a11y_hide_password" = "Hide password";
 "a11y_send_files" = "Send files";
 "a11y_show_password" = "Show password";
@@ -294,6 +295,7 @@
 "screen_room_attachment_source_files" = "Attachment";
 "screen_room_attachment_source_gallery" = "Photo & Video Library";
 "screen_room_attachment_source_location" = "Location";
+"screen_room_attachment_source_poll" = "Poll";
 "screen_room_details_add_topic_title" = "Add topic";
 "screen_room_details_already_a_member" = "Already a member";
 "screen_room_details_already_invited" = "Already invited";
