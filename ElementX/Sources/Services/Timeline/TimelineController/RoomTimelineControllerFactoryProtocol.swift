@@ -20,5 +20,7 @@ import Foundation
 protocol RoomTimelineControllerFactoryProtocol {
     func buildRoomTimelineController(roomProxy: RoomProxyProtocol,
                                      timelineItemFactory: RoomTimelineItemFactoryProtocol,
-                                     mediaProvider: MediaProviderProtocol) -> RoomTimelineControllerProtocol
+                                     mediaProvider: MediaProviderProtocol,
+                                     mediaPlayerProvider: MediaPlayerProviderProtocol,
+                                     voiceMessageMediaManager: VoiceMessageMediaManagerProtocol) -> RoomTimelineControllerProtocol
 }
