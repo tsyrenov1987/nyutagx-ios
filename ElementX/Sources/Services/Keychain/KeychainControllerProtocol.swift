@@ -22,6 +22,7 @@ struct KeychainCredentials {
     let restorationToken: RestorationToken
 }
 
+// sourcery: AutoMockable
 protocol KeychainControllerProtocol: ClientSessionDelegate {
     func setRestorationToken(_ restorationToken: RestorationToken, forUsername: String)
     func restorationTokenForUsername(_ username: String) -> RestorationToken?
