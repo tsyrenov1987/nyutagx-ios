@@ -13,9 +13,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>%1$d digit entered</string>
+			<string>%1$d eingegebene Ziffer</string>
 			<key>other</key>
-			<string>%1$d digits entered</string>
+			<string>%1$d eingegebene Ziffern</string>
 		</dict>
 	</dict>
 	<key>a11y_read_receipts_multiple_with_others</key>
@@ -29,9 +29,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>Read by %1$@ and %2$d other</string>
+			<string>Gelesen von %1$@ und %2$d anderen</string>
 			<key>other</key>
-			<string>Read by %1$@ and %2$d others</string>
+			<string>Gelesen von %1$@ und %2$d anderen</string>
 		</dict>
 	</dict>
 	<key>common_member_count</key>
@@ -189,9 +189,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>You have %1$d attempt to unlock</string>
+			<string>Du hast %1$d Versuch zu entsperren</string>
 			<key>other</key>
-			<string>You have %1$d attempts to unlock</string>
+			<string>Du hast %1$d Versuche zum Entsperren</string>
 		</dict>
 	</dict>
 	<key>screen_app_lock_subtitle_wrong_pin</key>
@@ -205,9 +205,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>Wrong PIN. You have %1$d more chance</string>
+			<string>Falsche PIN. Du hast %1$d weitere Chance</string>
 			<key>other</key>
-			<string>Wrong PIN. You have %1$d more chances</string>
+			<string>Falsche PIN. Du hast %1$d weitere Chancen</string>
 		</dict>
 	</dict>
 	<key>screen_room_member_list_header_title</key>
