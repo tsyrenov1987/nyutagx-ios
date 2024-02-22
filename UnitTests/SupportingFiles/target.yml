@@ -28,14 +28,9 @@ targets:
   UnitTests:
     type: bundle.unit-test
     platform: iOS
-    
-    buildToolPlugins:
-    - plugin: PrefireTestsPlugin
-      package: Prefire
 
     dependencies:
     - target: ElementX
-    - package: SnapshotTesting
 
     info:
       path: ../SupportingFiles/Info.plist
