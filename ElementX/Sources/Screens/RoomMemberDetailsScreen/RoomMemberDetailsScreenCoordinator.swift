@@ -26,6 +26,7 @@ struct RoomMemberDetailsScreenCoordinatorParameters {
 }
 
 enum RoomMemberDetailsScreenCoordinatorAction {
+    case openUserProfile
     case openDirectChat(displayName: String?)
 }
 
@@ -52,6 +53,8 @@ final class RoomMemberDetailsScreenCoordinator: CoordinatorProtocol {
             guard let self else { return }
             
             switch action {
+            case .openUserProfile:
+                actionsSubject.send(.openUserProfile)
             case .openDirectChat(let displayName):
                 actionsSubject.send(.openDirectChat(displayName: displayName))
             }
