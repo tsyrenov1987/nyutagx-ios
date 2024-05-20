@@ -289,7 +289,7 @@
 			<key>one</key>
 			<string>%1$@ tastează</string>
 			<key>few</key>
-			<string></string>
+			<string>%1$@ tastează</string>
 			<key>other</key>
 			<string>%1$@ tastează</string>
 		</dict>
@@ -307,7 +307,7 @@
 			<key>one</key>
 			<string>S-a găsit %1$d furnizor push: %2$@</string>
 			<key>few</key>
-			<string></string>
+			<string>S-au găsit %1$d furnizori push: %2$@</string>
 			<key>other</key>
 			<string>S-au găsit %1$d furnizori push: %2$@</string>
 		</dict>
@@ -325,7 +325,7 @@
 			<key>one</key>
 			<string>%1$d distribuitor găsit: %2$@.</string>
 			<key>few</key>
-			<string></string>
+			<string>%1$d distribuitori găsiți: %2$@.</string>
 			<key>other</key>
 			<string>%1$d distribuitori găsiți: %2$@.</string>
 		</dict>
