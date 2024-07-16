@@ -22,16 +22,11 @@ enum ElementCallServiceAction {
     case setCallMuted(_ muted: Bool, roomID: String)
 }
 
-enum ElementCallServiceNotificationKey: String {
-    case roomID
-    case roomDisplayName
-}
-
-let ElementCallServiceNotificationDiscardDelta = 10.0
-
 // sourcery: AutoMockable
 protocol ElementCallServiceProtocol {
     var actions: AnyPublisher<ElementCallServiceAction, Never> { get }
+    
+    func setClientProxy(_ clientProxy: ClientProxyProtocol)
     
     func setupCallSession(roomID: String, roomDisplayName: String) async
     
