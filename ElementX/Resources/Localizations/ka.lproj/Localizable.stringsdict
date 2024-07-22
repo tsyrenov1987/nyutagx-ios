@@ -29,9 +29,9 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>one</key>
-			<string>Read by %1$@ and %2$d other</string>
+			<string>წაკითხულია %1$@ და %2$d-ს ადამიანის მიერ</string>
 			<key>other</key>
-			<string>Read by %1$@ and %2$d others</string>
+			<string>წაკითხულია %1$@ და %2$d-ს ადამიანის მიერ</string>
 		</dict>
 	</dict>
 	<key>common_member_count</key>
