@@ -9,25 +9,32 @@ import Foundation
 import SwiftUI
 
 struct VoiceMessageRoomTimelineView: View {
-    @Environment(\.timelineContext) private var context
-    private let timelineItem: VoiceMessageRoomTimelineItem
-    private let playerState: AudioPlayerState
-    @State private var resumePlaybackAfterScrubbing = false
-    
-    init(timelineItem: VoiceMessageRoomTimelineItem, playerState: AudioPlayerState) {
-        self.timelineItem = timelineItem
-        self.playerState = playerState
-    }
+    let timelineItem: VoiceMessageRoomTimelineItem
+    let playerState: AudioPlayerState
     
     var body: some View {
         TimelineStyler(timelineItem: timelineItem) {
-            VoiceMessageRoomPlaybackView(playerState: playerState,
-                                         onPlayPause: onPlaybackPlayPause,
-                                         onSeek: { onPlaybackSeek($0) },
-                                         onScrubbing: { onPlaybackScrubbing($0) })
-                .fixedSize(horizontal: false, vertical: true)
+            VoiceMessageRoomTimelineContent(timelineItem: timelineItem,
+                                            playerState: playerState)
+                .accessibilityLabel(L10n.commonVoiceMessage)
                 .frame(maxWidth: 400)
         }
+    }
+}
+
+struct VoiceMessageRoomTimelineContent: View {
+    @Environment(\.timelineContext) private var context
+    @State private var resumePlaybackAfterScrubbing = false
+    
+    let timelineItem: VoiceMessageRoomTimelineItem
+    let playerState: AudioPlayerState
+    
+    var body: some View {
+        VoiceMessageRoomPlaybackView(playerState: playerState,
+                                     onPlayPause: onPlaybackPlayPause,
+                                     onSeek: { onPlaybackSeek($0) },
+                                     onScrubbing: { onPlaybackScrubbing($0) })
+            .fixedSize(horizontal: false, vertical: true)
     }
     
     private func onPlaybackPlayPause() {
@@ -78,7 +85,6 @@ struct VoiceMessageRoomTimelineView_Previews: PreviewProvider, TestablePreview {
     
     static var previews: some View {
         body.environmentObject(viewModel.context)
-            .previewDisplayName("Bubble")
     }
     
     static var body: some View {
