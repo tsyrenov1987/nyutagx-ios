@@ -373,19 +373,6 @@ private extension UIColor {
     }
 }
 
-extension NSAttributedString.Key {
-    static let DTTextBlocks: NSAttributedString.Key = .init(rawValue: DTTextBlocksAttribute)
-    static let MatrixBlockquote: NSAttributedString.Key = .init(rawValue: BlockquoteAttribute.name)
-    static let MatrixUserID: NSAttributedString.Key = .init(rawValue: UserIDAttribute.name)
-    static let MatrixUserDisplayName: NSAttributedString.Key = .init(rawValue: UserDisplayNameAttribute.name)
-    static let MatrixRoomDisplayName: NSAttributedString.Key = .init(rawValue: RoomDisplayNameAttribute.name)
-    static let MatrixRoomID: NSAttributedString.Key = .init(rawValue: RoomIDAttribute.name)
-    static let MatrixRoomAlias: NSAttributedString.Key = .init(rawValue: RoomAliasAttribute.name)
-    static let MatrixEventOnRoomID: NSAttributedString.Key = .init(rawValue: EventOnRoomIDAttribute.name)
-    static let MatrixEventOnRoomAlias: NSAttributedString.Key = .init(rawValue: EventOnRoomAliasAttribute.name)
-    static let MatrixAllUsersMention: NSAttributedString.Key = .init(rawValue: AllUsersMentionAttribute.name)
-}
-
 private struct TextParsingMatch {
     enum MatchType {
         case userID(identifier: String)
