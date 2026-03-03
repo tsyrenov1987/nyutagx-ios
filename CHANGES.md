@@ -1,3 +1,34 @@
+## Changes in 26.03.1 (2026-03-03)
+
+### What's Changed
+
+🙌 Improvements
+* Update join call button in room header by @americanrefugee in https://github.com/element-hq/element-x-ios/pull/5143
+
+🐛 Bugfixes
+* Make sure the inviter's avatar is hidden in the JoinRoomScreen. by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5151
+* Stop messages disappearing and then re-appearing after being sent. by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5162
+
+🗣 Translations
+* Translations update by @RiotRobot in https://github.com/element-hq/element-x-ios/pull/5158
+
+🧱 Build
+* Fix createScreen.sh by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5145
+* Set CI RunTests command retries default to 0, use 3 only for running unit tests by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5144
+* More fastlane to swift tool conversions by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5146
+* Move more fastlane lanes to swift tool CI commands by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5150
+
+Others
+* Update dependency element-hq/compound-design-tokens to v6.10.1 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5123
+* Remove space FFs by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5147
+* Update actions/upload-artifact action to v7 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5148
+* Flaky test possible fix by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5149
+* Update dependency fastlane to v2.232.2 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5153
+* Update the RustSDK to v26.03.02 by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5160
+
+
+**Full Changelog**: https://github.com/element-hq/element-x-ios/compare/release/26.03.0...release/26.03.1
+
 ## Changes in 26.03.0 (2026-02-25)
 
 ### What's Changed
