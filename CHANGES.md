@@ -1,3 +1,20 @@
+## Changes in 26.03.2 (2026-03-05)
+
+### What's Changed
+
+🐛 Bugfixes
+* Fixes an SDK issue with the crypto store. by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5167
+
+🧱 Build
+* Add zizmor checks on CI. by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5161
+* Convert more fastlane tools to swift commands  by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5163
+
+Others
+* Fix new `redundantSendable` and `redundantSwiftTestingSuite` swiftformat errors by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5164
+
+
+**Full Changelog**: https://github.com/element-hq/element-x-ios/compare/release/26.03.1...release/26.03.2
+
 ## Changes in 26.03.1 (2026-03-03)
 
 ### What's Changed
