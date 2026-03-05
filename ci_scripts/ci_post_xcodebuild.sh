@@ -9,7 +9,7 @@ fetch_unshallow_repository
 
 # Upload dsyms no matter the workflow
 # Perform this step before releasing to github in case it fails.
-swift run -q tools upload-dsyms --dsym-path "$CI_ARCHIVE_PATH/dSYMs"
+swift run -q tools ci upload-dsyms --dsym-path "$CI_ARCHIVE_PATH/dSYMs"
 
 generate_what_to_test_notes
 

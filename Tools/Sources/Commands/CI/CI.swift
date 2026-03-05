@@ -13,7 +13,8 @@ struct CI: ParsableCommand {
                                                         RunTests.self,
                                                         ConfigureNightly.self,
                                                         ConfigureProduction.self,
-                                                        TagNightly.self
+                                                        TagNightly.self,
+                                                        UploadDSYMs.self
                                                     ])
     
     static let testOutputDirectory = "test_output"
