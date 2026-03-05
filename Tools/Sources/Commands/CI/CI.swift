@@ -11,7 +11,9 @@ struct CI: ParsableCommand {
                                                         UITests.self,
                                                         IntegrationTests.self,
                                                         RunTests.self,
-                                                        ConfigureNightly.self
+                                                        ConfigureNightly.self,
+                                                        ConfigureProduction.self,
+                                                        TagNightly.self
                                                     ])
     
     static let testOutputDirectory = "test_output"
@@ -106,6 +108,8 @@ struct CI: ParsableCommand {
                                                                         environment: Environment = .inherit,
                                                                         output: Output = .standardOutput,
                                                                         error: Error = .standardError) async throws -> CollectedResult<Output, Error> {
+        logger.info("Running \(executable), with arguments: \(arguments)")
+        
         let result = try await Subprocess.run(executable,
                                               arguments: arguments,
                                               environment: environment,

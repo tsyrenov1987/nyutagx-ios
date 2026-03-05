@@ -9,40 +9,6 @@ before_all do
 
   ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "180"
   ENV["FASTLANE_XCODE_LIST_TIMEOUT"] = "180"
-  ENV["SENTRY_LOG_LEVEL"] = "DEBUG"
-end
-
-lane :config_production do
-  sh("(cd .. && swift run pipeline update-foss-secrets)")
-  xcodegen(spec: "project.yml")
-end
-
-$sentry_retry=0
-lane :upload_dsyms_to_sentry do |options|
-  auth_token = ENV["SENTRY_AUTH_TOKEN"]
-  UI.user_error!("Invalid Sentry Auth token.") unless !auth_token.to_s.empty?
-
-  dsym_path = options[:dsym_path]
-  UI.user_error!("Invalid DSYM path.") unless !dsym_path.to_s.empty?
-
-  begin
-    sentry_debug_files_upload(
-      auth_token: auth_token,
-      org_slug: 'element',
-      project_slug: 'element-x-ios',
-      url: 'https://sentry.tools.element.io/',
-      path: dsym_path,
-    )
-  rescue => exception
-    $sentry_retry += 1
-
-    if $sentry_retry <= 5
-      UI.message "Sentry failed, retrying."
-      upload_dsyms_to_sentry options
-    else
-      raise exception
-    end
-  end
 end
 
 lane :release_to_github do
@@ -126,22 +92,6 @@ def rebase_main_onto_current_branch
   UI.success("Successfully rebased main onto #{current_branch}")
 end
 
-lane :tag_nightly do |options|
-  build_number = options[:build_number]
-  UI.user_error!("Invalid build number.") unless !build_number.to_s.empty?
-
-  xcodegen_project_file_path = "../project.yml"
-  data = YAML.load_file xcodegen_project_file_path
-  current_version = data["settings"]["MARKETING_VERSION"]
-
-  setup_git()
-
-  tag_name = "nightly/#{current_version}.#{build_number}"
-  sh("git tag #{tag_name}")
-
-  git_push(tag_name: tag_name)
-end
-
 private_lane :setup_git do
   sh("git config --global user.name 'Element CI'")
   sh("git config --global user.email 'ci@element.io'")
@@ -170,31 +120,4 @@ private_lane :bump_build_number do
   # Increment build number to current date
   build_number = Time.now.strftime("%Y%m%d%H%M")
   increment_build_number(build_number: build_number)
-end
-
-private_lane :create_simulator_if_necessary do |options|
-  simulator_name = options[:name]
-  UI.user_error!("Invalid simulator name") unless !simulator_name.to_s.empty?
-
-  simulator_type = options[:type]
-  UI.user_error!("Invalid simulator type") unless !simulator_type.to_s.empty?
-
-  simulator_runtime = "com.apple.CoreSimulator.SimRuntime.iOS-#{simulator_version.gsub('.', '-')}"
-
-  simulators = sh("xcrun simctl list devices \"iOS #{simulator_version}\" available")
-  # Use a `(` here to avoid matching `iPhone 14 Pro` on `iPhone 14 Pro Max` for example
-  existing_simulator = simulators.lines.find { |line| line.include?("#{simulator_name} (") }
-  
-  if existing_simulator
-    UI.message("Found simulator: #{existing_simulator.inspect}")
-    device_id = existing_simulator.match(/\(([A-F0-9-]+)\)/)[1] # Extract the device ID for the existing simulator
-  else
-    UI.message "Simulator #{simulator_name} not found. Creating new simulator…"
-    create_command = "xcrun simctl create '#{simulator_name}\' #{simulator_type} #{simulator_runtime}"
-    device_id = sh(create_command).strip # Create a new simulator and get its device ID.
-    
-    UI.message "Created new simulator: #{simulator_name} (#{device_id})"
-  end
-  
-  # device_id is unused right now but is useful to check e.g. the boot status of a simulator.
 end
