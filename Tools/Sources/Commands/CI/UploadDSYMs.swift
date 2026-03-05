@@ -29,12 +29,11 @@ struct UploadDSYMs: AsyncParsableCommand {
         }
 
         let command = """
-        sentry-cli dif upload \
+        sentry-cli --url "\(url)" dif upload \
             --auth-token "\(authToken)" \
             --org "\(orgSlug)" \
             --project "\(projectSlug)" \
-            --url "\(url)" \
-            --log-level DEBUG \
+            --log-level debug \
             "\(dsymPath)"
         """
 
