@@ -12,5 +12,5 @@ elif [ "$CI_WORKFLOW" = "Element Pro" ]; then
     # Xcode Cloud automatically fetches the submodules.
     swift run pipeline configure-element-pro
 else
-    swift run pipeline configure-production
+    swift run tools ci configure-production
 fi
