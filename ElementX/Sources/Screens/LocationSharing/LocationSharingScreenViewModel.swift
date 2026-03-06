@@ -9,31 +9,44 @@
 import Combine
 import Foundation
 
-typealias StaticLocationScreenViewModelType = StateStoreViewModelV2<StaticLocationScreenViewState, StaticLocationScreenViewAction>
+typealias LocationSharingScreenViewModelType = StateStoreViewModelV2<LocationSharingScreenViewState, LocationSharingScreenViewAction>
 
-class StaticLocationScreenViewModel: StaticLocationScreenViewModelType, StaticLocationScreenViewModelProtocol {
+class LocationSharingScreenViewModel: LocationSharingScreenViewModelType, LocationSharingScreenViewModelProtocol {
+    private let roomProxy: JoinedRoomProxyProtocol
     private let timelineController: TimelineControllerProtocol
     private let analytics: AnalyticsService
     private let userIndicatorController: UserIndicatorControllerProtocol
     
-    private let actionsSubject: PassthroughSubject<StaticLocationScreenViewModelAction, Never> = .init()
-    var actions: AnyPublisher<StaticLocationScreenViewModelAction, Never> {
+    private let actionsSubject: PassthroughSubject<LocationSharingScreenViewModelAction, Never> = .init()
+    var actions: AnyPublisher<LocationSharingScreenViewModelAction, Never> {
         actionsSubject.eraseToAnyPublisher()
     }
     
-    init(interactionMode: StaticLocationInteractionMode,
+    init(interactionMode: LocationSharingInteractionMode,
          mapURLBuilder: MapTilerURLBuilderProtocol,
+         liveLocationSharingEnabled: Bool,
+         roomProxy: JoinedRoomProxyProtocol,
          timelineController: TimelineControllerProtocol,
          analytics: AnalyticsService,
-         userIndicatorController: UserIndicatorControllerProtocol) {
+         userIndicatorController: UserIndicatorControllerProtocol,
+         mediaProvider: MediaProviderProtocol) {
+        self.roomProxy = roomProxy
         self.timelineController = timelineController
         self.analytics = analytics
         self.userIndicatorController = userIndicatorController
         
-        super.init(initialViewState: .init(interactionMode: interactionMode, mapURLBuilder: mapURLBuilder))
+        super.init(initialViewState: .init(interactionMode: interactionMode,
+                                           mapURLBuilder: mapURLBuilder,
+                                           showLiveLocationSharingButton: liveLocationSharingEnabled),
+                   mediaProvider: mediaProvider)
+        
+        if interactionMode.canShowAvatar {
+            updateShownUserProfile(members: roomProxy.membersPublisher.value)
+            setupSubscriptions()
+        }
     }
     
-    override func process(viewAction: StaticLocationScreenViewAction) {
+    override func process(viewAction: LocationSharingScreenViewAction) {
         switch viewAction {
         case .close:
             actionsSubject.send(.close)
@@ -57,6 +70,32 @@ class StaticLocationScreenViewModel: StaticLocationScreenViewModelType, StaticLo
     }
     
     // MARK: - Private
+    
+    private func setupSubscriptions() {
+        roomProxy.membersPublisher.sink { [weak self] members in
+            self?.updateShownUserProfile(members: members)
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func updateShownUserProfile(members: [RoomMemberProxyProtocol]) {
+        switch state.interactionMode {
+        case .picker:
+            if let ownUser = members.first(where: { $0.userID == roomProxy.ownUserID }).map(UserProfileProxy.init) {
+                state.userProfile = ownUser
+            } else {
+                state.userProfile = .init(userID: roomProxy.ownUserID)
+            }
+        case .viewStatic(.some(let senderID), _):
+            if let sender = members.first(where: { $0.userID == senderID }).map(UserProfileProxy.init) {
+                state.userProfile = sender
+            } else {
+                state.userProfile = .init(userID: senderID)
+            }
+        default:
+            state.userProfile = nil
+        }
+    }
     
     private func sendLocation(_ geoURI: GeoURI, isUserLocation: Bool) async {
         guard case .success = await timelineController.sendLocation(body: geoURI.bodyMessage,

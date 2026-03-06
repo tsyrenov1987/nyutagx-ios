@@ -116,6 +116,8 @@ internal enum L10n {
   internal static var a11yShowPassword: String { return L10n.tr("Localizable", "a11y_show_password") }
   /// Start a call
   internal static var a11yStartCall: String { return L10n.tr("Localizable", "a11y_start_call") }
+  /// Start a voice call
+  internal static var a11yStartVoiceCall: String { return L10n.tr("Localizable", "a11y_start_voice_call") }
   /// Tombstoned room
   internal static var a11yTombstonedRoom: String { return L10n.tr("Localizable", "a11y_tombstoned_room") }
   /// User menu
@@ -584,6 +586,8 @@ internal enum L10n {
   internal static var commonOpticIdIos: String { return L10n.tr("Localizable", "common_optic_id_ios") }
   /// or
   internal static var commonOr: String { return L10n.tr("Localizable", "common_or") }
+  /// Other options
+  internal static var commonOtherOptions: String { return L10n.tr("Localizable", "common_other_options") }
   /// Password
   internal static var commonPassword: String { return L10n.tr("Localizable", "common_password") }
   /// People
@@ -908,8 +912,10 @@ internal enum L10n {
   internal static var dialogPermissionCamera: String { return L10n.tr("Localizable", "dialog_permission_camera") }
   /// Please grant the permission in the system settings.
   internal static var dialogPermissionGeneric: String { return L10n.tr("Localizable", "dialog_permission_generic") }
-  /// To share your current location, Element needs location access. Go to Settings > Location.
-  internal static var dialogPermissionLocationDescriptionIos: String { return L10n.tr("Localizable", "dialog_permission_location_description_ios") }
+  /// To share your current location, %1$@ needs location access. Go to Settings > Location.
+  internal static func dialogPermissionLocationDescriptionIos(_ p1: Any) -> String {
+    return L10n.tr("Localizable", "dialog_permission_location_description_ios", String(describing: p1))
+  }
   /// %1$@ does not have access to your location.
   internal static func dialogPermissionLocationTitleIos(_ p1: Any) -> String {
     return L10n.tr("Localizable", "dialog_permission_location_title_ios", String(describing: p1))
@@ -1062,6 +1068,8 @@ internal enum L10n {
   internal static func notificationFallbackNContent(_ p1: Int) -> String {
     return L10n.tr("Localizable", "notification_fallback_n_content", p1)
   }
+  /// 📞 Incoming call
+  internal static var notificationIncomingAudioCall: String { return L10n.tr("Localizable", "notification_incoming_audio_call") }
   /// 📹 Incoming call
   internal static var notificationIncomingCall: String { return L10n.tr("Localizable", "notification_incoming_call") }
   /// ** Failed to send - please open room
@@ -2238,6 +2246,8 @@ internal enum L10n {
   internal static var screenOnboardingSignInWithQrCode: String { return L10n.tr("Localizable", "screen_onboarding_sign_in_with_qr_code") }
   /// Create account
   internal static var screenOnboardingSignUp: String { return L10n.tr("Localizable", "screen_onboarding_sign_up") }
+  /// Welcome back
+  internal static var screenOnboardingWelcomeBack: String { return L10n.tr("Localizable", "screen_onboarding_welcome_back") }
   /// Welcome to the fastest %1$@ ever. Supercharged for speed and simplicity.
   internal static func screenOnboardingWelcomeMessage(_ p1: Any) -> String {
     return L10n.tr("Localizable", "screen_onboarding_welcome_message", String(describing: p1))
@@ -3157,7 +3167,7 @@ internal enum L10n {
   internal static var screenShareOpenGoogleMaps: String { return L10n.tr("Localizable", "screen_share_open_google_maps") }
   /// Open in OpenStreetMap
   internal static var screenShareOpenOsmMaps: String { return L10n.tr("Localizable", "screen_share_open_osm_maps") }
-  /// Share this location
+  /// Share pinned location
   internal static var screenShareThisLocationAction: String { return L10n.tr("Localizable", "screen_share_this_location_action") }
   /// You’ve changed your password on another session
   internal static var screenSignedOutReason1: String { return L10n.tr("Localizable", "screen_signed_out_reason_1") }
