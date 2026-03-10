@@ -1,3 +1,22 @@
+## Changes in 26.03.3 (2026-03-10)
+
+### What's Changed
+
+🙌 Improvements
+* Refactor and redesign Location Sharing Screen by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5155
+* Static Location Sheet by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5171
+
+🗣 Translations
+* Translations update by @RiotRobot in https://github.com/element-hq/element-x-ios/pull/5178
+
+Others
+* Update zizmorcore/zizmor-action action to v0.5.2 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5177
+* Bump element-call-swift to v0.17.0 by @Copilot in https://github.com/element-hq/element-x-ios/pull/5184
+* Update SDK to 26.03.10 by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5185
+
+
+**Full Changelog**: https://github.com/element-hq/element-x-ios/compare/release/26.03.2...release/26.03.3
+
 ## Changes in 26.03.2 (2026-03-05)
 
 ### What's Changed
