@@ -128,13 +128,8 @@ struct CI: ParsableCommand {
     // MARK: - Git
     
     static func gitConfigureGlobals() async throws {
-        guard let apiToken = ProcessInfo.processInfo.environment["GITHUB_TOKEN"], !apiToken.isEmpty else {
-            throw ValidationError("GITHUB_TOKEN environment variable is not set.")
-        }
-
         try await CI.run(.name("git"), ["config", "--global", "user.name", "Element CI"])
         try await CI.run(.name("git"), ["config", "--global", "user.email", "ci@element.io"])
-        try await CI.run(.name("git"), ["config", "--global", "http.extraHeader", "Authorization: Bearer \(apiToken)"])
     }
     
     static func gitRepositoryURL() async throws -> String {
@@ -150,15 +145,20 @@ struct CI: ParsableCommand {
             .replacingOccurrences(of: ".git", with: "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
-
+    
     static func gitPush(tagName: String? = nil) async throws {
+        guard let apiToken = ProcessInfo.processInfo.environment["GITHUB_TOKEN"], !apiToken.isEmpty
+        else {
+            throw ValidationError("GITHUB_TOKEN environment variable is not set.")
+        }
+
         let repoURL = try await CI.gitRepositoryURL()
         
         if let tagName {
             try await CI.run(.name("git"), ["tag", tagName])
-            try await CI.run(.name("git"), ["push", "https://\(repoURL)", tagName])
+            try await CI.run(.name("git"), ["push", "https://\(apiToken)@\(repoURL)", tagName])
         } else {
-            try await CI.run(.name("git"), ["push", "https://\(repoURL)"])
+            try await CI.run(.name("git"), ["push", "https://\(apiToken)@\(repoURL)"])
         }
     }
 }
