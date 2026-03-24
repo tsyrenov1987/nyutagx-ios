@@ -78,6 +78,19 @@ struct RoomMessageEventStringBuilder {
         }
     }
     
+    func buildAttributedStringForLiveLocation(senderDisplayName: String, isOutgoing: Bool) -> AttributedString {
+        var message = AttributedString(L10n.commonSharedLiveLocation)
+        if destination == .pinnedEvent {
+            message.bold()
+        }
+        
+        if destination == .roomList {
+            return prefix(message, with: isOutgoing ? L10n.commonYou : senderDisplayName)
+        } else {
+            return message
+        }
+    }
+    
     private func buildMessage(for destination: Destination, caption: String?, type: String) -> AttributedString {
         guard let caption else {
             return AttributedString(type)

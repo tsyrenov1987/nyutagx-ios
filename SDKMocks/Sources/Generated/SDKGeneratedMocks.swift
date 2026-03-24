@@ -12845,6 +12845,136 @@ open class QrCodeDataSDKMock: MatrixRustSDK.QrCodeData, @unchecked Sendable {
     {
     }
 
+    //MARK: - baseUrl
+
+    open var baseUrlUnderlyingCallsCount = 0
+    open var baseUrlCallsCount: Int {
+        get {
+            if Thread.isMainThread {
+                return baseUrlUnderlyingCallsCount
+            } else {
+                var returnValue: Int? = nil
+                DispatchQueue.main.sync {
+                    returnValue = baseUrlUnderlyingCallsCount
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                baseUrlUnderlyingCallsCount = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    baseUrlUnderlyingCallsCount = newValue
+                }
+            }
+        }
+    }
+    open var baseUrlCalled: Bool {
+        return baseUrlCallsCount > 0
+    }
+
+    open var baseUrlUnderlyingReturnValue: String?
+    open var baseUrlReturnValue: String? {
+        get {
+            if Thread.isMainThread {
+                return baseUrlUnderlyingReturnValue
+            } else {
+                var returnValue: String?? = nil
+                DispatchQueue.main.sync {
+                    returnValue = baseUrlUnderlyingReturnValue
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                baseUrlUnderlyingReturnValue = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    baseUrlUnderlyingReturnValue = newValue
+                }
+            }
+        }
+    }
+    open var baseUrlClosure: (() -> String?)?
+
+    open override func baseUrl() -> String? {
+        baseUrlCallsCount += 1
+        if let baseUrlClosure = baseUrlClosure {
+            return baseUrlClosure()
+        } else {
+            return baseUrlReturnValue
+        }
+    }
+
+    //MARK: - intent
+
+    open var intentUnderlyingCallsCount = 0
+    open var intentCallsCount: Int {
+        get {
+            if Thread.isMainThread {
+                return intentUnderlyingCallsCount
+            } else {
+                var returnValue: Int? = nil
+                DispatchQueue.main.sync {
+                    returnValue = intentUnderlyingCallsCount
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                intentUnderlyingCallsCount = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    intentUnderlyingCallsCount = newValue
+                }
+            }
+        }
+    }
+    open var intentCalled: Bool {
+        return intentCallsCount > 0
+    }
+
+    open var intentUnderlyingReturnValue: QrCodeIntent!
+    open var intentReturnValue: QrCodeIntent! {
+        get {
+            if Thread.isMainThread {
+                return intentUnderlyingReturnValue
+            } else {
+                var returnValue: QrCodeIntent? = nil
+                DispatchQueue.main.sync {
+                    returnValue = intentUnderlyingReturnValue
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                intentUnderlyingReturnValue = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    intentUnderlyingReturnValue = newValue
+                }
+            }
+        }
+    }
+    open var intentClosure: (() -> QrCodeIntent)?
+
+    open override func intent() -> QrCodeIntent {
+        intentCallsCount += 1
+        if let intentClosure = intentClosure {
+            return intentClosure()
+        } else {
+            return intentReturnValue
+        }
+    }
+
     //MARK: - serverName
 
     open var serverNameUnderlyingCallsCount = 0

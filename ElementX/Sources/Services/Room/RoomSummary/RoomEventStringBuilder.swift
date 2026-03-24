@@ -60,11 +60,10 @@ struct RoomEventStringBuilder {
                 default: L10n.commonWaitingForDecryptionKey
                 }
                 return prefix(errorMessage, with: displayName, isOutgoing: isOutgoing)
+            case .liveLocation:
+                return messageEventStringBuilder.buildAttributedStringForLiveLocation(senderDisplayName: displayName, isOutgoing: isOutgoing)
             case .other:
                 return nil // We shouldn't receive these without asking for custom event types.
-            case .liveLocation:
-                // TODO: Implement
-                return nil
             }
         case .failedToParseMessageLike, .failedToParseState:
             return prefix(L10n.commonUnsupportedEvent, with: displayName, isOutgoing: isOutgoing)
