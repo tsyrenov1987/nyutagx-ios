@@ -50,7 +50,7 @@ struct ReleaseToGitHub: AsyncParsableCommand {
         }
 
         // Bump the patch version using sed (preserves file formatting)
-        try await CI.run(.name("sed"), ["-i", "''", "'s/MARKETING_VERSION: \(currentVersion)/MARKETING_VERSION: \(newVersion)/g'", targetFilePath])
+        try await CI.run(.name("sed"), ["-i", "", "s/MARKETING_VERSION: \(currentVersion)/MARKETING_VERSION: \(newVersion)/g", targetFilePath])
         logger.info("Version updated from \(currentVersion) to \(newVersion)")
 
         try await CI.run(.name("xcodegen"))
