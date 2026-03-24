@@ -150,7 +150,7 @@ struct ReleaseToGitHub: AsyncParsableCommand {
         try await CI.run(.name("git"), ["reset", "--hard"])
         try await CI.run(.name("git"), ["checkout", "main"])
         try await CI.run(.name("git"), ["pull", "origin", "main"])
-        try await CI.run(.name("git"), ["rebase", "currentBranch"])
+        try await CI.run(.name("git"), ["rebase", currentBranch])
 
         try await CI.gitPush()
 
