@@ -1,3 +1,47 @@
+## Changes in 26.03.4 (2026-03-24)
+
+### What's Changed
+
+🙌 Improvements
+* Rename Sign Out to Remove Device + Update SDK 26.03.18 by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5280
+* PillView and BadgeLabel design tweaks following compound updates by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5284
+* Update container shape of the File TimelineItem's icon. by @americanrefugee in https://github.com/element-hq/element-x-ios/pull/5288
+* Use an iOS 26 close button and re-order some sections in SettingsScreen. by @americanrefugee in https://github.com/element-hq/element-x-ios/pull/5281
+* Re-order the sections on the Room Details Screen putting Media & Files at the top. by @amshakal in https://github.com/element-hq/element-x-ios/pull/5290
+
+🐛 Bugfixes
+* Fix key storage if it's broken by @andybalaam in https://github.com/element-hq/element-x-ios/pull/5168
+
+🗣 Translations
+* Translations update by @RiotRobot in https://github.com/element-hq/element-x-ios/pull/5212
+* Translations update by @RiotRobot in https://github.com/element-hq/element-x-ios/pull/5295
+
+🦻 Accessibility
+* Fix the AuthenticationStartScreen with large Dynamic Type sizes. by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5191
+
+🧱 Build
+* Replace the last of the fastlane lanes with swift tooling by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5186
+* Move CI GitHub token usage to the global git configuration by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5194
+* Set `LastUpgradeCheck` for XcodeGen  by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5206
+
+🚧 In development 🚧
+* Add support for reading accounts from Element Classic. by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5181
+* Render the live location timeline item by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5209
+
+Others
+* Update dependency element-hq/compound-design-tokens to v6.10.2 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5180
+* Fix screen template unit tests to use Swift Testing conventions by @Copilot in https://github.com/element-hq/element-x-ios/pull/5187
+* Update dependency element-hq/compound-design-tokens to v7 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5190
+* Update nschloe/action-cached-lfs-checkout action to v1.2.4 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5215
+* Update dependency siteline/SwiftUI-Introspect to from: "26.0.1" by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5221
+* Update dependency element-hq/compound-design-tokens to v8 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5282
+* Update codecov/codecov-action action to v5.5.3 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5283
+* Bump the RustSDK to v26.03.23 by @stefanceriu in https://github.com/element-hq/element-x-ios/pull/5296
+* Update matrix sdk to 26.03.24 by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5302
+
+
+**Full Changelog**: https://github.com/element-hq/element-x-ios/compare/release/26.03.3...release/26.03.4
+
 ## Changes in 26.03.3 (2026-03-10)
 
 ### What's Changed
