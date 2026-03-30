@@ -21462,8 +21462,13 @@ class WindowManagerMock: WindowManagerProtocol, @unchecked Sendable {
     }
     var showGlobalSearchCalled: Bool {
         return showGlobalSearchCallsCount > 0
+    var closeAuxiliaryWindowForTypeCalled: Bool {
+        return closeAuxiliaryWindowForTypeCallsCount > 0
     }
     var showGlobalSearchClosure: (() -> Void)?
+    var closeAuxiliaryWindowForTypeReceivedType: WindowManagerWindowType?
+    var closeAuxiliaryWindowForTypeReceivedInvocations: [WindowManagerWindowType] = []
+    var closeAuxiliaryWindowForTypeClosure: ((WindowManagerWindowType) -> Void)?
 
     func showGlobalSearch() {
         showGlobalSearchCallsCount += 1
