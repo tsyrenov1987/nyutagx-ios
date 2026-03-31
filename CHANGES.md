@@ -1,3 +1,35 @@
+## Changes in 26.04.0 (2026-03-31)
+
+### What's Changed
+
+✨ Features
+* Floating Date Pill by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5313
+* call: Support voice only incoming call by @BillCarsonFr in https://github.com/element-hq/element-x-ios/pull/5298
+
+🙌 Improvements
+* Update Send button bg color by @americanrefugee in https://github.com/element-hq/element-x-ios/pull/5170
+* Use single typeText call to speed up tests execution by @manuroe in https://github.com/element-hq/element-x-ios/pull/5310
+* Remove check for allowed provider when signing in using QR code by @hughns in https://github.com/element-hq/element-x-ios/pull/5196
+* Add support for iOS 26.4 emoji reactions and ensure older ESS versions still work. by @pixlwave in https://github.com/element-hq/element-x-ios/pull/5329
+
+🗣 Translations
+* Translations update by @RiotRobot in https://github.com/element-hq/element-x-ios/pull/5316
+
+🧱 Build
+* Bump the calendar version ready for the next release by @RiotRobot in https://github.com/element-hq/element-x-ios/pull/5327
+
+🚧 In development 🚧
+* LiveLocationManager permission handling by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5326
+* Live Location Timeline expiring timer check by @Velin92 in https://github.com/element-hq/element-x-ios/pull/5322
+
+Others
+* feat: Forward ElementCall logs to the native logs by @BillCarsonFr in https://github.com/element-hq/element-x-ios/pull/5320
+* Update dependency element-hq/compound-design-tokens to v9 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5325
+* Update codecov/codecov-action action to v5.5.4 by @renovate[bot] in https://github.com/element-hq/element-x-ios/pull/5308
+
+
+**Full Changelog**: https://github.com/element-hq/element-x-ios/compare/release/26.03.4...release/26.04.0
+
 ## Changes in 26.03.4 (2026-03-24)
 
 ### What's Changed
