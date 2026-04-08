@@ -8851,6 +8851,52 @@ open class EncryptionSDKMock: MatrixRustSDK.Encryption, @unchecked Sendable {
         }
     }
 
+    //MARK: - importSecretsBundle
+
+    open var importSecretsBundleSecretsBundleThrowableError: Error?
+    open var importSecretsBundleSecretsBundleUnderlyingCallsCount = 0
+    open var importSecretsBundleSecretsBundleCallsCount: Int {
+        get {
+            if Thread.isMainThread {
+                return importSecretsBundleSecretsBundleUnderlyingCallsCount
+            } else {
+                var returnValue: Int? = nil
+                DispatchQueue.main.sync {
+                    returnValue = importSecretsBundleSecretsBundleUnderlyingCallsCount
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                importSecretsBundleSecretsBundleUnderlyingCallsCount = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    importSecretsBundleSecretsBundleUnderlyingCallsCount = newValue
+                }
+            }
+        }
+    }
+    open var importSecretsBundleSecretsBundleCalled: Bool {
+        return importSecretsBundleSecretsBundleCallsCount > 0
+    }
+    open var importSecretsBundleSecretsBundleReceivedSecretsBundle: SecretsBundleWithUserId?
+    open var importSecretsBundleSecretsBundleReceivedInvocations: [SecretsBundleWithUserId] = []
+    open var importSecretsBundleSecretsBundleClosure: ((SecretsBundleWithUserId) async throws -> Void)?
+
+    open override func importSecretsBundle(secretsBundle: SecretsBundleWithUserId) async throws {
+        if let error = importSecretsBundleSecretsBundleThrowableError {
+            throw error
+        }
+        importSecretsBundleSecretsBundleCallsCount += 1
+        importSecretsBundleSecretsBundleReceivedSecretsBundle = secretsBundle
+        DispatchQueue.main.async {
+            self.importSecretsBundleSecretsBundleReceivedInvocations.append(secretsBundle)
+        }
+        try await importSecretsBundleSecretsBundleClosure?(secretsBundle)
+    }
+
     //MARK: - isLastDevice
 
     open var isLastDeviceThrowableError: Error?
@@ -11476,6 +11522,71 @@ open class LazyTimelineItemProviderSDKMock: MatrixRustSDK.LazyTimelineItemProvid
             return getShieldsStrictClosure(strict)
         } else {
             return getShieldsStrictReturnValue
+        }
+    }
+
+    //MARK: - latestContentRaw
+
+    open var latestContentRawUnderlyingCallsCount = 0
+    open var latestContentRawCallsCount: Int {
+        get {
+            if Thread.isMainThread {
+                return latestContentRawUnderlyingCallsCount
+            } else {
+                var returnValue: Int? = nil
+                DispatchQueue.main.sync {
+                    returnValue = latestContentRawUnderlyingCallsCount
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                latestContentRawUnderlyingCallsCount = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    latestContentRawUnderlyingCallsCount = newValue
+                }
+            }
+        }
+    }
+    open var latestContentRawCalled: Bool {
+        return latestContentRawCallsCount > 0
+    }
+
+    open var latestContentRawUnderlyingReturnValue: String?
+    open var latestContentRawReturnValue: String? {
+        get {
+            if Thread.isMainThread {
+                return latestContentRawUnderlyingReturnValue
+            } else {
+                var returnValue: String?? = nil
+                DispatchQueue.main.sync {
+                    returnValue = latestContentRawUnderlyingReturnValue
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                latestContentRawUnderlyingReturnValue = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    latestContentRawUnderlyingReturnValue = newValue
+                }
+            }
+        }
+    }
+    open var latestContentRawClosure: (() -> String?)?
+
+    open override func latestContentRaw() -> String? {
+        latestContentRawCallsCount += 1
+        if let latestContentRawClosure = latestContentRawClosure {
+            return latestContentRawClosure()
+        } else {
+            return latestContentRawReturnValue
         }
     }
 }
@@ -23027,6 +23138,89 @@ open class SecretsBundleSDKMock: MatrixRustSDK.SecretsBundle, @unchecked Sendabl
         set(value) { underlyingHandle = value }
     }
     fileprivate var underlyingHandle: UInt64!
+}
+open class SecretsBundleWithUserIdSDKMock: MatrixRustSDK.SecretsBundleWithUserId, @unchecked Sendable {
+    public init() {
+        super.init(noHandle: .init())
+    }
+
+    public required init(unsafeFromHandle handle: UInt64) {
+        fatalError("init(unsafeFromHandle:) has not been implemented")
+    }
+
+    fileprivate var handle: UInt64 {
+        get { return underlyingHandle }
+        set(value) { underlyingHandle = value }
+    }
+    fileprivate var underlyingHandle: UInt64!
+    static func reset()
+    {
+    }
+
+    //MARK: - containsBackupKey
+
+    open var containsBackupKeyUnderlyingCallsCount = 0
+    open var containsBackupKeyCallsCount: Int {
+        get {
+            if Thread.isMainThread {
+                return containsBackupKeyUnderlyingCallsCount
+            } else {
+                var returnValue: Int? = nil
+                DispatchQueue.main.sync {
+                    returnValue = containsBackupKeyUnderlyingCallsCount
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                containsBackupKeyUnderlyingCallsCount = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    containsBackupKeyUnderlyingCallsCount = newValue
+                }
+            }
+        }
+    }
+    open var containsBackupKeyCalled: Bool {
+        return containsBackupKeyCallsCount > 0
+    }
+
+    open var containsBackupKeyUnderlyingReturnValue: Bool!
+    open var containsBackupKeyReturnValue: Bool! {
+        get {
+            if Thread.isMainThread {
+                return containsBackupKeyUnderlyingReturnValue
+            } else {
+                var returnValue: Bool? = nil
+                DispatchQueue.main.sync {
+                    returnValue = containsBackupKeyUnderlyingReturnValue
+                }
+
+                return returnValue!
+            }
+        }
+        set {
+            if Thread.isMainThread {
+                containsBackupKeyUnderlyingReturnValue = newValue
+            } else {
+                DispatchQueue.main.sync {
+                    containsBackupKeyUnderlyingReturnValue = newValue
+                }
+            }
+        }
+    }
+    open var containsBackupKeyClosure: (() -> Bool)?
+
+    open override func containsBackupKey() -> Bool {
+        containsBackupKeyCallsCount += 1
+        if let containsBackupKeyClosure = containsBackupKeyClosure {
+            return containsBackupKeyClosure()
+        } else {
+            return containsBackupKeyReturnValue
+        }
+    }
 }
 open class SendAttachmentJoinHandleSDKMock: MatrixRustSDK.SendAttachmentJoinHandle, @unchecked Sendable {
     public init() {
