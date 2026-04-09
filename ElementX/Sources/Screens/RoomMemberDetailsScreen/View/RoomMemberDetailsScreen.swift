@@ -103,11 +103,20 @@ struct RoomMemberDetailsScreen: View {
             
             if let roomID = context.viewState.dmRoomID {
                 Button {
-                    context.send(viewAction: .startCall(roomID: roomID))
+                    context.send(viewAction: .startCall(roomID: roomID, isVoiceCall: true))
+                } label: {
+                    CompoundIcon(\.voiceCall)
+                }
+                .accessibilityLabel(L10n.a11yStartVoiceCall)
+                .buttonStyle(FormActionButtonStyle(title: L10n.actionCall))
+                
+                Button {
+                    context.send(viewAction: .startCall(roomID: roomID, isVoiceCall: false))
                 } label: {
                     CompoundIcon(\.videoCall)
                 }
-                .buttonStyle(FormActionButtonStyle(title: L10n.actionCall))
+                .accessibilityLabel(L10n.a11yStartVideoCall)
+                .buttonStyle(FormActionButtonStyle(title: L10n.commonVideo))
             }
             
             if let permalink = context.viewState.memberDetails?.permalink {

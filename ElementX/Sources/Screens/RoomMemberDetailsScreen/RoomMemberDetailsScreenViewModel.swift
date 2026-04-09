@@ -81,8 +81,8 @@ class RoomMemberDetailsScreenViewModel: RoomMemberDetailsScreenViewModelType, Ro
             openDirectChat()
         case .createDirectChat:
             Task { await createDirectChat() }
-        case .startCall(let roomID):
-            Task { await startCall(roomID: roomID) }
+        case .startCall(let roomID, let isVoiceCall):
+            Task { await startCall(roomID: roomID, isVoiceCall: isVoiceCall) }
         case .verifyUser:
             actionsSubject.send(.verifyUser(userID: state.userID))
         case .withdrawVerification:
@@ -225,12 +225,12 @@ class RoomMemberDetailsScreenViewModel: RoomMemberDetailsScreenViewModelType, Ro
         }
     }
     
-    private func startCall(roomID: String) async {
+    private func startCall(roomID: String, isVoiceCall: Bool) async {
         guard case let .joined(roomProxy) = await userSession.clientProxy.roomForIdentifier(roomID) else {
             showErrorIndicator()
             return
         }
-        actionsSubject.send(.startCall(roomProxy: roomProxy))
+        actionsSubject.send(.startCall(roomProxy: roomProxy, isVoiceCall: isVoiceCall))
     }
     
     // MARK: User Indicators

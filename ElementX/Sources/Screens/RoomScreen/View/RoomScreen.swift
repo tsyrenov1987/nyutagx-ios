@@ -6,6 +6,7 @@
 // Please see LICENSE files in the repository root for full details.
 //
 
+import Combine
 import Compound
 import SwiftUI
 import WysiwygComposer
@@ -172,10 +173,9 @@ struct RoomScreen: View {
         }
         
         if !ProcessInfo.processInfo.isiOSAppOnMac {
-            ToolbarItem(placement: .primaryAction) {
-                if context.viewState.shouldShowCallButton {
-                    callButton
-                        .disabled(!context.viewState.canJoinCall)
+            if context.viewState.shouldShowCallButton {
+                RoomCallControlsToolbar(viewState: context.viewState) { isVoiceCall in
+                    context.send(viewAction: .displayCall(isVoiceCall: isVoiceCall))
                 }
             }
         }
@@ -192,24 +192,6 @@ struct RoomScreen: View {
                     CompoundIcon(\.threads)
                 }
             }
-        }
-    }
-    
-    @ViewBuilder
-    private var callButton: some View {
-        if context.viewState.hasOngoingCall {
-            JoinCallButton {
-                context.send(viewAction: .displayCall)
-            }
-            .accessibilityIdentifier(A11yIdentifiers.roomScreen.joinCall)
-        } else {
-            Button {
-                context.send(viewAction: .displayCall)
-            } label: {
-                CompoundIcon(\.videoCallSolid)
-            }
-            .accessibilityLabel(L10n.a11yStartCall)
-            .accessibilityIdentifier(A11yIdentifiers.roomScreen.joinCall)
         }
     }
 }

@@ -16,7 +16,7 @@ enum RoomScreenViewModelAction: Equatable {
     case displayThread(threadRootEventID: String, focussedEventID: String)
     case displayPinnedEventsTimeline
     case displayRoomDetails
-    case displayCall
+    case displayCall(isVoiceCall: Bool)
     case removeComposerFocus
     case displayKnockRequests
     case displayRoom(roomID: String, via: [String])
@@ -27,7 +27,7 @@ enum RoomScreenViewAction {
     case tappedPinnedEventsBanner
     case viewAllPins
     case displayRoomDetails
-    case displayCall
+    case displayCall(isVoiceCall: Bool)
     case footerViewAction(RoomScreenFooterViewAction)
     case acceptKnock(eventID: String)
     case dismissKnockRequests
@@ -61,6 +61,9 @@ struct RoomScreenViewState: BindableState {
     var shouldShowCallButton: Bool {
         isCallingEnabled && !isParticipatingInOngoingCall // Hide the join call button when already in the call
     }
+    
+    /// Whether the current room is a DM
+    var isDirectOneToOneRoom: Bool
     
     var roomThreadListEnabled = false
     var isKnockingEnabled = false
