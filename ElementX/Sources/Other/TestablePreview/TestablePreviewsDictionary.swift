@@ -67,6 +67,7 @@ enum TestablePreviewsDictionary {
         "IdentityConfirmedScreen_Previews" : IdentityConfirmedScreen_Previews.self,
         "ImageMediaEventsTimelineView_Previews" : ImageMediaEventsTimelineView_Previews.self,
         "ImageRoomTimelineView_Previews" : ImageRoomTimelineView_Previews.self,
+        "InviteUsersConfirmationSheetView_Previews" : InviteUsersConfirmationSheetView_Previews.self,
         "InviteUsersScreenSelectedItem_Previews" : InviteUsersScreenSelectedItem_Previews.self,
         "InviteUsersScreen_Previews" : InviteUsersScreen_Previews.self,
         "JoinRoomByAddressView_Previews" : JoinRoomByAddressView_Previews.self,

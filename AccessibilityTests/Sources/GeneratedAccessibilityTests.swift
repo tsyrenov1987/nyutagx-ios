@@ -239,6 +239,10 @@ extension AccessibilityTests {
         try await performAccessibilityAudit(named: "ImageRoomTimelineView_Previews")
     }
 
+    func testInviteUsersConfirmationSheetView() async throws {
+        try await performAccessibilityAudit(named: "InviteUsersConfirmationSheetView_Previews")
+    }
+
     func testInviteUsersScreenSelectedItem() async throws {
         try await performAccessibilityAudit(named: "InviteUsersScreenSelectedItem_Previews")
     }

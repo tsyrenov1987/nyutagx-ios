@@ -476,6 +476,14 @@ extension PreviewTests {
     }
 
     @Test
+    func inviteUsersConfirmationSheetView() async throws {
+        AppSettings.resetAllSettings() // Ensure this test's previews start with fresh settings.
+        for (index, preview) in InviteUsersConfirmationSheetView_Previews._allPreviews.enumerated() {
+            try await assertSnapshots(matching: preview, step: index)
+        }
+    }
+
+    @Test
     func inviteUsersScreenSelectedItem() async throws {
         AppSettings.resetAllSettings() // Ensure this test's previews start with fresh settings.
         for (index, preview) in InviteUsersScreenSelectedItem_Previews._allPreviews.enumerated() {
