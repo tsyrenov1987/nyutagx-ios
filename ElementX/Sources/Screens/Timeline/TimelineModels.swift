@@ -56,6 +56,7 @@ enum TimelineViewAction {
     case paginateBackwards
     case paginateForwards
     case scrollToBottom
+    case scrollToFirstItemForCurrentDate
     
     case displayTimelineItemMenu(itemID: TimelineItemIdentifier)
     case handleTimelineItemMenuAction(itemID: TimelineItemIdentifier, action: TimelineItemMenuAction)
@@ -152,8 +153,8 @@ struct TimelineViewState: BindableState {
 struct TimelineViewStateBindings {
     var isScrolledToBottom = true
     
-    /// The formatted date text for the floating date badge shown while scrolling.
-    var floatingDateText: String?
+    /// The timestamp of the topmost visible item, used to drive the floating date badge while scrolling.
+    var floatingDate: Date?
     
     /// The state of wether reactions listed on the timeline are expanded/collapsed.
     /// Key is itemID, value is the collapsed state.
@@ -247,6 +248,7 @@ struct TimelineState {
     
     /// These can be removed when we have full swiftUI and moved as @State values in the view
     var scrollToBottomPublisher = PassthroughSubject<Void, Never>()
+    var scrollToFirstItemForDatePublisher = PassthroughSubject<Void, Never>()
     
     var itemsDictionary = OrderedDictionary<TimelineItemIdentifier.UniqueID, RoomTimelineItemViewState>()
     
