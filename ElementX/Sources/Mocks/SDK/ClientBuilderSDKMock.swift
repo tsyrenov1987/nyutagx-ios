@@ -19,6 +19,6 @@ nonisolated extension ClientBuilderSDKMock {
     convenience init(_ configuration: Configuration) {
         self.init()
         
-        disableWellKnownLookupDisableWellKnownLookupReturnValue = self
+        disableWellKnownLookupDisableWellKnownLookupClosure = { [unowned self] _ in self }
     }
 }
