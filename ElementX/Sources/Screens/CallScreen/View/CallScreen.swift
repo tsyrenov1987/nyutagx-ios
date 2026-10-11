@@ -219,6 +219,9 @@ struct CallView: UIViewRepresentable {
                       let level = body["level"],
                       let logMessage = body["message"] else { return }
                 
+                // Нютаг: секреты в лог не пишем — Element Call выводит в консоль OpenID-токен для LiveKit.
+                guard !logMessage.contains("access_token"), !logMessage.contains("password=") else { return }
+                
                 switch level {
                 case "log", "debug":
                     MXLog.debug("[ElementCall]: \(logMessage)")
