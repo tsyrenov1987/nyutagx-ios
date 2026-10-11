@@ -9,6 +9,7 @@
 import AVKit
 import Combine
 import EmbeddedElementCall
+import Network
 import SFSafeSymbols
 import SwiftUI
 import WebKit
@@ -124,6 +125,15 @@ struct CallView: UIViewRepresentable {
                 configuration.userContentController.addUserScript(userScript)
             }
             
+            // Нютаг: Element Call ходит к ядру (JWT LiveKit, сигналинг SFU) только через SOCKS туннеля — входа без него нет.
+            configuration.websiteDataStore = .nonPersistent()
+            if let endpoint = NyutagTunnel.endpoint, let port = NWEndpoint.Port(rawValue: UInt16(endpoint.port)) {
+                let proxy = ProxyConfiguration(socksv5Proxy: .hostPort(host: "127.0.0.1", port: port))
+                proxy.applyCredential(username: endpoint.user, password: endpoint.password)
+                configuration.websiteDataStore.proxyConfigurations = [proxy]
+            }
+            configuration.userContentController.addUserScript(WKUserScript(source: Self.nyutagConfigScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+            
             webView = WKWebView(frame: .zero, configuration: configuration)
             webView.uiDelegate = self
             webView.navigationDelegate = self
@@ -219,8 +229,8 @@ struct CallView: UIViewRepresentable {
                       let level = body["level"],
                       let logMessage = body["message"] else { return }
                 
-                // Нютаг: секреты в лог не пишем — Element Call выводит в консоль OpenID-токен для LiveKit.
-                guard !logMessage.contains("access_token"), !logMessage.contains("password=") else { return }
+                // Нютаг: секреты в лог не пишем — Element Call выводит в консоль OpenID-токен и JWT для LiveKit.
+                guard !logMessage.contains("access_token"), !logMessage.contains("password="), !logMessage.contains("eyJ") else { return }
                 
                 switch level {
                 case "log", "debug":
@@ -286,6 +296,39 @@ struct CallView: UIViewRepresentable {
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             viewModelContext?.send(viewAction: .urlChanged(webView.url))
         }
+        
+        /// Нютаг: TLS ядра проверяем только по нашему CA.
+        func webView(_ webView: WKWebView, respondTo challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+            NyutagTrust.evaluate(challenge)
+        }
+        
+        /// Нютаг: Tuwunel не умеет отложенные события (MSC4140), поэтому членство упавшего клиента живёт до истечения срока —
+        /// по умолчанию 4 часа «призраков» в звонке. Срок 10 минут, как на Android.
+        /// Заодно шлём в лог необработанные ошибки страницы и сбои сетевых запросов (только адрес и статус, без тел).
+        private static let nyutagConfigScript = """
+        (() => {
+            const report = (level, message) => window.webkit.messageHandlers.forwardLogs.postMessage({ level, message: "[Nyutag] " + message });
+            window.addEventListener("error", (event) => report("error", "error: " + event.message + " @" + event.filename + ":" + event.lineno));
+            window.addEventListener("unhandledrejection", (event) => report("error", "unhandled rejection: " + (event.reason && (event.reason.message || event.reason.stack) || event.reason)));
+            const originalFetch = window.fetch.bind(window);
+            window.fetch = async (input, init) => {
+                const url = new URL(String(typeof input === "string" || input instanceof URL ? input : input.url), window.location.href);
+                const target = url.origin + url.pathname;
+                let response;
+                try {
+                    response = await originalFetch(input, init);
+                } catch (error) {
+                    report("warn", "fetch failed " + target + ": " + error);
+                    throw error;
+                }
+                if (url.protocol !== "file:" && !response.ok) { report("warn", "fetch " + target + " -> " + response.status); }
+                if (!url.pathname.endsWith("/config.json")) { return response; }
+                const config = await response.json();
+                config.matrix_rtc_session = Object.assign({}, config.matrix_rtc_session, { membership_event_expiry_ms: 600000 });
+                return new Response(JSON.stringify(config), { status: 200, headers: { "Content-Type": "application/json" } });
+            };
+        })();
+        """
         
         // MARK: - Picture in Picture
         
