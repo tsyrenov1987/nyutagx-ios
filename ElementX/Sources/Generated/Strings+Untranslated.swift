@@ -61,7 +61,12 @@ internal nonisolated enum UntranslatedL10n {
 
 nonisolated extension UntranslatedL10n {
   static func tr(_ table: String, _ key: String, _ args: CVarArg...) -> String {
-    // No need to check languages, we always default to en for untranslated strings
+    // Нютаг: перевод из таблицы Nyutag на языке пользователя, иначе английский, как у Element.
+    for language in Bundle.overrideLocalizations ?? Bundle.app.preferredLocalizations {
+      guard let bundle = Bundle.lprojBundle(for: language) else { continue }
+      let nyutagFormat = NSLocalizedString(key, tableName: "Nyutag", bundle: bundle, comment: "")
+      if nyutagFormat != key { return String(format: nyutagFormat, locale: Locale(identifier: language), arguments: args) }
+    }
     guard let bundle = Bundle.lprojBundle(for: "en") else { return key }
     let format = NSLocalizedString(key, tableName: table, bundle: bundle, comment: "")
     return String(format: format, locale: Locale(identifier: "en"), arguments: args)

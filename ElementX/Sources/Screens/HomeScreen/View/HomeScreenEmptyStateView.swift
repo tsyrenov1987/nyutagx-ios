@@ -15,29 +15,44 @@ struct HomeScreenEmptyStateView: View {
     let context: HomeScreenViewModel.Context
     
     var body: some View {
-        VStack(spacing: 2) {
+        // Нютаг: как пустой экран в Telegram/WhatsApp — картинка, одна мысль и главное действие.
+        // Сеть закрытая, поэтому главное — позвать своих; «Начать чат» — вторым.
+        VStack(spacing: 0) {
+            Image(systemName: "bubble.left.and.bubble.right.fill")
+                .font(.system(size: 40, weight: .semibold))
+                .foregroundStyle(Color(NyutagBrand.blue))
+                .frame(width: 96, height: 96)
+                .background(Color(NyutagBrand.blueSubtle), in: Circle())
+                .padding(.bottom, 20)
+                .accessibilityHidden(true)
+            
             Text(L10n.screenRoomlistEmptyTitle)
-                .font(.compound.bodyLG)
-                .foregroundColor(.compound.textSecondary)
+                .font(.compound.headingSMSemibold)
+                .foregroundColor(.compound.textPrimary)
                 .multilineTextAlignment(.center)
+                .padding(.bottom, 8)
             
             Text(L10n.screenRoomlistEmptyMessage)
-                .font(.compound.bodyLG)
+                .font(.compound.bodyMD)
                 .foregroundColor(.compound.textSecondary)
                 .multilineTextAlignment(.center)
-                .padding(.bottom, 16)
+                .padding(.bottom, 24)
             
-            Button { context.send(viewAction: .startChat) } label: {
-                Label(L10n.actionStartChat, icon: \.chat)
-                    .font(.compound.bodyLGSemibold)
-                    .foregroundColor(.compound.textOnSolidPrimary)
-                    .padding(.vertical, 6)
-                    .padding(.horizontal, 8)
+            VStack(spacing: 12) {
+                Button { context.send(viewAction: .nyutagInviteFriend) } label: {
+                    Label(NyutagL10n.inviteFriend, icon: \.userAdd)
+                }
+                .buttonStyle(.compound(.primary))
+                
+                Button { context.send(viewAction: .startChat) } label: {
+                    Label(L10n.actionStartChat, icon: \.chat)
+                }
+                .buttonStyle(.compound(.secondary))
             }
-            .buttonStyle(.borderedProminent)
-            .buttonBorderShape(.capsule)
+            .frame(maxWidth: 320)
         }
-        .padding(16)
+        .padding(.horizontal, 32)
+        .padding(.vertical, 16)
     }
 }
 

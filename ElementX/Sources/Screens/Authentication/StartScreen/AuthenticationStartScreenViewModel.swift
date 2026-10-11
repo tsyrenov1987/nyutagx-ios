@@ -49,9 +49,10 @@ class AuthenticationStartScreenViewModel: AuthenticationStartScreenViewModelType
         let initialViewState = if !appSettings.allowOtherAccountProviders {
             // We don't show the create account button when custom providers are disallowed.
             // The assumption here being that if you're running a custom app, your users will already be created.
+            // Нютаг: регистрация по приглашению есть всегда; входа по QR нет (нужен OIDC/MSC4108, у сервера его нет).
             AuthenticationStartScreenViewState(serverNameOrBaseURL: appSettings.accountProviders.count == 1 ? appSettings.accountProviders[0].serverNameOrBaseURL : nil,
-                                               showCreateAccountButton: false,
-                                               showQRCodeLoginButton: isQRCodeScanningSupported,
+                                               showCreateAccountButton: true,
+                                               showQRCodeLoginButton: false,
                                                classicAppMode: isClassicAppAccountAllowed ? authenticationService.classicAppAccount.map { .welcomeBack($0) } : nil,
                                                hideBrandChrome: appSettings.hideBrandChrome)
         } else if let provisioningParameters {

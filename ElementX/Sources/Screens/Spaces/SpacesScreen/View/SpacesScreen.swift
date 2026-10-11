@@ -22,67 +22,85 @@ struct SpacesScreen: View {
             .toolbarBloom(hasSearchBar: false)
     }
     
-    @ViewBuilder
+    // Нютаг: как «Сообщества» во «ВКонтакте» — поиск, свои сообщества и каталог всех сообществ сервера.
     private var mainContent: some View {
-        if context.viewState.topLevelSpaces.isEmpty {
-            emptyState
-        } else {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    header
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                if !context.viewState.visibleSpaces.isEmpty {
+                    sectionHeader(NyutagL10n.communitiesMine)
                     spaces
+                }
+                
+                if !context.viewState.catalog.isEmpty {
+                    sectionHeader(NyutagL10n.communitiesAll)
+                    ForEach(context.viewState.catalog) { community in
+                        NyutagCommunityCell(community: community, mediaProvider: context.mediaProvider) {
+                            context.send(viewAction: .openCommunity(community))
+                        }
+                    }
+                }
+                
+                if context.viewState.visibleSpaces.isEmpty, context.viewState.catalog.isEmpty {
+                    emptyState
                 }
             }
         }
+        .scrollDismissesKeyboard(.immediately)
+        .searchable(text: $context.searchQuery, placement: .navigationBarDrawer(displayMode: .always), prompt: NyutagL10n.communitiesSearch)
+        .onChange(of: context.searchQuery) { context.send(viewAction: .searchQueryChanged) }
+        .refreshable { context.send(viewAction: .refreshCommunities) }
     }
     
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title)
+            .font(.compound.bodySMSemibold)
+            .foregroundStyle(.compound.textSecondary)
+            .textCase(.uppercase)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+            .padding(.bottom, 6)
+    }
+    
+    @ViewBuilder
     private var emptyState: some View {
-        FullscreenDialog(horizontalPadding: 24) {
-            TitleAndIcon(title: L10n.screenSpaceListEmptyStateTitle,
-                         icon: \.spaceSolid,
-                         iconStyle: .defaultSolid)
-        } bottomContent: {
-            Button(L10n.actionCreateSpace) {
-                context.send(viewAction: .createSpace)
-            }
-            .buttonStyle(.compound(.primary))
-        }
-    }
-    
-    private var header: some View {
-        VStack(spacing: 16) {
-            BigIcon(icon: \.spaceSolid)
-            
-            VStack(spacing: 8) {
-                Text(L10n.screenSpaceListTitle)
-                    .font(.compound.headingMDBold)
-                    .foregroundStyle(.compound.textPrimary)
-                    .multilineTextAlignment(.center)
+        if context.viewState.isLoadingCommunities, !context.viewState.hasLoadedCommunities {
+            ProgressView()
+                .padding(.top, 64)
+        } else if context.viewState.isSearching {
+            Text(L10n.commonNoResults)
+                .font(.compound.bodyLG)
+                .foregroundStyle(.compound.textSecondary)
+                .padding(.top, 64)
+        } else {
+            VStack(spacing: 0) {
+                Image(systemName: "person.3.fill")
+                    .font(.system(size: 34, weight: .semibold))
+                    .foregroundStyle(Color(NyutagBrand.blue))
+                    .frame(width: 96, height: 96)
+                    .background(Color(NyutagBrand.blueSubtle), in: Circle())
+                    .padding(.bottom, 20)
+                    .accessibilityHidden(true)
                 
-                Text(L10n.commonSpaces(context.viewState.topLevelSpaces.count))
+                Text(NyutagL10n.communitiesEmpty)
                     .font(.compound.bodyLG)
                     .foregroundStyle(.compound.textSecondary)
                     .multilineTextAlignment(.center)
+                    .padding(.bottom, 24)
+                
+                Button(L10n.actionCreateSpace) {
+                    context.send(viewAction: .createSpace)
+                }
+                .buttonStyle(.compound(.primary))
+                .frame(maxWidth: 320)
             }
-            
-            Text(L10n.screenSpaceListDescription)
-                .font(.compound.bodyMD)
-                .foregroundStyle(.compound.textPrimary)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(.horizontal, 16)
-        .padding(.top, 32)
-        .padding(.bottom, 24)
-        .overlay(alignment: .bottom) {
-            Rectangle()
-                .fill(Color.compound.borderDisabled)
-                .frame(height: 1 / UIScreen.main.scale)
+            .padding(.horizontal, 32)
+            .padding(.top, 64)
         }
     }
     
     private var spaces: some View {
-        ForEach(context.viewState.topLevelSpaces, id: \.id) { spaceServiceRoom in
+        ForEach(context.viewState.visibleSpaces, id: \.id) { spaceServiceRoom in
             SpaceRoomCell(spaceServiceRoom: spaceServiceRoom,
                           isSelected: spaceServiceRoom.id == context.viewState.selectedSpaceID,
                           mediaProvider: context.mediaProvider) { action in
@@ -152,5 +170,65 @@ struct SpacesScreen_Previews: PreviewProvider, TestablePreview {
         return SpacesScreenViewModel(userSession: UserSessionMock(.init(clientProxy: clientProxy)),
                                      selectedSpacePublisher: .init(nil),
                                      userIndicatorController: UserIndicatorControllerMock())
+    }
+}
+
+/// Нютаг: сообщество из каталога — аватар, название, открытое/закрытое и число участников.
+private struct NyutagCommunityCell: View {
+    let community: NyutagCommunity
+    let mediaProvider: MediaProviderProtocol?
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 16) {
+                LoadableAvatarImage(url: community.avatarURL,
+                                    name: community.name,
+                                    contentID: community.id,
+                                    shape: .roundedRect,
+                                    avatarSize: .room(on: .spaces),
+                                    mediaProvider: mediaProvider)
+                    .accessibilityHidden(true)
+                
+                HStack(spacing: 12) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(community.name)
+                            .font(.compound.bodyLGSemibold)
+                            .foregroundStyle(.compound.textPrimary)
+                            .lineLimit(1)
+                        
+                        Label {
+                            Text(community.isOpen ? NyutagL10n.communityOpen : NyutagL10n.communityClosedBadge)
+                                .font(.compound.bodyMD)
+                                .foregroundStyle(.compound.textSecondary)
+                                .lineLimit(1)
+                        } icon: {
+                            CompoundIcon(community.isOpen ? \.public : \.lockSolid, size: .xSmall, relativeTo: .compound.bodyMD)
+                                .foregroundStyle(.compound.iconTertiary)
+                        }
+                        .labelStyle(.custom(spacing: 4))
+                        
+                        Text(L10n.commonMemberCount(community.membersCount))
+                            .font(.compound.bodyMD)
+                            .foregroundStyle(.compound.textSecondary)
+                            .lineLimit(1)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    CompoundIcon(\.chevronRight, size: .small, relativeTo: .compound.bodyLG)
+                        .foregroundStyle(.compound.iconTertiary)
+                }
+                .padding(.vertical, 12)
+                .overlay(alignment: .bottom) {
+                    Rectangle()
+                        .fill(Color.compound.borderDisabled)
+                        .frame(height: 1 / UIScreen.main.scale)
+                        .padding(.trailing, -16)
+                }
+            }
+            .padding(.horizontal, 16)
+            .accessibilityElement(children: .combine)
+        }
+        .buttonStyle(SpaceRoomCellButtonStyle(isHighlighted: false))
     }
 }

@@ -19,6 +19,8 @@ struct Application: App {
     private var appCoordinator: AppCoordinatorProtocol!
     
     init() {
+        NyutagLanguage.apply() // Нютаг: язык, выбранный в приложении (в т.ч. бурятский)
+        
         if ProcessInfo.isRunningUITests {
             appCoordinator = UITestsAppCoordinator(appDelegate: appDelegate)
         } else if ProcessInfo.isRunningUnitTests {

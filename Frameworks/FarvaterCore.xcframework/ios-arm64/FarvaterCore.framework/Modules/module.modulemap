@@ -1,0 +1,8 @@
+framework module "FarvaterCore" {
+	header "ref.h"
+    header "Mobile.objc.h"
+    header "Universe.objc.h"
+    header "FarvaterCore.h"
+
+    export *
+}

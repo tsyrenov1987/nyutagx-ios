@@ -15,6 +15,9 @@ struct AuthenticationStartScreen: View {
     
     @Bindable var context: AuthenticationStartScreenViewModel.Context
     
+    /// Нютаг: язык выбирается прямо на старте — бурятского нет среди языков iOS.
+    @State private var language = NyutagLanguage.current
+    
     var body: some View {
         if case let .welcomeBack(classicAppAccount) = context.viewState.classicAppMode,
            classicAppAccount.state.isServerSupported != false {
@@ -53,6 +56,11 @@ struct AuthenticationStartScreen: View {
         .background {
             AuthenticationStartScreenBackgroundImage()
         }
+        .overlay(alignment: .topTrailing) {
+            languageMenu
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+        }
         .navigationBarHidden(context.viewState.classicAppMode == nil)
         .toolbar { toolbar }
         .alert(item: $context.alertInfo)
@@ -77,13 +85,13 @@ struct AuthenticationStartScreen: View {
             if !context.viewState.hideBrandChrome {
                 VStack(spacing: 8) {
                     Text(L10n.screenOnboardingWelcomeTitle)
-                        .font(.compound.headingLGBold)
+                        .font(.compound.headingXLBold)
                         .foregroundColor(.compound.textPrimary)
                         .multilineTextAlignment(.center)
                         .accessibilityAddTraits(.isHeader)
                     Text(L10n.screenOnboardingWelcomeMessage(InfoPlistReader.main.productionAppName))
                         .font(.compound.bodyLG)
-                        .foregroundColor(.compound.textPrimary)
+                        .foregroundColor(.compound.textSecondary)
                         .multilineTextAlignment(.center)
                 }
                 .padding()
@@ -109,16 +117,16 @@ struct AuthenticationStartScreen: View {
             }
             
             Button { context.send(viewAction: .login) } label: {
-                Text(context.viewState.loginButtonTitle)
+                Text(NyutagL10n.startSignIn)
             }
             .buttonStyle(.compound(.primary))
             .accessibilityIdentifier(A11yIdentifiers.authenticationStartScreen.signIn)
             
             if context.viewState.showCreateAccountButton {
                 Button { context.send(viewAction: .register) } label: {
-                    Text(L10n.screenCreateAccountTitle)
+                    Text(NyutagL10n.startHaveInvite)
                 }
-                .buttonStyle(.compound(.tertiary))
+                .buttonStyle(.compound(.secondary))
             }
             
             versionText
@@ -136,6 +144,26 @@ struct AuthenticationStartScreen: View {
         }
         .padding(.horizontal, verticalSizeClass == .compact ? 128 : 24)
         .readableFrame()
+    }
+    
+    var languageMenu: some View {
+        Menu {
+            Picker(NyutagL10n.languageTitle, selection: $language) {
+                ForEach(NyutagLanguage.allCases) { language in
+                    Text(language.nativeName).tag(language)
+                }
+            }
+        } label: {
+            Label(language == .system ? NyutagL10n.languageTitle : language.nativeName, systemImage: "globe")
+                .font(.compound.bodyMDSemibold)
+                .foregroundStyle(.compound.textPrimary)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(.ultraThinMaterial, in: Capsule())
+        }
+        .onChange(of: language) { _, newValue in
+            NyutagLanguage.select(newValue)
+        }
     }
     
     var versionText: Text {

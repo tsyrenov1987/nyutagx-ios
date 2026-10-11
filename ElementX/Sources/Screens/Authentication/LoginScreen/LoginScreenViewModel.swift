@@ -91,7 +91,19 @@ class LoginScreenViewModel: LoginScreenViewModelType, LoginScreenViewModelProtoc
         startLoading(isInteractionBlocking: true)
         
         Task {
-            switch await authenticationService.login(username: state.bindings.username,
+            // Нютаг: телефон или почту сервис ядра превращает в Matrix ID (он же сверяет пароль).
+            var username = state.bindings.username
+            if username.looksLikeNyutagContact {
+                do throws(NyutagInviteError) {
+                    username = try await NyutagInvitesService.shared.resolveLogin(identifier: username, password: state.bindings.password)
+                } catch {
+                    stopLoading()
+                    handleError(error.errcode == NyutagInviteError.network ? .failedLoggingIn : .invalidCredentials)
+                    return
+                }
+            }
+            
+            switch await authenticationService.login(username: username,
                                                      password: state.bindings.password,
                                                      initialDeviceName: UIDevice.current.initialDeviceName,
                                                      deviceID: nil) {

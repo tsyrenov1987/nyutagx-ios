@@ -13,7 +13,10 @@ typealias SpacesScreenViewModelType = StateStoreViewModelV2<SpacesScreenViewStat
 
 class SpacesScreenViewModel: SpacesScreenViewModelType, SpacesScreenViewModelProtocol {
     private let spaceServiceProxy: SpaceServiceProxyProtocol
+    private let clientProxy: ClientProxyProtocol
     private let userIndicatorController: UserIndicatorControllerProtocol
+    
+    @CancellableTask private var communitiesTask: Task<Void, Never>?
     
     private let actionsSubject: PassthroughSubject<SpacesScreenViewModelAction, Never> = .init()
     var actionsPublisher: AnyPublisher<SpacesScreenViewModelAction, Never> {
@@ -24,6 +27,7 @@ class SpacesScreenViewModel: SpacesScreenViewModelType, SpacesScreenViewModelPro
          selectedSpacePublisher: CurrentValuePublisher<String?, Never>,
          userIndicatorController: UserIndicatorControllerProtocol) {
         spaceServiceProxy = userSession.clientProxy.spaceService
+        clientProxy = userSession.clientProxy
         self.userIndicatorController = userIndicatorController
         
         super.init(initialViewState: SpacesScreenViewState(userProfile: userSession.clientProxy.userProfilePublisher.value,
@@ -43,6 +47,8 @@ class SpacesScreenViewModel: SpacesScreenViewModelType, SpacesScreenViewModelPro
             .receive(on: DispatchQueue.main)
             .weakAssign(to: \.state.userProfile, on: self)
             .store(in: &cancellables)
+        
+        loadCommunities(debounce: false)
     }
     
     // MARK: - Public
@@ -59,6 +65,39 @@ class SpacesScreenViewModel: SpacesScreenViewModelType, SpacesScreenViewModelPro
             actionsSubject.send(.showSettings)
         case .createSpace:
             actionsSubject.send(.showCreateSpace)
+        case .openCommunity(let community):
+            if let joinedSpace = state.topLevelSpaces.first(where: { $0.id == community.id }) {
+                Task { await selectSpace(joinedSpace) }
+            } else {
+                actionsSubject.send(.joinCommunity(roomID: community.id))
+            }
+        case .searchQueryChanged:
+            loadCommunities(debounce: true)
+        case .refreshCommunities:
+            loadCommunities(debounce: false)
+        }
+    }
+    
+    // MARK: - Нютаг: каталог сообществ
+    
+    private func loadCommunities(debounce: Bool) {
+        let query = state.bindings.searchQuery
+        communitiesTask = Task { [weak self] in
+            if debounce {
+                try? await Task.sleep(for: .milliseconds(350))
+            }
+            guard let self, !Task.isCancelled else { return }
+            guard let accessToken = (clientProxy as? ClientProxy)?.nyutagAccessToken else { return }
+            state.isLoadingCommunities = true
+            defer { state.isLoadingCommunities = false }
+            do throws(NyutagInviteError) {
+                let page = try await NyutagInvitesService.shared.communities(searchTerm: query, since: nil, accessToken: accessToken)
+                guard !Task.isCancelled else { return }
+                state.communities = page.communities
+                state.hasLoadedCommunities = true
+            } catch {
+                MXLog.warning("Nyutag: communities catalog failed: \(error.errcode)")
+            }
         }
     }
     

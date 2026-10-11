@@ -213,7 +213,17 @@ class JoinRoomScreenViewModel: JoinRoomScreenViewModelType, JoinRoomScreenViewMo
                                                       isDirect: info?.isDirect,
                                                       isSpace: info?.isSpace,
                                                       childrenCount: nil,
-                                                      spaceVisibility: nil)
+                                                      spaceVisibility: nyutagSpaceVisibility)
+    }
+    
+    /// Нютаг: у сообщества из каталога (открытого по ID) видимость берётся из предпросмотра, иначе оно всегда «частное».
+    private var nyutagSpaceVisibility: SpaceServiceRoomVisibility? {
+        switch roomPreview?.info.joinRule {
+        case .public: .public
+        case .restricted, .knockRestricted: .restricted
+        case .none: nil
+        default: .private
+        }
     }
     
     private func updateSpaceRoomDetails(spaceServiceRoom: SpaceServiceRoom, inviter: RoomInviterDetails?) async {
@@ -379,6 +389,7 @@ class JoinRoomScreenViewModel: JoinRoomScreenViewModelType, JoinRoomScreenViewMo
             switch await clientProxy.knockRoomAlias(alias,
                                                     message: state.bindings.knockMessage.isBlank ? nil : state.bindings.knockMessage) {
             case .success:
+                NyutagKnockedRooms.insert(state.roomID)
                 // The room should become knocked through the sync
                 await loadRoomDetails()
             case .failure(let error):
@@ -391,6 +402,7 @@ class JoinRoomScreenViewModel: JoinRoomScreenViewModelType, JoinRoomScreenViewMo
                                                via: via,
                                                message: state.bindings.knockMessage.isBlank ? nil : state.bindings.knockMessage) {
             case .success:
+                NyutagKnockedRooms.insert(state.roomID)
                 // The room should become knocked through the sync
                 await loadRoomDetails()
             case .failure(let error):
@@ -486,6 +498,7 @@ class JoinRoomScreenViewModel: JoinRoomScreenViewModelType, JoinRoomScreenViewMo
         if case .failure = result {
             userIndicatorController.submitIndicator(.init(title: L10n.errorUnknown))
         } else {
+            NyutagKnockedRooms.remove(roomID)
             actionsSubject.send(.dismiss)
         }
     }

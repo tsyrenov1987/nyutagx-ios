@@ -12,6 +12,8 @@ import SwiftUI
 
 struct SettingsScreen: View {
     @Bindable var context: SettingsScreenViewModel.Context
+    @State private var language = NyutagLanguage.current
+    @State private var isLanguageChanged = false
     
     private var shouldHideManageAccountSection: Bool {
         context.viewState.accountProfileURL == nil &&
@@ -23,6 +25,8 @@ struct SettingsScreen: View {
         Form {
             userSection
             
+            nyutagInviteSection
+            
             if context.viewState.showUserStatusInput {
                 userStatusSection
             }
@@ -32,6 +36,8 @@ struct SettingsScreen: View {
             }
             
             manageMyAppSection
+            
+            nyutagLanguageSection
             
             generalSection
             
@@ -93,6 +99,34 @@ struct SettingsScreen: View {
                     .padding(.vertical, 8)
                 }
             })
+        }
+    }
+    
+    private var nyutagInviteSection: some View {
+        Section {
+            ListRow(label: .default(title: NyutagL10n.inviteFriend,
+                                    icon: \.userAdd),
+                    kind: .button {
+                        context.send(viewAction: .nyutagInviteFriend)
+                    })
+        }
+    }
+    
+    private var nyutagLanguageSection: some View {
+        Section {
+            ListRow(label: .default(title: NyutagL10n.languageTitle,
+                                    icon: \.translate),
+                    kind: .picker(selection: $language,
+                                  items: NyutagLanguage.allCases.map { (title: $0.nativeName, tag: $0) }))
+                .onChange(of: language) { _, newValue in
+                    NyutagLanguage.select(newValue)
+                    isLanguageChanged = true
+                }
+        } footer: {
+            if isLanguageChanged {
+                Text(NyutagL10n.languageRestart)
+                    .compoundListSectionFooter()
+            }
         }
     }
     
@@ -172,18 +206,7 @@ struct SettingsScreen: View {
                     })
                     .accessibilityIdentifier(A11yIdentifiers.settingsScreen.advancedSettings)
             
-            ListRow(label: .default(title: L10n.screenAdvancedSettingsLabs,
-                                    icon: \.labs),
-                    kind: .navigationLink {
-                        context.send(viewAction: .labs)
-                    })
-            
-            ListRow(label: .default(title: L10n.commonAbout,
-                                    icon: \.info),
-                    kind: .navigationLink {
-                        context.send(viewAction: .about)
-                    })
-                    .accessibilityIdentifier(A11yIdentifiers.settingsScreen.about)
+            // Нютаг: «Лаборатории» и «О приложении» (ссылки на правила element.io) скрыты — свои правила появятся перед публикацией.
             
             if context.viewState.isBugReportServiceEnabled {
                 ListRow(label: .default(title: L10n.commonReportAProblem,

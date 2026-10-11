@@ -82,6 +82,12 @@ targets:
         productionAppName: $(PRODUCTION_APP_NAME)
         isNightlyBuild: $(IS_NIGHTLY_BUILD)
         ITSAppUsesNonExemptEncryption: false
+        # Нютаг: ядро на частном CA. Без исключения ATS система отклоняет сертификат раньше делегата URLSession
+        # (лог «ATS failed system trust»); сам делегат (NyutagTrust) доверяет только CA Нютага и только для этого хоста.
+        NSAppTransportSecurity:
+          NSExceptionDomains:
+            core.nyutag.chat:
+              NSExceptionAllowsInsecureHTTPLoads: true
         NSUserActivityTypes: [
           INSendMessageIntent,
           INStartCallIntent,
@@ -117,24 +123,13 @@ targets:
       path: ElementX.entitlements
       properties:
         aps-environment: development
-        com.apple.developer.associated-domains:
-        - applinks:element.io
-        - applinks:app.element.io
-        - applinks:staging.element.io
-        - applinks:develop.element.io
-        - applinks:mobile.element.io
-        - applinks:matrix.to
-        # - applinks:localhost?mode=developer # developer mode only works with https (but self-signed is fine).
-        - webcredentials:*.element.io
         com.apple.developer.usernotifications.communication: true
         com.apple.security.app-sandbox: true
         com.apple.security.application-groups:
         - $(APP_GROUP_IDENTIFIER)
-        - $(CLASSIC_APP_GROUP_IDENTIFIER)
         com.apple.security.network.client: true
         keychain-access-groups:
         - $(KEYCHAIN_ACCESS_GROUP_IDENTIFIER)
-        - $(CLASSIC_APP_KEYCHAIN_ACCESS_GROUP_IDENTIFIER)
 
     settings:
       base:
@@ -153,6 +148,9 @@ targets:
         SWIFT_DEFAULT_ACTOR_ISOLATION: MainActor
         OTHER_SWIFT_FLAGS:
         - "-DIS_MAIN_APP"
+        OTHER_LDFLAGS:
+        - "$(inherited)"
+        - "-lresolv"
 
     preBuildScripts:
     - name: 🛠 SwiftGen
@@ -233,6 +231,8 @@ targets:
     - target: MatrixRustSDKMocks
     - package: MatrixRustSDK
       embed: true
+    - framework: ../../Frameworks/FarvaterCore.xcframework
+      embed: false
     - package: Compound
     - package: BuildExtensions
       product: Macros

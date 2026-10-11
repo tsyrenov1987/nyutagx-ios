@@ -25,6 +25,9 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
     private let roomSummaryProvider: RoomSummaryProviderProtocol?
     
     private var actionsSubject: PassthroughSubject<HomeScreenViewModelAction, Never> = .init()
+    @CancellableTask private var emptyStateFallbackTask: Task<Void, Never>?
+    /// Нютаг: одобренные заявки, по которым уже пробовали вступить (до следующего статуса «заявка подана»).
+    private var approvedKnockAttempts = Set<String>()
     var actions: AnyPublisher<HomeScreenViewModelAction, Never> {
         actionsSubject.eraseToAnyPublisher()
     }
@@ -137,6 +140,13 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             }
             .store(in: &cancellables)
         
+        userSession.clientProxy.staticRoomSummaryProvider.roomListPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] summaries in
+                self?.joinApprovedKnocks(summaries)
+            }
+            .store(in: &cancellables)
+        
         userSession.clientProxy.hideInviteAvatarsPublisher
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
@@ -219,6 +229,8 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             roomSummaryProvider?.updateVisibleRange(range)
         case .startChat:
             actionsSubject.send(.presentStartChatScreen)
+        case .nyutagInviteFriend:
+            Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
         case .spaceFilters:
             if spaceFilterSubject.value != nil {
                 spaceFilterSubject.send(nil)
@@ -344,10 +356,16 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             .empty // Loaded, there are no rooms at all.
         } else if hasRooms {
             .rooms // Loaded and the summaries have published.
-        } else if state.roomListMode == .skeletons {
-            .skeletons // Loaded but nothing published yet, flipping to .rooms would flash an empty list.
+        } else if state.roomListMode == .skeletons || state.roomListMode == .empty {
+            state.roomListMode // Loaded but nothing published yet, flipping to .rooms would flash an empty list.
         } else {
             .rooms
+        }
+        
+        // Нютаг: если чатов так и нет (например, у пользователя пока только сообщества — они на своей вкладке),
+        // через паузу показываем пустое состояние с приглашением, а не вечный скелетон.
+        if roomListMode == .skeletons, roomSummaryProviderState.isLoaded, !hasRooms {
+            scheduleEmptyStateFallback()
         }
         
         guard roomListMode != state.roomListMode else {
@@ -369,6 +387,16 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
         }
     }
     
+    private func scheduleEmptyStateFallback() {
+        guard state.roomListMode == .skeletons, emptyStateFallbackTask == nil else { return }
+        emptyStateFallbackTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard let self, !Task.isCancelled, state.roomListMode == .skeletons, state.rooms.isEmpty else { return }
+            state.roomListMode = .empty
+            MXLog.info("No chats published after loading, setting view room list mode to \"\(state.roomListMode)\"")
+        }
+    }
+    
     private func updateRooms() {
         guard let roomSummaryProvider else {
             MXLog.error("Room summary provider unavailable")
@@ -386,6 +414,35 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
         }
         
         state.rooms = rooms
+    }
+    
+    /// Нютаг: заявку одобрили (пришло приглашение) — вступаем сами, без второго подтверждения, как во ВКонтакте.
+    private func joinApprovedKnocks(_ summaries: [RoomSummary]) {
+        let knocked = NyutagKnockedRooms.all
+        guard !knocked.isEmpty else { return }
+        
+        for summary in summaries where knocked.contains(summary.id) {
+            switch summary.joinRequestType {
+            case .knock:
+                approvedKnockAttempts.remove(summary.id)
+            case .invite:
+                // Кэш может ещё держать старое приглашение: одна попытка на каждое приглашение, отказ заявку не стирает.
+                guard approvedKnockAttempts.insert(summary.id).inserted else { continue }
+                Task {
+                    switch await userSession.clientProxy.joinRoom(summary.id, via: []) {
+                    case .success:
+                        NyutagKnockedRooms.remove(summary.id)
+                    case .failure(let error):
+                        MXLog.error("Failed joining approved knock \(summary.id): \(error)")
+                    }
+                }
+            case .none:
+                // Покинутая комната остаётся в списке и до заявки — забываем только после вступления или бана.
+                if [.joined, .banned].contains(summary.room.membership()) {
+                    NyutagKnockedRooms.remove(summary.id)
+                }
+            }
+        }
     }
     
     private func markRoomAsFavourite(_ roomID: String, isFavourite: Bool) async {

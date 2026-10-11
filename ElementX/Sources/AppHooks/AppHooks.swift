@@ -16,10 +16,10 @@ final nonisolated class AppHooks: AppHooksProtocol {
         await userSessionHook.configure(with: userSession)
     }
     
-    @AppHook(default: DefaultAppSettingsHook())
+    @AppHook(default: NyutagAppSettingsHook())
     var appSettingsHook: AppSettingsHookProtocol
     
-    @AppHook(default: DefaultCompoundHook())
+    @AppHook(default: NyutagCompoundHook())
     var compoundHook: CompoundHookProtocol
     
     @AppHook(default: DefaultBugReportHook())
@@ -53,8 +53,14 @@ final nonisolated class AppHooks: AppHooksProtocol {
     @AppHook(default: DefaultTracingHook())
     var tracingHook: TracingHookProtocol
     
+    #if IS_MAIN_APP
+    // Нютаг: транспорт кильватера и свой CA (в расширениях Go-ядра нет).
+    @AppHook(default: NyutagClientFactoryHook())
+    var clientFactoryHook: ClientFactoryHookProtocol
+    #else
     @AppHook(default: DefaultClientFactoryHook())
     var clientFactoryHook: ClientFactoryHookProtocol
+    #endif
     
     @AppHook(default: DefaultRemoteSettingsHook())
     var remoteSettingsHook: RemoteSettingsHookProtocol

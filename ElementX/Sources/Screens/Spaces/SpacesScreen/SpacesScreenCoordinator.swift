@@ -19,6 +19,7 @@ enum SpacesScreenCoordinatorAction {
     case selectSpace(SpaceRoomListProxyProtocol)
     case showSettings
     case showCreateSpace
+    case joinCommunity(roomID: String)
 }
 
 final class SpacesScreenCoordinator: CoordinatorProtocol {
@@ -49,6 +50,8 @@ final class SpacesScreenCoordinator: CoordinatorProtocol {
                 actionsSubject.send(.showSettings)
             case .showCreateSpace:
                 actionsSubject.send(.showCreateSpace)
+            case .joinCommunity(let roomID):
+                actionsSubject.send(.joinCommunity(roomID: roomID))
             }
         }
         .store(in: &cancellables)

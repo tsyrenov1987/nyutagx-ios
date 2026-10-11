@@ -1,0 +1,71 @@
+key	en	ru	bxr
+screen_onboarding_welcome_title	Nyutag	Нютаг	Нютаг
+screen_onboarding_welcome_message	Chats and calls for your people. Everything is encrypted on your devices.	Переписка и звонки для своих. Всё шифруется на ваших устройствах.	Өөрынхидтэеэ бэшэлгэ, дуудалга. Бүхы юумэн таны утаһан дээрэ шифрлэгдэнэ.
+nyutag_start_sign_in	Sign in	Войти	Орохо
+nyutag_start_have_invite	I have an invitation	У меня есть приглашение	Намда урилга бии
+nyutag_language_title	Language	Язык	Хэлэн
+nyutag_language_system	As on the phone	Как в телефоне	Утаһандал адли
+nyutag_language_restart	The language will change fully after the app restarts.	Язык полностью сменится после перезапуска приложения.	Хэлэн программа дахин эхилхэдэ бүрин һэлгэгдэнэ.
+screen_login_title_with_homeserver	Sign in to Nyutag	Вход в Нютаг	Нютаг руу орохо
+screen_login_subtitle	Use your username, phone or email.	Войдите по имени пользователя, телефону или e-mail.	Нэрээрээ, утаһаараа али e-mail хаягаараа орогты.
+screen_login_form_header	Your details	Ваши данные	Таны мэдээн
+nyutag_login_no_account	No account yet? You need an invitation code.	Нет аккаунта? Нужен код приглашения.	Аккаунт үгы гү? Урилгын код хэрэгтэй.
+nyutag_signup_step	Step %1$d of %2$d	Шаг %1$d из %2$d	%2$d алхамһаа %1$d-дэхи
+nyutag_signup_code_title	Enter the invitation code	Введите код приглашения	Урилгын кодоо оруулагты
+nyutag_signup_paste	Paste	Вставить	Оруулха
+nyutag_signup_name_title	What is your name?	Как вас зовут?	Таныень нэрэ хэн бэ?
+nyutag_signup_name_subtitle	Friends will see this name in chats.	Это имя друзья увидят в чатах.	Энэ нэрые нүхэд чатнуудта харана.
+nyutag_signup_name_label	Name	Имя	Нэрэ
+nyutag_signup_username_footer	Username for signing in: %1$@	Ник для входа: %1$@	Орохо нэрэ: %1$@
+nyutag_signup_username_edit	Change username	Изменить ник	Нэрээ һэлгэхэ
+nyutag_signup_password_title	Create a password	Придумайте пароль	Нюуса үгэ зохёогты
+nyutag_signup_password_subtitle	At least 8 characters. You will use it to sign in on other devices.	Не короче 8 символов. С ним вы войдёте на других устройствах.	8 тэмдэгһээ доошо бэшэ. Ондоо түхеэрэлгэ дээрэ энээгээр ороходоо хэрэглэхэт.
+nyutag_signup_password_repeat	Repeat the password	Повторите пароль	Нюуса үгөө дахин оруулагты
+nyutag_signup_password_mismatch	The passwords do not match.	Пароли не совпадают.	Нюуса үгэнүүд таарахагүй.
+nyutag_signup_creating	Creating the account…	Создаём аккаунт…	Аккаунт бүтээжэ байна…
+nyutag_signup_contact_subtitle	We will send a code to confirm it. Nobody else will see it.	Пришлём код для подтверждения. Его никто не увидит.	Баталха код эльгээхэбди. Үөр хүн харахагүй.
+screen_roomlist_filter_people	Personal	Личные	Хубиин
+screen_roomlist_empty_title	Your chats will appear here	Здесь появятся ваши чаты	Эндэ таны чатнууд гараха
+screen_roomlist_empty_message	Nyutag is invite-only. Invite your friends and family.	В Нютаг попадают по приглашению. Позовите друзей и родных.	Нютаг руу урилгаар ороно. Нүхэдөө, түрэлөө уригты.
+nyutag_invite_friend	Invite a friend	Пригласить друга	Нүхэрөө уриха
+nyutag_new_chat	New chat	Новый чат	Шэнэ чат
+nyutag_new_group	New group	Новая группа	Шэнэ бүлэг
+screen_room_timeline_legacy_call	Unsupported call. The other person should update Nyutag.	Звонок не поддерживается. Собеседнику нужно обновить Нютаг.	Дуудалга дэмжэгдэхэгүй. Хүндэ Нютагаа шэнэлхэ хэрэгтэй.
+screen_notification_settings_sound_element_default	Nyutag (default)	Нютаг (по умолчанию)	Нютаг (үндэһэн)
+common_invite_unknown_profile	This user was not found, the invitation may not arrive.	Такой пользователь не найден, приглашение может не дойти.	Иимэ хэрэглэгшэ олдобогүй, урилга хүрэхэгүй байжа магад.
+nyutag_signup_invited_by	Invitation from %1$@	Приглашение от %1$@	Урилга: %1$@
+banner_set_up_recovery_title	Save your recovery key	Сохраните ключ восстановления	Сэргээхэ түлхюурээ хадагалагты
+banner_set_up_recovery_content	Without it, you can't restore your chats if you lose all your devices.	Без него переписку не вернуть, если потеряете все устройства.	Бүхы утаһаа гээбэл, түүнгүйгөөр бэшэлгээ бусаажа шадахагүйт.
+nyutag_community_open	Open	Открытое	Нээлттэй
+nyutag_community_open_description	Anyone can find it in search and join.	Любой найдёт его в поиске и сможет вступить.	Хэн бүхэн бэдэржэ олоод, ороод болохо.
+nyutag_community_closed	Closed	Закрытое	Хаалттай
+nyutag_community_closed_description	Anyone can find it in search and send a request. An admin approves new members.	Любой найдёт его в поиске и подаст заявку. Новых участников одобряет админ.	Хэн бүхэн бэдэржэ олоод, гуйлта эльгээхэ. Шэнэ гэшүүдые админ зүбшөөрнэ.
+nyutag_community_closed_badge	Closed · by request	Закрытое · по заявке	Хаалттай · гуйлтаар
+nyutag_communities_search	Search communities	Поиск сообществ	Оршон бэдэрхэ
+nyutag_communities_mine	My communities	Мои сообщества	Минии оршонууд
+nyutag_communities_all	All communities	Все сообщества	Бүхы оршонууд
+nyutag_communities_empty	No communities yet. Create the first one!	Сообществ пока нет. Создайте первое!	Оршон одоохондоо үгы. Түрүүшынхиеэ байгуулагты!
+common_public_space	Open community	Открытое сообщество	Нээлттэй оршон
+common_private_space	Closed community	Закрытое сообщество	Хаалттай оршон
+action_signout	Sign out	Выйти	Гараха
+screen_signout_preference_item	Sign out	Выйти	Гараха
+screen_signout_confirmation_dialog_title	Sign out?	Выйти из аккаунта?	Аккаунтһаа гараха гүт?
+screen_signout_confirmation_dialog_submit	Sign out	Выйти	Гараха
+action_signout_anyway	Sign out anyway	Всё равно выйти	Тиигэбэшье гараха
+screen_signout_confirmation_dialog_content	Are you sure you want to sign out?	Вы уверены, что хотите выйти из аккаунта на этом устройстве?	Энэ түхеэрэлгэ дээрэ аккаунтһаа гарахадаа итгэлтэй гүт?
+screen_room_details_requests_to_join_title	Requests to join	Заявки на вступление	Орохо гуйлтанууд
+nyutag_community_requests	Requests to join	Заявки на вступление	Орохо гуйлтанууд
+action_invite_friends	Invite friends	Пригласить друзей	Нүхэдөө уриха
+action_accept	Accept	Принять	Зүбшөөхэ
+screen_join_room_knock_action	Request to join	Подать заявку	Гуйлта эльгээхэ
+screen_join_room_knock_sent_title	Request sent	Заявка отправлена	Гуйлта эльгээгдэбэ
+screen_join_room_knock_sent_description	You'll join automatically once an admin approves your request.	Вы вступите автоматически, как только админ одобрит заявку.	Админ гуйлтыетнай зүбшөөнгүүт, та өөрөө автоматаар оронот.
+screen_roomlist_knock_event_sent_description	Request sent	Заявка отправлена	Гуйлта эльгээгдэбэ
+screen_join_room_cancel_knock_action	Cancel request	Отменить заявку	Гуйлтаа болюулха
+screen_join_room_cancel_knock_alert_title	Cancel request?	Отменить заявку?	Гуйлтаа болюулха гү?
+screen_create_room_room_address_section_footer	A short link for the directory and invitations.	Короткая ссылка для каталога и приглашений.	Каталог болон урилгада богони холбоос.
+screen_edit_room_address_room_address_section_footer	A short link for the directory and invitations.	Короткая ссылка для каталога и приглашений.	Каталог болон урилгада богони холбоос.
+screen_security_and_privacy_room_address_section_footer	A short link for the directory and invitations.	Короткая ссылка для каталога и приглашений.	Каталог болон урилгада богони холбоос.
+screen_create_room_add_people_title	Invite people	Пригласить участников	Хүнүүдые уриха
+screen_room_details_invite_people_title	Invite people	Пригласить участников	Хүнүүдые уриха
+common_people	Members	Участники	Гэшүүд

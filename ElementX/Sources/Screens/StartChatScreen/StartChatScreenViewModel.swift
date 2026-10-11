@@ -55,6 +55,8 @@ class StartChatScreenViewModel: StartChatScreenViewModelType, StartChatScreenVie
             actionsSubject.send(.close)
         case .createRoom:
             actionsSubject.send(.createRoom)
+        case .nyutagInviteFriend:
+            Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
         case .selectUser(let user):
             showLoadingIndicator(delay: .milliseconds(200))
             

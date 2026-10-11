@@ -56,7 +56,8 @@ struct CreateRoomScreenViewState: BindableState {
     var availableAccessTypes: [CreateRoomScreenAccessType] {
         var availableAccessTypes: [CreateRoomScreenAccessType] = []
         if isSpace {
-            availableAccessTypes = [.public]
+            // Нютаг: как во «ВКонтакте» — сообщество видят все, а админ решает: открытое или закрытое (по заявке).
+            return [.public, .askToJoin]
         } else if let selectedSpace = bindings.selectedSpace, selectedSpace.joinRule != .public {
             availableAccessTypes = [.spaceMembers]
             if isKnockingFeatureEnabled {

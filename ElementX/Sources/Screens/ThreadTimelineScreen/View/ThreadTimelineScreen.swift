@@ -24,7 +24,7 @@ struct ThreadTimelineScreen: View {
     
     var body: some View {
         TimelineView(timelineContext: timelineContext)
-            .background(.compound.bgCanvasDefault)
+            .background(NyutagChatWallpaper().ignoresSafeArea()) // Нютаг: фон-орнамент
             .toolbarRole(RoomHeaderView.toolbarRole)
             .navigationTitle(L10n.commonThread)
             .navigationBarTitleDisplayMode(.inline)

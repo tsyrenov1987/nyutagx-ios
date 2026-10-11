@@ -19,7 +19,10 @@ struct SecurityAndPrivacyScreen: View {
             }
             
             if context.desiredSettings.accessType.isAddressRequired, context.viewState.canEditAddress {
-                visibilitySection
+                // Нютаг: сообщество всегда в каталоге — пояснение про видимость и переключатель не нужны.
+                if !context.viewState.isSpace {
+                    visibilitySection
+                }
                 if let canonicalAlias = context.viewState.canonicalAlias {
                     addressSection(canonicalAlias: canonicalAlias)
                 } else {
@@ -46,36 +49,48 @@ struct SecurityAndPrivacyScreen: View {
     
     private var roomAccessSection: some View {
         Section {
-            ListRow(label: .default(title: L10n.screenSecurityAndPrivacyRoomAccessAnyoneOptionTitle,
-                                    description: L10n.screenSecurityAndPrivacyRoomAccessAnyoneOptionDescription,
-                                    icon: \.public),
-                    kind: .selection(isSelected: context.desiredSettings.accessType == .anyone) { context.desiredSettings.accessType = .anyone })
+            if context.viewState.isSpace {
+                // Нютаг: сообщество всегда видно в каталоге — админ выбирает только, открытое оно или по заявке.
+                ListRow(label: .default(title: NyutagL10n.communityOpen,
+                                        description: NyutagL10n.communityOpenDescription,
+                                        icon: \.public),
+                        kind: .selection(isSelected: context.desiredSettings.accessType == .anyone) { context.desiredSettings.accessType = .anyone })
+                ListRow(label: .default(title: NyutagL10n.communityClosed,
+                                        description: NyutagL10n.communityClosedDescription,
+                                        icon: \.userAdd),
+                        kind: .selection(isSelected: context.desiredSettings.accessType == .askToJoin) { context.desiredSettings.accessType = .askToJoin })
+            } else {
+                ListRow(label: .default(title: L10n.screenSecurityAndPrivacyRoomAccessAnyoneOptionTitle,
+                                        description: L10n.screenSecurityAndPrivacyRoomAccessAnyoneOptionDescription,
+                                        icon: \.public),
+                        kind: .selection(isSelected: context.desiredSettings.accessType == .anyone) { context.desiredSettings.accessType = .anyone })
             
-            if context.viewState.isSpaceMembersOptionAvailable {
-                ListRow(label: .default(title: L10n.screenSecurityAndPrivacyRoomAccessSpaceMembersOptionTitle,
-                                        description: context.viewState.spaceMembersDescription,
-                                        icon: \.space),
-                        kind: .selection(isSelected: context.desiredSettings.accessType.isSpaceMembers) {
-                            context.send(viewAction: .selectedSpaceMembersAccess)
-                        })
-                        .disabled(!context.viewState.isSpaceMembersOptionSelectable)
+                if context.viewState.isSpaceMembersOptionAvailable {
+                    ListRow(label: .default(title: L10n.screenSecurityAndPrivacyRoomAccessSpaceMembersOptionTitle,
+                                            description: context.viewState.spaceMembersDescription,
+                                            icon: \.space),
+                            kind: .selection(isSelected: context.desiredSettings.accessType.isSpaceMembers) {
+                                context.send(viewAction: .selectedSpaceMembersAccess)
+                            })
+                            .disabled(!context.viewState.isSpaceMembersOptionSelectable)
+                }
+            
+                if context.viewState.currentSettings.accessType == .askToJoin {
+                    askToJoinOption
+                }
+            
+                // Ask to join and askToJoin with space members can coexist if the initial setting is ask to join but the space members option is available otherwise it's either one or the other.
+                if context.viewState.isAskToJoinWithSpaceMembersOptionAvailable {
+                    askToJoinWithSpaceMembersOption
+                } else if context.viewState.isKnockingEnabled, context.viewState.currentSettings.accessType != .askToJoin {
+                    askToJoinOption
+                }
+            
+                ListRow(label: .default(title: L10n.screenSecurityAndPrivacyRoomAccessInviteOnlyOptionTitle,
+                                        description: L10n.screenSecurityAndPrivacyRoomAccessInviteOnlyOptionDescription,
+                                        icon: \.lock),
+                        kind: .selection(isSelected: context.desiredSettings.accessType == .inviteOnly) { context.desiredSettings.accessType = .inviteOnly })
             }
-            
-            if context.viewState.currentSettings.accessType == .askToJoin {
-                askToJoinOption
-            }
-            
-            // Ask to join and askToJoin with space members can coexist if the initial setting is ask to join but the space members option is available otherwise it's either one or the other.
-            if context.viewState.isAskToJoinWithSpaceMembersOptionAvailable {
-                askToJoinWithSpaceMembersOption
-            } else if context.viewState.isKnockingEnabled, context.viewState.currentSettings.accessType != .askToJoin {
-                askToJoinOption
-            }
-            
-            ListRow(label: .default(title: L10n.screenSecurityAndPrivacyRoomAccessInviteOnlyOptionTitle,
-                                    description: L10n.screenSecurityAndPrivacyRoomAccessInviteOnlyOptionDescription,
-                                    icon: \.lock),
-                    kind: .selection(isSelected: context.desiredSettings.accessType == .inviteOnly) { context.desiredSettings.accessType = .inviteOnly })
         } header: {
             Text(L10n.screenSecurityAndPrivacyRoomAccessSectionHeader)
                 .compoundListSectionHeader()
@@ -169,7 +184,9 @@ struct SecurityAndPrivacyScreen: View {
         Section {
             ListRow(label: .plain(title: canonicalAlias),
                     kind: .navigationLink { context.send(viewAction: .editAddress) })
-            roomDirectoryVisibilityRow
+            if !context.viewState.isSpace {
+                roomDirectoryVisibilityRow
+            }
         } header: {
             Text(L10n.screenSecurityAndPrivacyRoomAddressSectionHeader)
                 .compoundListSectionHeader()

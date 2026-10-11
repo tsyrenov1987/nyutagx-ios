@@ -51,6 +51,8 @@ class SpacesTabFlowCoordinator: FlowCoordinatorProtocol {
         case startCreateSpaceFlow
         /// Create space has finished
         case dismissedCreateSpaceFlow
+        /// Нютаг: открыть сообщество из каталога (ID в `userInfo`).
+        case joinCommunity
     }
     
     private let stateMachine: StateMachine<State, Event>
@@ -98,6 +100,7 @@ class SpacesTabFlowCoordinator: FlowCoordinatorProtocol {
     
     // MARK: - Private
     
+    // swiftlint:disable:next cyclomatic_complexity
     private func configureStateMachine() {
         stateMachine.addRoutes(event: .start, transitions: [.initial => .spacesScreen(selectedSpaceID: nil)]) { [weak self] _ in
             self?.presentSpacesScreen()
@@ -110,6 +113,14 @@ class SpacesTabFlowCoordinator: FlowCoordinatorProtocol {
         } handler: { [weak self] context in
             guard let self, let spaceRoomListProxy = context.userInfo as? SpaceRoomListProxyProtocol else { return }
             startSpaceFlow(spaceRoomListProxy: spaceRoomListProxy)
+        }
+        
+        stateMachine.addRouteMapping { event, fromState, userInfo in
+            guard event == .joinCommunity, case .spacesScreen = fromState, let roomID = userInfo as? String else { return nil }
+            return .spacesScreen(selectedSpaceID: roomID)
+        } handler: { [weak self] context in
+            guard let self, let roomID = context.userInfo as? String else { return }
+            startSpaceFlow(entryPoint: .joinSpaceByID(roomID: roomID, via: [userSession.clientProxy.userIDServerName ?? NyutagTunnel.serverName]))
         }
         
         stateMachine.addRouteMapping { event, fromState, _ in
@@ -160,6 +171,8 @@ class SpacesTabFlowCoordinator: FlowCoordinatorProtocol {
                     actionsSubject.send(.showSettings)
                 case .showCreateSpace:
                     stateMachine.tryEvent(.startCreateSpaceFlow)
+                case .joinCommunity(let roomID):
+                    stateMachine.tryEvent(.joinCommunity, userInfo: roomID)
                 }
             }
             .store(in: &cancellables)
@@ -168,7 +181,11 @@ class SpacesTabFlowCoordinator: FlowCoordinatorProtocol {
     }
     
     private func startSpaceFlow(spaceRoomListProxy: SpaceRoomListProxyProtocol) {
-        let coordinator = SpaceFlowCoordinator(entryPoint: .space(spaceRoomListProxy),
+        startSpaceFlow(entryPoint: .space(spaceRoomListProxy))
+    }
+    
+    private func startSpaceFlow(entryPoint: SpaceFlowCoordinatorEntryPoint) {
+        let coordinator = SpaceFlowCoordinator(entryPoint: entryPoint,
                                                spaceServiceProxy: userSession.clientProxy.spaceService,
                                                isChildFlow: false,
                                                navigationStackCoordinator: detailNavigationStackCoordinator,
@@ -196,7 +213,7 @@ class SpacesTabFlowCoordinator: FlowCoordinatorProtocol {
         }
         
         coordinator.start()
-        selectedSpaceSubject.send(spaceRoomListProxy.id)
+        selectedSpaceSubject.send(entryPoint.spaceID)
     }
     
     private func startCreateSpaceFlow() {

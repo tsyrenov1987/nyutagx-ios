@@ -41,7 +41,8 @@ class CreateRoomScreenViewModel: CreateRoomScreenViewModelType, CreateRoomScreen
         
         var selectedSpace: SpaceServiceRoom?
         let canSelectSpace: Bool
-        var selectedAccessType = CreateRoomScreenAccessType.private
+        // Нютаг: сообщество всегда видно в каталоге — по умолчанию открытое; закрытое (по заявке) выбирает админ.
+        var selectedAccessType: CreateRoomScreenAccessType = isSpace ? .public : .private
         switch spaceSelectionMode {
         case .editableSpacesList(let preSelectedSpace):
             canSelectSpace = true
@@ -106,7 +107,7 @@ class CreateRoomScreenViewModel: CreateRoomScreenViewModelType, CreateRoomScreen
             }
             state.roomName = name
             if syncNameAndAlias {
-                state.aliasLocalPart = roomAliasNameFromRoomDisplayName(roomName: name)
+                state.aliasLocalPart = roomAliasNameFromRoomDisplayName(roomName: name.nyutagLatinized)
             }
         }
     }
@@ -149,7 +150,7 @@ class CreateRoomScreenViewModel: CreateRoomScreenViewModelType, CreateRoomScreen
             .sink { [weak self] _ in
                 guard let self else { return }
                 state.aliasErrors = []
-                state.aliasLocalPart = roomAliasNameFromRoomDisplayName(roomName: state.roomName)
+                state.aliasLocalPart = roomAliasNameFromRoomDisplayName(roomName: state.roomName.nyutagLatinized)
                 syncNameAndAlias = true
             }
             .store(in: &cancellables)

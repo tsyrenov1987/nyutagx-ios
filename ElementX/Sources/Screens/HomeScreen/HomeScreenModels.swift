@@ -37,6 +37,8 @@ enum HomeScreenViewAction {
     case reportRoom(roomIdentifier: String)
     case showSettings
     case startChat
+    /// Нютаг: выпустить код приглашения и поделиться им.
+    case nyutagInviteFriend
     case setupRecovery
     case confirmRecoveryKey
     case resetEncryption

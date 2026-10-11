@@ -50,31 +50,10 @@ struct StartChatScreen: View {
     /// The content shown in the form when the search query is empty.
     @ViewBuilder
     private var mainContent: some View {
-        createRoomSection
-        roomDirectorySearch
-        inviteFriendsSection
-        joinRoomByAddressSection
+        // Нютаг: как в Telegram — одним блоком «Новая группа», «Пригласить друга», «Каталог групп», ниже люди.
+        // Вход по адресу #группа:сервер убран как технический.
+        nyutagActionsSection
         usersSection
-    }
-    
-    private var joinRoomByAddressSection: some View {
-        Section {
-            ListRow(label: .default(title: L10n.screenStartChatJoinRoomByAddressAction,
-                                    icon: \.room),
-                    kind: .button {
-                        context.isJoinRoomByAddressSheetPresented = true
-                    })
-        }
-    }
-    
-    private var roomDirectorySearch: some View {
-        Section {
-            ListRow(label: .default(title: L10n.screenRoomDirectorySearchTitle,
-                                    icon: \.listBulleted),
-                    kind: .navigationLink {
-                        context.send(viewAction: .openRoomDirectorySearch)
-                    })
-        }
     }
     
     /// The content shown in the form when a search query has been entered.
@@ -87,24 +66,17 @@ struct StartChatScreen: View {
         }
     }
     
-    private var createRoomSection: some View {
+    private var nyutagActionsSection: some View {
         Section {
-            ListRow(label: .default(title: L10n.screenCreateRoomActionCreateRoom,
-                                    icon: \.plus),
+            ListRow(label: .default(title: NyutagL10n.newGroup, icon: \.plus),
                     kind: .navigationLink { context.send(viewAction: .createRoom) })
                 .accessibilityIdentifier(A11yIdentifiers.startChatScreen.createRoom)
-        }
-    }
-    
-    private var inviteFriendsSection: some View {
-        Section {
-            ListRow(kind: .custom {
-                MatrixUserShareLink(userID: context.viewState.userID) {
-                    ListRowLabel.default(title: L10n.actionInvitePeopleToApp(InfoPlistReader.main.bundleDisplayName),
-                                         icon: \.shareIos)
-                }
-            })
-            .accessibilityIdentifier(A11yIdentifiers.startChatScreen.inviteFriends)
+            // Нютаг: вместо ссылки matrix.to — одноразовый код приглашения.
+            ListRow(label: .default(title: NyutagL10n.inviteFriend, icon: \.userAdd),
+                    kind: .button { context.send(viewAction: .nyutagInviteFriend) })
+                .accessibilityIdentifier(A11yIdentifiers.startChatScreen.inviteFriends)
+            ListRow(label: .default(title: L10n.screenRoomDirectorySearchTitle, icon: \.listBulleted),
+                    kind: .navigationLink { context.send(viewAction: .openRoomDirectorySearch) })
         }
     }
     

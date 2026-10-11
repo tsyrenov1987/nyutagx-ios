@@ -178,6 +178,7 @@ struct CreateRoomScreen: View {
         Section {
             ForEach(context.viewState.availableAccessTypes, id: \.self) { accessType in
                 CreateRoomAccessRow(access: accessType,
+                                    isSpace: context.viewState.isSpace,
                                     spaceName: context.selectedSpace?.name ?? "",
                                     isSelected: context.selectedAccessType == accessType) {
                     context.selectedAccessType = accessType
@@ -262,12 +263,17 @@ struct CreateRoomScreen: View {
 
 private struct CreateRoomAccessRow: View {
     let access: CreateRoomScreenAccessType
+    let isSpace: Bool
     let spaceName: String
     let isSelected: Bool
     let onSelection: () -> Void
     
     var title: String {
         switch access {
+        case .public where isSpace:
+            NyutagL10n.communityOpen
+        case .askToJoin where isSpace:
+            NyutagL10n.communityClosed
         case .public:
             L10n.screenCreateRoomRoomAccessSectionPublicOptionTitle
         case .askToJoin:
@@ -283,6 +289,10 @@ private struct CreateRoomAccessRow: View {
     
     var description: String {
         switch access {
+        case .public where isSpace:
+            NyutagL10n.communityOpenDescription
+        case .askToJoin where isSpace:
+            NyutagL10n.communityClosedDescription
         case .public:
             L10n.screenCreateRoomRoomAccessSectionPublicOptionDescription
         case .askToJoin:

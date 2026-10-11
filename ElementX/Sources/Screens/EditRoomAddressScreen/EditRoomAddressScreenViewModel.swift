@@ -56,7 +56,7 @@ class EditRoomAddressScreenViewModel: EditRoomAddressScreenViewModelType, EditRo
             return nil
         }
         
-        return roomAliasNameFromRoomDisplayName(roomName: displayName)
+        return roomAliasNameFromRoomDisplayName(roomName: displayName.nyutagLatinized)
     }
     
     // MARK: - Public

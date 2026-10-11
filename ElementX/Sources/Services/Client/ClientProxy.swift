@@ -1574,12 +1574,14 @@ private struct ClientProxyServices {
         Task { [roomSummaryProvider, alternateRoomSummaryProvider, staticRoomSummaryProvider] in
             // Wait for actual content (or a loaded-but-empty account) as the loading state
             // doesn't take into account the app having build and published any summaries.
-            for await rooms in roomSummaryProvider.roomListPublisher.values {
+            // Нютаг: у пустого аккаунта Tuwunel даёт loaded(nil), а не loaded(0). Без этой проверки статический список
+            // не создаётся и `roomForIdentifier` ждёт вечно — предпросмотр сообщества из каталога висит на «Загрузка…».
+            for await (rooms, state) in roomSummaryProvider.roomListPublisher.combineLatest(roomSummaryProvider.statePublisher).values {
                 if !rooms.isEmpty {
                     break
                 }
                 
-                if case .loaded(0) = roomSummaryProvider.statePublisher.value {
+                if state.isLoaded {
                     break
                 }
             }
@@ -1691,5 +1693,14 @@ private extension CreateRoomAccessType {
         default:
             false
         }
+    }
+}
+
+// MARK: - Нютаг
+
+extension ClientProxy {
+    /// Токен сессии для сервиса приглашений ядра (`/_nyutag/v1/invites`); не логируется.
+    var nyutagAccessToken: String? {
+        try? client.session().accessToken
     }
 }

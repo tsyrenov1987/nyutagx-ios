@@ -98,6 +98,8 @@ enum SettingsScreenViewAction {
     case labs
     case logout
     case deactivateAccount
+    /// Нютаг: выпустить код приглашения и поделиться им.
+    case nyutagInviteFriend
     
     enum UserStatusAction {
         /// Show status picker sheet to select a preset status.

@@ -227,6 +227,11 @@ class SecurityAndPrivacyScreenViewModel: SecurityAndPrivacyScreenViewModelType, 
             }
         }
         
+        // Нютаг: сообщества видны всем в каталоге, и открытые, и закрытые (как во ВКонтакте).
+        if state.isSpace, state.bindings.desiredSettings.accessType.isAddressRequired {
+            state.bindings.desiredSettings.isVisibileInRoomDirectory = true
+        }
+        
         if state.currentSettings.isVisibileInRoomDirectory != state.bindings.desiredSettings.isVisibileInRoomDirectory {
             let visibility: RoomVisibility = state.bindings.desiredSettings.isVisibileInRoomDirectory == true ? .public : .private
             

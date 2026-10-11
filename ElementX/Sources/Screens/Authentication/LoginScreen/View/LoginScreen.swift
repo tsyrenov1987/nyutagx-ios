@@ -62,7 +62,7 @@ struct LoginScreen: View {
     var loginForm: some View {
         VStack(alignment: .leading, spacing: 0) {
             TextField(text: $context.username) {
-                Text(L10n.commonUsername).foregroundColor(.compound.textSecondary)
+                Text(NyutagL10n.loginIdentifierHint).foregroundColor(.compound.textSecondary) // Нютаг: имя, телефон или e-mail
             }
             .focused($isUsernameFocused)
             .textFieldStyle(.compound(labelText: L10n.screenLoginFormHeader, accessibilityIdentifier: A11yIdentifiers.loginScreen.emailUsername))

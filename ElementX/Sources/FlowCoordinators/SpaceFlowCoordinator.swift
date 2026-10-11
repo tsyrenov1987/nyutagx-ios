@@ -19,11 +19,14 @@ enum SpaceFlowCoordinatorAction {
 enum SpaceFlowCoordinatorEntryPoint {
     case space(SpaceRoomListProxyProtocol)
     case joinSpace(SpaceServiceRoom)
+    /// Нютаг: сообщество из каталога — известен только его ID.
+    case joinSpaceByID(roomID: String, via: [String])
     
     var spaceID: String {
         switch self {
         case .space(let spaceRoomListProxy): spaceRoomListProxy.id
         case .joinSpace(let spaceServiceRoom): spaceServiceRoom.id
+        case .joinSpaceByID(let roomID, _): roomID
         }
     }
 }
@@ -147,7 +150,7 @@ class SpaceFlowCoordinator: FlowCoordinatorProtocol {
         switch entryPoint {
         case .space:
             stateMachine.tryEvent(.start)
-        case .joinSpace:
+        case .joinSpace, .joinSpaceByID:
             stateMachine.tryEvent(.startUnjoined)
         }
     }
@@ -395,9 +398,13 @@ class SpaceFlowCoordinator: FlowCoordinatorProtocol {
     }
     
     private func presentJoinSpaceScreen() {
-        guard case let .joinSpace(spaceServiceRoom) = entryPoint else { fatalError("Attempting to join a space with the wrong entry point.") }
+        let source: JoinRoomScreenSource = switch entryPoint {
+        case .joinSpace(let spaceServiceRoom): .space(spaceServiceRoom)
+        case .joinSpaceByID(let roomID, let via): .generic(roomID: roomID, via: via)
+        case .space: fatalError("Attempting to join a space with the wrong entry point.")
+        }
         
-        let parameters = JoinRoomScreenCoordinatorParameters(source: .space(spaceServiceRoom),
+        let parameters = JoinRoomScreenCoordinatorParameters(source: source,
                                                              userSession: flowParameters.userSession,
                                                              userIndicatorController: flowParameters.userIndicatorController,
                                                              appSettings: flowParameters.appSettings)
@@ -435,10 +442,10 @@ class SpaceFlowCoordinator: FlowCoordinatorProtocol {
     }
     
     private func presentSpaceAfterJoining() {
+        // Нютаг: корневой поток (вступление из каталога) заменяет корень сразу, без nil — иначе на iPhone
+        // диффы компактного стека снимают деталь и остаётся пустой экран (см. dismissFlow в RoomFlowCoordinator).
         if isChildFlow {
             navigationStackCoordinator.pop()
-        } else {
-            navigationStackCoordinator.setRootCoordinator(nil)
         }
         
         presentSpace()

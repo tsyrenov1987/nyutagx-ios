@@ -434,7 +434,8 @@ final nonisolated class AppSettings: @unchecked Sendable {
     @UserPreference(defaultValue: false)
     var enableOnlySignedDeviceIsolationMode: Bool
     
-    @UserPreference(defaultValue: false)
+    /// Нютаг: включено — закрытые сообщества и группы работают по заявкам.
+    @UserPreference(defaultValue: true)
     var knockingEnabled: Bool
     
     @UserPreference(defaultValue: false)

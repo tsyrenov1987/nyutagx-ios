@@ -37,6 +37,8 @@ final class SpaceSettingsFlowCoordinator: FlowCoordinatorProtocol {
         case rolesAndPermissionsFlow
         /// The members flow screen
         case membersFlow
+        /// Нютаг: заявки на вступление в закрытое сообщество.
+        case knockRequestsList
     }
     
     enum Event: EventType {
@@ -63,6 +65,9 @@ final class SpaceSettingsFlowCoordinator: FlowCoordinatorProtocol {
         
         case startRolesAndPermissionsFlow
         case stopRolesAndPermissionsFlow
+        
+        case presentKnockRequestsList
+        case dismissedKnockRequestsList
     }
     
     private let roomProxy: JoinedRoomProxyProtocol
@@ -151,6 +156,11 @@ final class SpaceSettingsFlowCoordinator: FlowCoordinatorProtocol {
             case (.rolesAndPermissionsFlow, .stopRolesAndPermissionsFlow):
                 return .spaceSettings
                 
+            case (.spaceSettings, .presentKnockRequestsList):
+                return .knockRequestsList
+            case (.knockRequestsList, .dismissedKnockRequestsList):
+                return .spaceSettings
+                
             default:
                 return nil
             }
@@ -202,6 +212,11 @@ final class SpaceSettingsFlowCoordinator: FlowCoordinatorProtocol {
             case (.rolesAndPermissionsFlow, .stopRolesAndPermissionsFlow, .spaceSettings):
                 childFlowCoordinator = nil
                 
+            case (.spaceSettings, .presentKnockRequestsList, .knockRequestsList):
+                presentKnockRequestsListScreen()
+            case (.knockRequestsList, .dismissedKnockRequestsList, .spaceSettings):
+                break
+                
             default:
                 fatalError("Unhandled transition")
             }
@@ -234,9 +249,12 @@ final class SpaceSettingsFlowCoordinator: FlowCoordinatorProtocol {
                 navigationStackCoordinator.pop()
             case .transferOwnership:
                 stateMachine.tryEvent(.presentTransferOwnership)
+            case .presentKnockingRequestsListScreen:
+                // Нютаг: закрытое сообщество — админ одобряет заявки здесь (в Element этот путь вёл в fatalError).
+                stateMachine.tryEvent(.presentKnockRequestsList)
             case .presentRecipientDetails, .presentNotificationSettingsScreen, .presentReportRoomScreen,
                  .presentInviteUsersScreen, .presentInviteToNewRoom, .presentPollsHistory, .presentCall,
-                 .presentPinnedEventsTimeline, .presentMediaEventsTimeline, .presentKnockingRequestsListScreen:
+                 .presentPinnedEventsTimeline, .presentMediaEventsTimeline:
                 fatalError("Not handled in the space context")
             }
         }
@@ -244,6 +262,15 @@ final class SpaceSettingsFlowCoordinator: FlowCoordinatorProtocol {
         
         navigationStackCoordinator.push(coordinator, animated: animated) { [weak self] in
             self?.actionsSubject.send(.finished(leftRoom: leftRoom))
+        }
+    }
+    
+    private func presentKnockRequestsListScreen() {
+        let coordinator = KnockRequestsListScreenCoordinator(parameters: .init(roomProxy: roomProxy,
+                                                                               mediaProvider: flowParameters.userSession.mediaProvider,
+                                                                               userIndicatorController: flowParameters.userIndicatorController))
+        navigationStackCoordinator.push(coordinator) { [weak self] in
+            self?.stateMachine.tryEvent(.dismissedKnockRequestsList)
         }
     }
     

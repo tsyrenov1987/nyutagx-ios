@@ -80,7 +80,11 @@ struct SpaceHeaderView: View {
     }
     
     private var spaceDetailsVisibilityTitle: String {
-        switch spaceServiceRoom.visibility {
+        // Нютаг: сообщества бывают только открытые и закрытые (по заявке), как в каталоге.
+        if spaceServiceRoom.isSpace {
+            return spaceServiceRoom.visibility == .public ? NyutagL10n.communityOpen : NyutagL10n.communityClosedBadge
+        }
+        return switch spaceServiceRoom.visibility {
         case .public: L10n.commonPublic
         case .private: L10n.commonPrivate
         case .restricted: L10n.commonSpaceMembers

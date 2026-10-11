@@ -143,6 +143,8 @@ class SettingsScreenViewModel: SettingsScreenViewModelType, SettingsScreenViewMo
             actionsSubject.send(.developerOptions)
         case .deactivateAccount:
             actionsSubject.send(.deactivateAccount)
+        case .nyutagInviteFriend:
+            Task { await NyutagInviteFriend.share(clientProxy: clientProxy, userIndicatorController: userIndicatorController) }
         }
     }
     

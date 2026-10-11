@@ -40,6 +40,8 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
         
         /// The screen to login with a password.
         case loginScreen
+        /// Нютаг: регистрация по приглашению.
+        case nyutagSignUpScreen
         
         /// The screen to report an error.
         case bugReportFlow
@@ -84,6 +86,10 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
         
         /// The user has successfully signed in. The new session can be found in the `userInfo`.
         case signedIn
+        
+        /// Нютаг: регистрация по приглашению.
+        case nyutagSignUp
+        case cancelledNyutagSignUp
     }
     
     private let stateMachine: StateMachine<State, Event>
@@ -153,7 +159,7 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
             stateMachine.tryEvent(.cancelledLoginWithQR) // Needs to be handled manually.
         case .serverSelectionScreen:
             navigationStackCoordinator.popToRoot(animated: animated)
-        case .loginScreen:
+        case .loginScreen, .nyutagSignUpScreen:
             navigationStackCoordinator.popToRoot(animated: animated)
         case .bugReportFlow:
             navigationStackCoordinator.setSheetCoordinator(nil)
@@ -203,6 +209,11 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
         }
         stateMachine.addRoutes(event: .cancelledServerSelection, transitions: [.serverSelectionScreen => .startScreen])
         
+        stateMachine.addRoutes(event: .nyutagSignUp, transitions: [.startScreen => .nyutagSignUpScreen]) { [weak self] _ in
+            self?.showNyutagSignUpScreen()
+        }
+        stateMachine.addRoutes(event: .cancelledNyutagSignUp, transitions: [.nyutagSignUpScreen => .startScreen])
+        
         stateMachine.addRoutes(event: .continueWithPassword, transitions: [.serverSelectionScreen => .loginScreen,
                                                                            .startScreen => .loginScreen]) { [weak self] context in
             let loginHint = context.userInfo as? String
@@ -230,7 +241,8 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
         stateMachine.addRoutes(event: .signedIn, transitions: [.qrCodeLoginScreen => .complete,
                                                                .serverSelectionScreen => .complete, // OAuth authentication
                                                                .startScreen => .complete, // Direct OAuth authentication
-                                                               .loginScreen => .complete]) { [weak self] context in
+                                                               .loginScreen => .complete,
+                                                               .nyutagSignUpScreen => .complete]) { [weak self] context in
             guard let userSession = context.userInfo as? UserSessionProtocol else { fatalError("The user session wasn't included in the context") }
             self?.userHasSignedIn(userSession: userSession)
         }
@@ -279,7 +291,12 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
                 case .login:
                     stateMachine.tryEvent(.selectServer(.login))
                 case .register:
-                    stateMachine.tryEvent(.selectServer(.register))
+                    // Нютаг: свой сервер с регистрацией по приглашению — сразу на её шаги.
+                    if appSettings.allowOtherAccountProviders {
+                        stateMachine.tryEvent(.selectServer(.register))
+                    } else {
+                        stateMachine.tryEvent(.nyutagSignUp)
+                    }
                     
                 case .loginDirectlyWithOAuth(let oAuthData, let window):
                     showOAuthAuthentication(oAuthData: oAuthData, presentationAnchor: window)
@@ -416,6 +433,30 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
         
         navigationStackCoordinator.push(coordinator) { [weak self] in
             self?.stateMachine.tryEvent(.cancelledPasswordLogin(previousState: fromState))
+        }
+    }
+    
+    // MARK: - Нютаг: регистрация
+    
+    private func showNyutagSignUpScreen() {
+        guard let serverNameOrBaseURL = appSettings.accountProviders.first?.serverNameOrBaseURL else { fatalError("Nyutag requires a managed account provider") }
+        let coordinator = NyutagSignUpScreenCoordinator(parameters: .init(authenticationService: authenticationService,
+                                                                          serverNameOrBaseURL: serverNameOrBaseURL,
+                                                                          userIndicatorController: userIndicatorController))
+        coordinator.actions
+            .sink { [weak self] action in
+                guard let self else { return }
+                switch action {
+                case .cancel:
+                    navigationStackCoordinator.pop()
+                case .signedIn(let userSession):
+                    stateMachine.tryEvent(.signedIn, userInfo: userSession)
+                }
+            }
+            .store(in: &cancellables)
+        
+        navigationStackCoordinator.push(coordinator) { [weak self] in
+            self?.stateMachine.tryEvent(.cancelledNyutagSignUp)
         }
     }
     
