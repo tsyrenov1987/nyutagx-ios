@@ -69,3 +69,6 @@ screen_security_and_privacy_room_address_section_footer	A short link for the dir
 screen_create_room_add_people_title	Invite people	Пригласить участников	Хүнүүдые уриха
 screen_room_details_invite_people_title	Invite people	Пригласить участников	Хүнүүдые уриха
 common_people	Members	Участники	Гэшүүд
+screen_knock_requests_list_title	Requests to join	Заявки на вступление	Орохо гуйлтанууд
+screen_knock_requests_list_empty_state_title	No new requests	Новых заявок нет	Шэнэ гуйлта үгы
+screen_knock_requests_list_empty_state_description	Requests to join will appear here.	Здесь появятся заявки на вступление.	Орохо гуйлтанууд эндэ гараха.

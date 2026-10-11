@@ -186,7 +186,9 @@
 "screen_join_room_title_knock" = "Хотите присоединиться к этой группе?";
 "screen_knock_requests_list_ban_alert_description" = "Вы уверены, что хотите отклонить и запретить %1$@? Этот пользователь больше не сможет запрашивать доступ к этой группе.";
 "screen_knock_requests_list_decline_alert_description" = "Вы уверены, что хотите отклонить запрос %1$@ на присоединение к этой группе?";
-"screen_knock_requests_list_empty_state_description" = "Вы сможете увидеть запрос, когда кто-то попросит присоединиться к группе.";
+"screen_knock_requests_list_empty_state_description" = "Здесь появятся заявки на вступление.";
+"screen_knock_requests_list_empty_state_title" = "Новых заявок нет";
+"screen_knock_requests_list_title" = "Заявки на вступление";
 "screen_labs_enable_knocking_description" = "Пользователи могут запросить доступ к группе, которая не открыта для всех на вступление. Стабильно работает на мобильных устройствах, веб-версия существует, но находится в экспериментальной стадии.";
 "screen_leave_space_subtitle" = "Выберите группы, которые вы хотите покинуть и в которых вы не являетесь единственным администратором:";
 "screen_leave_space_subtitle_last_admin" = "Прежде чем покинуть это сообщество, вам необходимо назначить другого администратора.";

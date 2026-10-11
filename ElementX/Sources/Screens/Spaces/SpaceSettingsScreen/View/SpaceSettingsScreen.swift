@@ -101,6 +101,15 @@ struct SpaceSettingsScreen: View {
                         })
             }
             
+            // Нютаг: закрытое сообщество — админ одобряет заявки отсюда.
+            if context.viewState.canSeeKnockingRequests {
+                ListRow(label: .default(title: L10n.screenRoomDetailsRequestsToJoinTitle, icon: \.askToJoin),
+                        details: context.viewState.knockRequestsCount > 0 ? .counter(context.viewState.knockRequestsCount) : nil,
+                        kind: .navigationLink {
+                            context.send(viewAction: .processTapRequestsToJoin)
+                        })
+            }
+            
             if context.viewState.canEditRolesOrPermissions {
                 ListRow(label: .default(title: L10n.screenSpaceSettingsRolesAndPermissions, icon: \.admin),
                         kind: .navigationLink {

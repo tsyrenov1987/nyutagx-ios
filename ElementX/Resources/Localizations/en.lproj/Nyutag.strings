@@ -99,6 +99,9 @@
 "screen_join_room_knock_action" = "Request to join";
 "screen_join_room_knock_sent_description" = "You'll join automatically once an admin approves your request.";
 "screen_join_room_knock_sent_title" = "Request sent";
+"screen_knock_requests_list_empty_state_description" = "Requests to join will appear here.";
+"screen_knock_requests_list_empty_state_title" = "No new requests";
+"screen_knock_requests_list_title" = "Requests to join";
 "screen_login_form_header" = "Your details";
 "screen_login_subtitle" = "Use your username, phone or email.";
 "screen_login_title_with_homeserver" = "Sign in to Nyutag";
