@@ -9,6 +9,7 @@ import Foundation
 nonisolated enum NyutagL10n {
     static var startSignIn: String { tr("nyutag_start_sign_in") }
     static var startHaveInvite: String { tr("nyutag_start_have_invite") }
+    static var startSignUp: String { tr("nyutag_start_sign_up") }
     static var languageTitle: String { tr("nyutag_language_title") }
     static var languageSystem: String { tr("nyutag_language_system") }
     static var languageRestart: String { tr("nyutag_language_restart") }

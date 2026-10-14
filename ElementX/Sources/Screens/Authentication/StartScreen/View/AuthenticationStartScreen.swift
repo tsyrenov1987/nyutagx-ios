@@ -124,7 +124,7 @@ struct AuthenticationStartScreen: View {
             
             if context.viewState.showCreateAccountButton {
                 Button { context.send(viewAction: .register) } label: {
-                    Text(NyutagL10n.startHaveInvite)
+                    Text(NyutagL10n.startSignUp)
                 }
                 .buttonStyle(.compound(.secondary))
             }

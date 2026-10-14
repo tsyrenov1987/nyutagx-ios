@@ -141,7 +141,12 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
         let hasContact = configuration.isPhoneAvailable || configuration.isEmailAvailable
         // Телефон без SMS — свой шаг: номер вводится без кода, по нему человека находят друзья.
         let hasPhoneStep = configuration.requiresPhone && configuration.isPhoneUnverified
-        state.steps = [.code, hasContact ? .contact : nil, hasPhoneStep ? .phone : nil, .name, .password].compactMap(\.self)
+        // Код спрашиваем, только если сервер требует приглашение или код пришёл по ссылке (чтобы запомнить, кто пригласил).
+        let hasCodeStep = configuration.requiresInvite || !state.bindings.code.isEmpty
+        state.steps = [hasCodeStep ? .code : nil, hasContact ? .contact : nil, hasPhoneStep ? .phone : nil, .name, .password].compactMap(\.self)
+        if !state.steps.contains(state.step), let first = state.steps.first {
+            state.step = first
+        }
         if hasContact {
             state.bindings.medium = state.availableMedia.first ?? .email
         }
