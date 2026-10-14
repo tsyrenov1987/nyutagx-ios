@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleExecutable</key>
-  <string>Nyutag-FarvaterCore</string>
+  <string>FarvaterCore</string>
   <key>CFBundleIdentifier</key>
-  <string>Nyutag-FarvaterCore</string>
+  <string>FarvaterCore</string>
   <key>MinimumOSVersion</key>
   <string>100.0</string>
   <key>CFBundleShortVersionString</key>
-  <string>0.0.1791957097</string>
+  <string>0.0.1791957571</string>
   <key>CFBundleVersion</key>
-  <string>0.0.1791957097</string>
+  <string>0.0.1791957571</string>
   <key>CFBundlePackageType</key>
   <string>FMWK</string>
 </dict>
