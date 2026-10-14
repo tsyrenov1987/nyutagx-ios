@@ -5,7 +5,8 @@
   1. Свои ключи nyutag_* из Android-форка (strings_nyutag.xml в values / values-ru / values-b+bxr).
   2. Свои ключи только для iOS и ручные замены: Tools/Nyutag/strings.tsv (key, en, ru, bxr).
   3. Русские термины: «комната» -> «группа», «пространство» -> «сообщество» (род совпадает, падежи сохраняются).
-  4. Бурятский черновик строк Element из Android (translations.xml в values-b+bxr), по тем же ключам Localazy.
+  4. Бурятский черновик строк Element из Android (translations.xml в values-b+bxr), по тем же ключам Localazy;
+     ключи только iOS (Localizable, SAS, Untranslated, stringsdict) — Tools/Nyutag/bxr-ios.tsv.
 Таблица Nyutag проверяется в L10n.tr раньше Localizable, поэтому файлы Localazy не трогаем.
 """
 import csv, glob, os, plistlib, re, sys
@@ -33,6 +34,49 @@ def android_to_ios(text):
     text = text.replace("\\'", "'").replace('\\"', '"').replace("\\@", "@").replace("\\?", "?")
     text = re.sub(r"%(\d+\$)?s", lambda m: "%" + (m.group(1) or "") + "@", text)
     return text
+
+def android_plurals(pattern):
+    out = {}
+    for path in sorted(glob.glob(os.path.join(ANDROID, pattern), recursive=True)):
+        if "/build/" in path:
+            continue
+        for el in ET.parse(path).getroot().findall("plurals"):
+            forms = {item.get("quantity"): android_to_ios(item.text or "") for item in el}
+            out[el.get("name")] = forms.get("other") or list(forms.values())[-1]
+    return out
+
+def bxr_ios():
+    """table -> {key: text} из bxr-ios.tsv (таблица, ключ, перевод)."""
+    out = {}
+    path = os.path.join(IOS, "Tools/Nyutag/bxr-ios.tsv")
+    for line in open(path, encoding="utf-8"):
+        if line.startswith("#") or not line.strip():
+            continue
+        table, key, value = line.rstrip("\n").split("\t", 2)
+        out.setdefault(table, {})[key] = value
+    return out
+
+def write_bxr_plurals(extra):
+    """Бурятский: у языка нет правил CLDR, iOS берёт форму other — её и пишем для каждого ключа Localizable.stringsdict."""
+    with open(os.path.join(LOC, "en.lproj/Localizable.stringsdict"), "rb") as f:
+        plurals = plistlib.load(f)
+    android = android_plurals("**/src/main/res/values-b+bxr/*.xml")
+    out = {}
+    for key, entry in plurals.items():
+        new = {}
+        for name, variable in entry.items():
+            if not isinstance(variable, dict):
+                new[name] = variable
+                continue
+            text = android.get(key) or extra.get(f"stringsdict:{name}", {}).get(key)
+            if not text:
+                break
+            new[name] = {k: v for k, v in variable.items() if k.startswith("NSString")} | {"other": text}
+        else:
+            out[key] = new
+    with open(os.path.join(LOC, "bxr.lproj/Nyutag.stringsdict"), "wb") as f:
+        plistlib.dump(out, f, sort_keys=True)
+    print(f"bxr plurals: {len(out)} из {len(plurals)}")
 
 def escape(value):
     return value.replace("\\", "\\\\").replace('"', '\\"').replace("\\\\n", "\\n")
@@ -86,6 +130,9 @@ def main():
     tables = {"en": {}, "ru": {}, "bxr": {}}
     # 4. Бурятский черновик строк Element (самый низкий приоритет — перекрывается своими ключами ниже).
     tables["bxr"].update(android_strings("**/src/main/res/values-b+bxr/translations.xml"))
+    extra = bxr_ios()
+    for table in ("Localizable", "Untranslated"):
+        tables["bxr"].update(extra.get(table, {}))
     # 3. Русские термины.
     ru = parse_strings(os.path.join(LOC, "ru.lproj/Localizable.strings"))
     for key, value in ru.items():
@@ -126,6 +173,12 @@ def main():
         with open(os.path.join(LOC, f"{lang}.lproj/Nyutag.stringsdict"), "wb") as f:
             plistlib.dump(changed, f, sort_keys=True)
         print(f"{lang} plurals: {len(changed)}")
+    write_bxr_plurals(extra)
+    # SAS-эмодзи читаются своей таблицей (Strings+SAS.swift), мимо Nyutag.
+    with open(os.path.join(LOC, "bxr.lproj/SAS.strings"), "w", encoding="utf-8") as f:
+        f.write("// Сгенерировано Tools/Nyutag/gen-strings.py — не править руками.\n\n")
+        for key in sorted(extra.get("SAS", {})):
+            f.write(f'"{escape(key)}" = "{escape(extra["SAS"][key])}";\n')
     for lang, table in tables.items():
         os.makedirs(os.path.join(LOC, f"{lang}.lproj"), exist_ok=True)
         with open(os.path.join(LOC, f"{lang}.lproj/Nyutag.strings"), "w", encoding="utf-8") as f:

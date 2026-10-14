@@ -72,7 +72,7 @@ common_people	Members	Участники	Гэшүүд
 screen_knock_requests_list_title	Requests to join	Заявки на вступление	Орохо гуйлтанууд
 screen_knock_requests_list_empty_state_title	No new requests	Новых заявок нет	Шэнэ гуйлта үгы
 screen_knock_requests_list_empty_state_description	Requests to join will appear here.	Здесь появятся заявки на вступление.	Орохо гуйлтанууд эндэ гараха.
-screen_room_timeline_legacy_call	Unsupported call. Ask the caller to update Nyutag.	Звонок не поддерживается. Попросите собеседника обновить Нютаг.	
+screen_room_timeline_legacy_call	Unsupported call. Ask the caller to update Nyutag.	Звонок не поддерживается. Попросите собеседника обновить Нютаг.	Дуудалга дэмжэгдэхэгүй. Хүндэ Нютагаа шэнэлхэ хэрэгтэй.
 screen_search_empty_state_title	Start searching…	Начните поиск…	Бэдэржэ эхилэгты…
 screen_search_empty_state_message	Search for chats and messages	Ищите чаты и сообщения	Чат, зурбас бэдэрэгты
 screen_search_tab_chats	Chats	Чаты	Чадууд
@@ -80,10 +80,10 @@ screen_search_tab_messages	Messages	Сообщения	Зурбаснууд
 screen_search_no_results_message	There are no results for “%1$@”. Try a new search term.	По запросу «%1$@» ничего не найдено. Попробуйте другие слова.	«%1$@» гэжэ юумэн олдобогүй. Ондоо үгэ оролдогты.
 screen_search_recent_searches	Recent searches	Недавние запросы	Һүүлшын бэдэрэлгэнүүд
 screen_home_tab_search	Search	Поиск	Бэдэрэлгэ
-common_favourite		Отмеченный	
-common_favourited		Отмеченный	
-screen_roomlist_filter_favourites		Отмеченные	
-screen_roomlist_filter_favourites_empty_state_title		Отмеченных чатов пока нет	
-screen_roomlist_filter_favourites_empty_state_subtitle		Отметить чат можно в его настройках.\nА пока снимите фильтр, чтобы увидеть остальные чаты.	
-screen_room_timeline_beginning_of_room		Это начало чата «%1$@».	
+common_favourite		Отмеченный	Тэмдэглэһэн
+common_favourited		Отмеченный	Тэмдэглэһэн
+screen_roomlist_filter_favourites		Отмеченные	Тэмдэглэһэн
+screen_roomlist_filter_favourites_empty_state_title		Отмеченных чатов пока нет	Тэмдэглэһэн чат үшөө үгы
+screen_roomlist_filter_favourites_empty_state_subtitle		Отметить чат можно в его настройках.\nА пока снимите фильтр, чтобы увидеть остальные чаты.	Чатые тэрэнэй тохируулгануудта тэмдэглэжэ болохот.\nМүнөөдөө бусад чатнуудые харахын тула шүүлтүүрөө болюулагты.
+screen_room_timeline_beginning_of_room		Это начало чата «%1$@».	«%1$@» чатай эхин.
 screen_server_confirmation_message_login_matrix_dot_org	Chats and calls for your people. Everything is encrypted on your devices.	Переписка и звонки для своих. Всё шифруется на ваших устройствах.	Өөрынхидтэеэ бэшэлгэ, дуудалга. Бүхы юумэн таны утаһан дээрэ шифрлэгдэнэ.

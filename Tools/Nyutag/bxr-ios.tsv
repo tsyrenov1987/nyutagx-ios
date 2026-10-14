@@ -1,0 +1,150 @@
+# Нютаг: бурятский (черновик) для ключей, которых нет в Android. table	key	bxr
+Localizable	Notification	Мэдээсэл
+Localizable	a11y.encryption_details	Шифрлэлгын дэлгэрэнгы
+Localizable	a11y.move_the_map_to_my_location	Газарай зураг минии байрлал руу шэлжүүлхэ
+Localizable	a11y.other_user_avatar	Нүгөө хэрэглэгшын аватар
+Localizable	a11y.room_avatar	Бүлэгэй аватар
+Localizable	a11y.sent_by_sender_at_date	%1$@ эльгээбэ, %2$@ сагта
+Localizable	a11y.thread_in_room	%1$@ соо һудал
+Localizable	a11y.threads_in_room	%1$@ соо һудалнууд
+Localizable	a11y.user_avatar	Хэрэглэгшын аватар
+Localizable	a11y.your_avatar	Таны аватар
+Localizable	a11y_read_receipts_tap_to_show_all_ios	Бүгэдые харуулхын тула дарагты
+Localizable	common_face_id_ios	Face ID
+Localizable	common_optic_id_ios	Optic ID
+Localizable	common_touch_id_ios	Touch ID
+Localizable	dialog_permission_live_location_description_ios	Шууд байрлалаараа хубаалдахын тула аппликаци арада ажаллаха үедэ %1$@-да байрлалда хандалга хэрэгтэй. Тохируулганууд > Байрлал руу ороод, «Үргэлжэ» шэлэгты
+Localizable	dialog_permission_location_description_ios	Мүнөөнэй байрлалаараа хубаалдахын тула %1$@-да байрлалда хандалга хэрэгтэй. Тохируулганууд > Байрлал руу орогты.
+Localizable	dialog_permission_location_title_ios	%1$@-да таны байрлалда хандалга үгы.
+Localizable	dialog_permission_microphone_description_ios	Дуутай бэшэгүүдые бэшэжэ, эльгээхын тула хандалга зүбшөөгты.
+Localizable	dialog_permission_microphone_title_ios	%1$@-да таны микрофондо хандаха зүбшөөл хэрэгтэй.
+Localizable	dialog_permission_photo_library_title_ios	%1$@-да таны фото сангай хандалга үгы.
+Localizable	dialog_unsaved_changes_description_ios	Таны хубилалтанууд хадагалагдахагүй
+Localizable	error.account_already_logged_in	Та энэ түхеэрэлгэ дээрэ %1$@ болоод орохо болонхойт.
+Localizable	login_initial_device_name_ios	%1$@ iOS
+Localizable	notification_received_while_offline_ios	Сүлжээндэ үгы байхадаа нэгэ али хэдэн мэдээсэл абабат.
+Localizable	screen_app_lock_biometric_unlock_reason_ios	Аппликаци руу орохын тула танилта хэрэгтэй
+Localizable	screen_app_lock_settings_enable_face_id_ios	Face ID зүбшөөхэ
+Localizable	screen_app_lock_settings_enable_optic_id_ios	Optic ID зүбшөөхэ
+Localizable	screen_app_lock_settings_enable_touch_id_ios	Touch ID зүбшөөхэ
+Localizable	screen_change_server_error_element_pro_required_action_ios	App Store
+Localizable	screen_create_poll_cancel_confirmation_content_ios	Таны хубилалтанууд хадагалагдахагүй
+Localizable	screen_create_poll_cancel_confirmation_title_ios	Һанал асуулга болюулха
+Localizable	screen_link_new_device_authentication_reason_ios	Шэнэ түхеэрэлгэ холбохынгоо урда өөрөө гэжэ баталагты.
+Localizable	screen_missing_key_backup_step_2_ios	Хэрэглэгшын тохируулганууд > Аюулгүй байдал руу орогты
+Localizable	screen_missing_key_backup_step_3_ios	Чатай нөөсэлэлгэ хүрэтэр доошоо гүйлгэжэ, «Тохируулха» дарагты
+Localizable	screen_notification_settings_sound_system_alert_ios	Дохёо
+Localizable	screen_notification_settings_sound_system_anticipate_ios	Anticipate
+Localizable	screen_notification_settings_sound_system_bell_ios	Bell
+Localizable	screen_notification_settings_sound_system_bloom_ios	Bloom
+Localizable	screen_notification_settings_sound_system_calypso_ios	Calypso
+Localizable	screen_notification_settings_sound_system_chime_ios	Chime
+Localizable	screen_notification_settings_sound_system_choo_choo_ios	Choo Choo
+Localizable	screen_notification_settings_sound_system_descent_ios	Descent
+Localizable	screen_notification_settings_sound_system_electronic_ios	Electronic
+Localizable	screen_notification_settings_sound_system_fanfare_ios	Fanfare
+Localizable	screen_notification_settings_sound_system_glass_ios	Glass
+Localizable	screen_notification_settings_sound_system_horn_ios	Horn
+Localizable	screen_notification_settings_sound_system_ladder_ios	Ladder
+Localizable	screen_notification_settings_sound_system_minuet_ios	Minuet
+Localizable	screen_notification_settings_sound_system_news_flash_ios	News Flash
+Localizable	screen_notification_settings_sound_system_noir_ios	Noir
+Localizable	screen_notification_settings_sound_system_sherwood_forest_ios	Sherwood Forest
+Localizable	screen_notification_settings_sound_system_spell_ios	Spell
+Localizable	screen_notification_settings_sound_system_suspense_ios	Suspense
+Localizable	screen_notification_settings_sound_system_swish_ios	Swish
+Localizable	screen_notification_settings_sound_system_telegraph_ios	Telegraph
+Localizable	screen_notification_settings_sound_system_tiptoes_ios	Tiptoes
+Localizable	screen_notification_settings_sound_system_tri_tone_ios	Tri-tone
+Localizable	screen_notification_settings_sound_system_tweet_ios	Tweet
+Localizable	screen_notification_settings_sound_system_typewriters_ios	Typewriters
+Localizable	screen_notification_settings_sound_system_update_ios	Шэнэлхэ
+Localizable	screen_room_confirm_removal_message	Энэ бэшэгые хаһахадаа итгэлтэй гүт?
+Localizable	screen_room_typing_many_members_first_component_ios	%1$@, %2$@ болон 
+Localizable	screen_room_typing_notification_plural_ios	 бэшэжэ байна…
+Localizable	screen_room_typing_notification_singular_ios	 бэшэжэ байна…
+Localizable	screen_space_remove_rooms_confirmation_title_ios	%1$@-һаа бүлэгүүдые хаһаха гү?
+SAS	aeroplane	Онгосо
+SAS	anchor	Якорь
+SAS	apple	Алим
+SAS	ball	Бүмбэгэ
+SAS	banana	Банан
+SAS	bell	Хонхо
+SAS	bicycle	Дугы
+SAS	book	Ном
+SAS	butterfly	Эрбээхэй
+SAS	cactus	Кактус
+SAS	cake	Торт
+SAS	cat	Миисгэй
+SAS	clock	Саг
+SAS	cloud	Үүлэн
+SAS	corn	Эрдэни шэшэ
+SAS	dog	Нохой
+SAS	elephant	Заан
+SAS	fire	Гал
+SAS	fish	Загаһан
+SAS	flag	Туг
+SAS	flower	Сэсэг
+SAS	folder	Папка
+SAS	gift	Бэлэг
+SAS	glasses	Нюдэнэй шэл
+SAS	globe	Глобус
+SAS	guitar	Гитара
+SAS	hammer	Алха
+SAS	hat	Малгай
+SAS	headphones	Наушнигууд
+SAS	heart	Зүрхэн
+SAS	horse	Морин
+SAS	hourglass	Элһэн саг
+SAS	key	Түлхюур
+SAS	light_bulb	Гэрэлэй шэл
+SAS	lion	Арсалан
+SAS	lock	Түгжээ
+SAS	moon	Һара
+SAS	mushroom	Мөөг
+SAS	octopus	Осьминог
+SAS	panda	Панда
+SAS	paperclip	Скрепка
+SAS	pencil	Харандаа
+SAS	penguin	Пингвин
+SAS	pig	Гахай
+SAS	pin	Хадааһан
+SAS	pizza	Пицца
+SAS	rabbit	Туулай
+SAS	robot	Робот
+SAS	rocket	Ракета
+SAS	rooster	Эрэ тахяа
+SAS	santa	Санта
+SAS	scissors	Хайша
+SAS	smiley	Энеэдэ
+SAS	spanner	Гаечна түлхюур
+SAS	strawberry	Гүзээлзэгэнэ
+SAS	telephone	Утаһан
+SAS	thumbs_up	Эрхы дээшэ
+SAS	train	Поезд
+SAS	tree	Модон
+SAS	trophy	Шагналай аяга
+SAS	trumpet	Бүрээ
+SAS	turtle	Мэлхэй
+SAS	umbrella	Шүхэр
+SAS	unicorn	Ганса эбэртэ
+Untranslated	screen_home_tab_search	Бэдэрэлгэ
+Untranslated	screen_search_empty_state_message	Чат болон бэшэгүүдые бэдэрхэ
+Untranslated	screen_search_empty_state_title	Бэдэржэ эхилэгты...
+Untranslated	screen_search_no_results_message	“%1$@” гэжэ юумэн олдобогүй. Ондоо үгөөр бэдэрэгты.
+Untranslated	screen_search_recent_searches	Һүүлшын бэдэрэлгэнүүд
+Untranslated	screen_search_tab_chats	Чатнууд
+Untranslated	screen_search_tab_messages	Бэшэгүүд
+Untranslated	soft_logout_clear_data_dialog_content	Энэ түхеэрэлгэ дээрэ хадагалагдаһан бүхы мэдээе сэбэрлэхэ гү?\nАккаунтайнгаа мэдээн болон бэшэгүүдтээ хандахын тула дахин орогты.
+Untranslated	soft_logout_clear_data_dialog_title	Мэдээн сэбэрлэхэ
+Untranslated	soft_logout_clear_data_notice	Анхарагты: таны хубиин мэдээн (шифрлэлгын түлхюурнүүдые оруулжа) энэ түхеэрэлгэ дээрэ хадагалагдаһаар.\n\nЭнэ түхеэрэлгэ хэрэглэжэ дүүрэбэл, али ондоо аккаунт руу орохо гэбэл, сэбэрлэгты.
+Untranslated	soft_logout_clear_data_submit	Бүхы мэдээе сэбэрлэхэ
+Untranslated	soft_logout_clear_data_title	Хубиин мэдээе сэбэрлэхэ
+Untranslated	soft_logout_signin_e2e_warning_notice	Зөөхэн энэ түхеэрэлгэ дээрэ хадагалагдаһан шифрлэлгын түлхюурнүүдые сэргээхын тула орогты. Ямаршье түхеэрэлгэ дээрэ бүхы аюулгүй бэшэгүүдээ уншахада тэдэ хэрэгтэй.
+Untranslated	soft_logout_signin_notice	Таны гэрэй серверэй (%1$s) админ таниие %2$s (%3$s) аккаунтһаа гаргаба.
+Untranslated	soft_logout_signin_title	Орохо
+stringsdict:COUNT	screen.room.timeline_redacted_messages	%1$d хаһагдаһан бэшэг
+Localizable	call_invalid_audio_device_bluetooth_devices_disabled	Android-ай энэ хубилбарта Нютагай дуудалганууд Bluetooth-гарнитура дэмжэдэггүй. Ондоо түхеэрэлгэ шэлэгты.
+Localizable	screen_login_error_invalid_user_id	Хэрэглэгшын нэрээ оруулагты, жэшээнь dorzho.
+Localizable	screen_notification_settings_sound_element_fade	Нютаг: аалиханаар
+Localizable	screen_start_chat_join_room_by_address_supporting_text	жэшээнь, #room-name:nyutag.chat

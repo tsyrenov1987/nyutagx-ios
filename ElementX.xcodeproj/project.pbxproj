@@ -1810,6 +1810,7 @@
 		057B747CF045D3C6C30EAB2C /* fi */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = fi; path = fi.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		05A3E8741D199CD1A37F4CBF /* UIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIView.swift; sourceTree = "<group>"; };
 		05AF58372CA884A789EB9C5A /* AppMediatorProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMediatorProtocol.swift; sourceTree = "<group>"; };
+		05EFCBF2E04F249EAAC05800 /* bxr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = bxr; path = bxr.lproj/Nyutag.stringsdict; sourceTree = "<group>"; };
 		05F598B1B346DAF223651C91 /* LoginScreenCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreenCoordinator.swift; sourceTree = "<group>"; };
 		06775BFC4D00C62B7E1353A8 /* SettingsScreenUserStatusPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreenUserStatusPickerView.swift; sourceTree = "<group>"; };
 		0685156EB62D7E243F097CFC /* ServerSelectionScreenViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerSelectionScreenViewModelProtocol.swift; sourceTree = "<group>"; };
@@ -3312,6 +3313,7 @@
 		FE5CD2993048222B64C45006 /* SDKListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SDKListener.swift; sourceTree = "<group>"; };
 		FEC4B431B0117BDEE697DB4A /* ComposerDisabledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerDisabledView.swift; sourceTree = "<group>"; };
 		FF720BA68256297680980481 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		FFD8E11543AACAEC499EC9A7 /* bxr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bxr; path = bxr.lproj/SAS.strings; sourceTree = "<group>"; };
 		FFECCE59967018204876D0A5 /* LocationMarkerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMarkerView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -9955,6 +9957,7 @@
 			children = (
 				4DD043F8B29AD1FF824203E2 /* ar */,
 				9F40FB0A43DAECEC27C73722 /* bg */,
+				FFD8E11543AACAEC499EC9A7 /* bxr */,
 				0CBB0B65E5C1686700EF1276 /* ca */,
 				2E11E7C396ED06A154CF6DF3 /* cs */,
 				DA3D82522494E78746B2214E /* de */,
@@ -10032,6 +10035,7 @@
 		5ED419176C89CB262F68F6E1 /* Nyutag.stringsdict */ = {
 			isa = PBXVariantGroup;
 			children = (
+				05EFCBF2E04F249EAAC05800 /* bxr */,
 				19C4C2862D3F98C87DBE29EB /* en */,
 				BD596D1C0C5DE79C98207DD8 /* ru */,
 			);
