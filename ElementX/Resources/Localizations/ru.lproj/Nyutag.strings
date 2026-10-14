@@ -373,3 +373,5 @@
 "state_event_room_leave_by_you" = "Вы покинули группу";
 "state_event_room_topic_removed" = "%1$@ удалил(а) тему группы";
 "state_event_room_topic_removed_by_you" = "Вы удалили тему группы";
+"nyutag_not_in_contacts" = "Этого человека нет в ваших контактах";
+"nyutag_not_in_contacts_check" = "Сверить с контактами";

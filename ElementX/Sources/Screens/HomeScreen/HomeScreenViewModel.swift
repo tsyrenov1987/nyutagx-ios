@@ -28,6 +28,8 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
     @CancellableTask private var emptyStateFallbackTask: Task<Void, Never>?
     /// Нютаг: одобренные заявки, по которым уже пробовали вступить (до следующего статуса «заявка подана»).
     private var approvedKnockAttempts = Set<String>()
+    /// Нютаг: личные чаты, в которые уже пробовали вступить сами (одна попытка на приглашение).
+    private var directInviteAttempts = Set<String>()
     var actions: AnyPublisher<HomeScreenViewModelAction, Never> {
         actionsSubject.eraseToAnyPublisher()
     }
@@ -144,6 +146,7 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             .receive(on: DispatchQueue.main)
             .sink { [weak self] summaries in
                 self?.joinApprovedKnocks(summaries)
+                self?.joinDirectInvites(summaries)
             }
             .store(in: &cancellables)
         
@@ -440,6 +443,21 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
                 // Покинутая комната остаётся в списке и до заявки — забываем только после вступления или бана.
                 if [.joined, .banned].contains(summary.room.membership()) {
                     NyutagKnockedRooms.remove(summary.id)
+                }
+            }
+        }
+    }
+    
+    /// Нютаг: приглашение в личный чат принимаем сами — сообщения приходят сразу, без «Принять/Отклонить».
+    private func joinDirectInvites(_ summaries: [RoomSummary]) {
+        for summary in summaries where summary.joinRequestType?.isInvite == true && summary.isDirect && !summary.isSpace {
+            guard directInviteAttempts.insert(summary.id).inserted else { continue }
+            Task {
+                switch await userSession.clientProxy.joinRoom(summary.id, via: []) {
+                case .success:
+                    NyutagUnansweredChats.insert(summary.id)
+                case .failure(let error):
+                    MXLog.error("Failed auto-joining direct chat \(summary.id): \(error)")
                 }
             }
         }

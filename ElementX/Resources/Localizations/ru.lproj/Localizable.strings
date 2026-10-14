@@ -1752,3 +1752,17 @@
 "troubleshoot_notifications_test_unified_push_title" = "Проверка UnifiedPush";
 "vulkan_not_supported_dialog_content_android" = "Ваше устройство слишком старое, требуется устройство с Android 8 или более новой версией.";
 "vulkan_not_supported_dialog_title_android" = "Отображение карт не поддерживается";
+
+/* Нютаг: подписи пушей — ключи, которые шлёт Sygnal (loc-key), подставляет сама iOS. */
+"MSG_FROM_USER" = "%@: новое сообщение";
+"MSG_FROM_USER_WITH_CONTENT" = "%1$@: %2$@";
+"MSG_FROM_USER_IN_ROOM" = "%1$@ в «%2$@»: новое сообщение";
+"MSG_FROM_USER_IN_ROOM_WITH_CONTENT" = "%1$@ в «%2$@»: %3$@";
+"IMAGE_FROM_USER" = "%1$@ прислал(а) фото";
+"IMAGE_FROM_USER_IN_ROOM" = "%1$@ прислал(а) фото в «%3$@»";
+"ACTION_FROM_USER" = "* %1$@ %2$@";
+"ACTION_FROM_USER_IN_ROOM" = "%1$@: * %2$@ %3$@";
+"VOICE_CALL_FROM_USER" = "Звонок от %@";
+"VIDEO_CALL_FROM_USER" = "Видеозвонок от %@";
+"USER_INVITE_TO_NAMED_ROOM" = "%1$@ приглашает вас в «%2$@»";
+"USER_INVITE_TO_CHAT" = "%@: новое сообщение";

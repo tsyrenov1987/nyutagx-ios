@@ -3263,6 +3263,7 @@
 		F409D44C2E6BE50462E82F8A /* en-US */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-US"; path = "en-US.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		F4469F6AE311BDC439B3A5EC /* UserSessionMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSessionMock.swift; sourceTree = "<group>"; };
 		F4548A9BDE5CB3AB864BCA9F /* EffectsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EffectsView.swift; sourceTree = "<group>"; };
+		F46E0EAB0E3171B0C5E2BE0F /* bxr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = bxr; path = bxr.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F46E441BA50705E6CEC89FE0 /* RoomSummaryProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSummaryProviderTests.swift; sourceTree = "<group>"; };
 		F48A2FA6814F824ABB4C07F3 /* RoomCallControlsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomCallControlsToolbar.swift; sourceTree = "<group>"; };
 		F4CEB4590CCF70F0E3C0B171 /* GeneratedAccessibilityTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedAccessibilityTests.swift; sourceTree = "<group>"; };
@@ -10048,6 +10049,7 @@
 				C88508B6F7974CFABEC4B261 /* ar */,
 				F0205C03F98BE861EDABCB0D /* be */,
 				49193CB0C248D621A96FB2AA /* bg */,
+				F46E0EAB0E3171B0C5E2BE0F /* bxr */,
 				72D03D36422177EF01905D20 /* ca */,
 				8D8169443E5AC5FF71BFB3DB /* cs */,
 				B0C5E5931A668B18D8C09028 /* cy */,

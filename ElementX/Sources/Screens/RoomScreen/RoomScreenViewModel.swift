@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Contacts
 import Foundation
 import MatrixRustSDK
 import OrderedCollections
@@ -84,6 +85,27 @@ class RoomScreenViewModel: RoomScreenViewModelType, RoomScreenViewModelProtocol 
         }
         
         startDMPresenceUpdates()
+        Task { await updateNotInContacts() }
+    }
+    
+    /// Нютаг: надпись «Вне контактов». Номера книжки уходят на сервер только для ответа да/нет и не сохраняются.
+    private func updateNotInContacts() async {
+        guard NyutagUnansweredChats.all.contains(roomProxy.id),
+              roomProxy.infoPublisher.value.isDM,
+              let dmRecipient = roomProxy.membersPublisher.value.first(where: { $0.userID != roomProxy.ownUserID }) else {
+            state.nyutagNotInContacts = false
+            return
+        }
+        let status = CNContactStore.authorizationStatus(for: .contacts)
+        state.nyutagCanCheckContacts = status == .notDetermined
+        guard status == .authorized || status == .limited,
+              let accessToken = (clientProxy as? ClientProxy)?.nyutagAccessToken else {
+            state.nyutagNotInContacts = true
+            return
+        }
+        let phones = await Task.detached { NyutagAddressBook.phones() }.value
+        let isInContacts = (try? await NyutagInvitesService.shared.isInContacts(userID: dmRecipient.userID, phones: phones, accessToken: accessToken)) ?? false
+        state.nyutagNotInContacts = !isInContacts
     }
     
     /// Нютаг: присутствие собеседника в личном чате, пока экран открыт (раз в 30 с, как подпись в Telegram).
@@ -115,6 +137,11 @@ class RoomScreenViewModel: RoomScreenViewModelType, RoomScreenViewModelProtocol 
     
     override func process(viewAction: RoomScreenViewAction) {
         switch viewAction {
+        case .nyutagCheckContacts:
+            Task {
+                _ = try? await CNContactStore().requestAccess(for: .contacts)
+                await updateNotInContacts()
+            }
         case .tappedPinnedEventsBanner:
             handleTappedPinnedEventsBanner()
         case .viewAllPins:
@@ -195,6 +222,15 @@ class RoomScreenViewModel: RoomScreenViewModelType, RoomScreenViewModelProtocol 
     // MARK: - Private
     
     private func setupSubscriptions(ongoingCallRoomIDPublisher: CurrentValuePublisher<String?, Never>) {
+        // Нютаг: мы ответили (сообщение отправлено) — надпись «Вне контактов» убираем.
+        roomProxy.infoPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self, state.nyutagNotInContacts, !NyutagUnansweredChats.all.contains(roomProxy.id) else { return }
+                state.nyutagNotInContacts = false
+            }
+            .store(in: &cancellables)
+        
         appSettings.threadsEnabledPublisher
             .weakAssign(to: \.state.roomThreadListEnabled, on: self)
             .store(in: &cancellables)

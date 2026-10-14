@@ -25,6 +25,8 @@ enum RoomScreenViewModelAction: Equatable {
 }
 
 enum RoomScreenViewAction {
+    /// Нютаг: «Сверить с контактами» в надписи «Вне контактов».
+    case nyutagCheckContacts
     case tappedPinnedEventsBanner
     case viewAllPins
     case displayRoomDetails
@@ -45,6 +47,10 @@ struct RoomScreenViewState: BindableState {
     var dmRecipientDetails = RoomHeaderView.DMRecipientDetails()
     /// Нютаг: «в сети» / «был(а) …» собеседника под именем в личном чате.
     var dmPresenceSubtitle: String?
+    /// Нютаг: надпись «Вне контактов» — незнакомый написал первым, мы не ответили, его номера нет в записной книжке.
+    var nyutagNotInContacts = false
+    /// Нютаг: доступ к контактам ещё не спрашивали — в надписи кнопка «Сверить с контактами».
+    var nyutagCanCheckContacts = false
     
     var lastScrollDirection: ScrollDirection?
     // This is used to control the banner

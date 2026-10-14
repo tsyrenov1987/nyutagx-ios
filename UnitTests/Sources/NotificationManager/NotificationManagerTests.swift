@@ -86,11 +86,13 @@ final class NotificationManagerTests {
             return
         }
         #expect(data.url == appSettings.pushGatewayNotifyEndpoint.absoluteString)
-        #expect(data.format == .eventIdOnly)
-        let defaultPayload = APNSPayload(aps: APSInfo(mutableContent: 1,
+        #expect(data.format == nil)
+        let defaultPayload = APNSPayload(aps: APSInfo(mutableContent: nil,
                                                       alert: APSAlert(locKey: "Notification",
-                                                                      locArgs: [])),
-                                         pusherNotificationClientIdentifier: nil)
+                                                                      locArgs: []),
+                                                      sound: "default"),
+                                         pusherNotificationClientIdentifier: nil,
+                                         receiverID: clientProxy.userID)
         #expect(try data.defaultPayload == (defaultPayload.toJsonString()))
     }
     

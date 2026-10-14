@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import Contacts
 import Foundation
 import Network
 import Synchronization
@@ -94,6 +95,11 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
             guard let phone = match["phone"] as? String, let userID = match["user_id"] as? String else { return nil }
             return (phone, userID)
         }, uniquingKeysWith: { first, _ in first })
+    }
+    
+    /// Есть ли номер участника среди номеров записной книжки (сервер отвечает только да/нет, номера не хранит).
+    func isInContacts(userID: String, phones: [String], accessToken: String) async throws(NyutagInviteError) -> Bool {
+        try await request("POST", "/_nyutag/v1/contact-check", body: ["user_id": userID, "phones": phones], bearer: accessToken)["in_contacts"] as? Bool ?? false
     }
     
     /// Указан ли у участника свой номер телефона.
@@ -263,6 +269,44 @@ nonisolated struct NyutagCommunityPage: Sendable {
 /// Заявки в закрытые сообщества, поданные с этого устройства: приглашение после одобрения принимается само, как во ВКонтакте.
 enum NyutagKnockedRooms {
     private static let key = "nyutagKnockedRoomIDs"
+    
+    static var all: Set<String> {
+        Set(UserDefaults.standard.stringArray(forKey: key) ?? [])
+    }
+    
+    static func insert(_ roomID: String) {
+        UserDefaults.standard.set(Array(all.union([roomID])), forKey: key)
+    }
+    
+    static func remove(_ roomID: String) {
+        UserDefaults.standard.set(Array(all.subtracting([roomID])), forKey: key)
+    }
+}
+
+/// Номера из записной книжки (после разрешения на контакты) — для надписи «Вне контактов».
+enum NyutagAddressBook {
+    /// Столько же принимает сервер в одной проверке.
+    nonisolated static let maxPhones = 5000
+    
+    nonisolated static func phones() -> [String] {
+        var phones = Set<String>()
+        let request = CNContactFetchRequest(keysToFetch: [CNContactPhoneNumbersKey as CNKeyDescriptor])
+        try? CNContactStore().enumerateContacts(with: request) { contact, stop in
+            for number in contact.phoneNumbers {
+                phones.insert(number.value.stringValue)
+            }
+            if phones.count >= maxPhones {
+                stop.pointee = true
+            }
+        }
+        return Array(phones.prefix(maxPhones))
+    }
+}
+
+/// Личные чаты, принятые сами (написал незнакомый), где мы ещё не ответили: пока чат здесь, в нём надпись «Вне контактов».
+/// Хранится только на этом устройстве.
+enum NyutagUnansweredChats {
+    private static let key = "nyutagUnansweredChatIDs"
     
     static var all: Set<String> {
         Set(UserDefaults.standard.stringArray(forKey: key) ?? [])

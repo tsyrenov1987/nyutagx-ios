@@ -814,6 +814,7 @@ class TimelineViewModel: TimelineViewModelType, TimelineViewModelProtocol {
         guard !message.isEmpty else {
             fatalError("This message should never be empty")
         }
+        NyutagUnansweredChats.remove(roomProxy.id) // Нютаг: ответили — собеседник больше не «вне контактов»
         
         switch mode {
         case .reply(let eventID, _, _):

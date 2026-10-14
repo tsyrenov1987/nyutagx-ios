@@ -2072,3 +2072,5 @@
 "verification_emoji_63" = "Хадааһан";
 "vulkan_not_supported_dialog_content_android" = "Таны түхеэрэлгэ хэтэ хуушан, Android 8 али шэнэ хубилбаритай түхеэрэлгэ хэрэгтэй.";
 "vulkan_not_supported_dialog_title_android" = "Газарай зураг харуулха дэмжэгдэдэггүй";
+"nyutag_not_in_contacts" = "Энэ хүн таны контактнуудта үгы";
+"nyutag_not_in_contacts_check" = "Контактнуудтай харюулха";

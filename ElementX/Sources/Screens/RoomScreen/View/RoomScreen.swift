@@ -75,7 +75,8 @@ struct RoomScreen: View {
             .topBanners([
                 TopBannerLayer(verticalBanners: [
                     TopBannerItem(pinnedItemsBanner, isVisible: context.viewState.shouldShowPinnedEventsBanner && !isVoiceOverEnabled),
-                    TopBannerItem(liveLocationBanner, isVisible: context.viewState.isSharingLiveLocation && !isVoiceOverEnabled)
+                    TopBannerItem(liveLocationBanner, isVisible: context.viewState.isSharingLiveLocation && !isVoiceOverEnabled),
+                    TopBannerItem(nyutagNotInContactsBanner, isVisible: context.viewState.nyutagNotInContacts)
                 ]),
                 // This can overlay on top of the stacked banners
                 TopBannerLayer(knockRequestsBanner, isVisible: context.viewState.shouldSeeKnockRequests)
@@ -137,6 +138,25 @@ struct RoomScreen: View {
         } onStop: {
             context.send(viewAction: .tappedStopLiveLocation)
         }
+    }
+    
+    /// Нютаг: «Вне контактов» — незнакомый написал первым, мы ещё не ответили.
+    private var nyutagNotInContactsBanner: some View {
+        HStack(spacing: 8) {
+            CompoundIcon(\.userProfile)
+                .foregroundStyle(.compound.iconSecondary)
+            Text(NyutagL10n.notInContacts)
+                .font(.compound.bodySM)
+                .foregroundStyle(.compound.textSecondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if context.viewState.nyutagCanCheckContacts {
+                Button(NyutagL10n.notInContactsCheck) { context.send(viewAction: .nyutagCheckContacts) }
+                    .font(.compound.bodySMSemibold)
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(.compound.bgSubtleSecondary)
     }
     
     private var pinnedItemsBanner: some View {

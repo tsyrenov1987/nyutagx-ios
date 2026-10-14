@@ -15,7 +15,8 @@ struct NyutagAppSettingsHook: AppSettingsHookProtocol {
         appSettings.override(accountProviders: [.managed(serverName: NyutagTunnel.serverName, baseURL: homeserver, canUseServerName: false)],
                              allowOtherAccountProviders: false,
                              hideBrandChrome: false,
-                             pushGatewayBaseURL: appSettings.pushGatewayBaseURL,
+                             // Свой Sygnal на ядре: адрес вызывает сам сервер Нютага (loopback), телефон к нему не ходит.
+                             pushGatewayBaseURL: "http://127.0.0.1:5000",
                              oAuthRedirectURL: appSettings.oAuthRedirectURL,
                              oAuthClientURIPath: appSettings.oAuthClientURIPath,
                              websiteURL: appSettings.websiteURL,

@@ -1,0 +1,16 @@
+
+
+/* Нютаг: подписи пушей — ключи, которые шлёт Sygnal (loc-key), подставляет сама iOS. */
+"Notification" = "Мэдээсэл";
+"MSG_FROM_USER" = "%@: шэнэ бэшэг";
+"MSG_FROM_USER_WITH_CONTENT" = "%1$@: %2$@";
+"MSG_FROM_USER_IN_ROOM" = "%1$@ «%2$@» бүлэгтэ: шэнэ бэшэг";
+"MSG_FROM_USER_IN_ROOM_WITH_CONTENT" = "%1$@ «%2$@» бүлэгтэ: %3$@";
+"IMAGE_FROM_USER" = "%1$@ фото эльгээбэ";
+"IMAGE_FROM_USER_IN_ROOM" = "%1$@ «%3$@» бүлэгтэ фото эльгээбэ";
+"ACTION_FROM_USER" = "* %1$@ %2$@";
+"ACTION_FROM_USER_IN_ROOM" = "%1$@: * %2$@ %3$@";
+"VOICE_CALL_FROM_USER" = "%@ хонходоно";
+"VIDEO_CALL_FROM_USER" = "%@ видео хонходоно";
+"USER_INVITE_TO_NAMED_ROOM" = "%1$@ таниие «%2$@» бүлэгтэ уряална";
+"USER_INVITE_TO_CHAT" = "%@: шэнэ бэшэг";

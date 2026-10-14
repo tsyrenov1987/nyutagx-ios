@@ -1752,3 +1752,17 @@
 "troubleshoot_notifications_test_unified_push_title" = "Check UnifiedPush";
 "vulkan_not_supported_dialog_content_android" = "Your device is too old, a device with Android 8 or newer is required.";
 "vulkan_not_supported_dialog_title_android" = "Rendering maps is not supported";
+
+/* Нютаг: подписи пушей — ключи, которые шлёт Sygnal (loc-key), подставляет сама iOS. */
+"MSG_FROM_USER" = "%@: new message";
+"MSG_FROM_USER_WITH_CONTENT" = "%1$@: %2$@";
+"MSG_FROM_USER_IN_ROOM" = "%1$@ in %2$@: new message";
+"MSG_FROM_USER_IN_ROOM_WITH_CONTENT" = "%1$@ in %2$@: %3$@";
+"IMAGE_FROM_USER" = "%1$@ sent a photo";
+"IMAGE_FROM_USER_IN_ROOM" = "%1$@ sent a photo to %3$@";
+"ACTION_FROM_USER" = "* %1$@ %2$@";
+"ACTION_FROM_USER_IN_ROOM" = "%1$@: * %2$@ %3$@";
+"VOICE_CALL_FROM_USER" = "Call from %@";
+"VIDEO_CALL_FROM_USER" = "Video call from %@";
+"USER_INVITE_TO_NAMED_ROOM" = "%1$@ invited you to %2$@";
+"USER_INVITE_TO_CHAT" = "%@: new message";

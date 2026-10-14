@@ -180,15 +180,19 @@ final class NotificationManager: NSObject, NotificationManagerProtocol {
     
     private func setPusher(with deviceToken: Data, clientProxy: ClientProxyProtocol) async -> Bool {
         do {
-            let defaultPayload = APNSPayload(aps: APSInfo(mutableContent: 1,
+            // Нютаг: расширение уведомлений не ходит через туннель кильватера, поэтому текст и звук задаёт шлюз Sygnal
+            // (полный формат: отправитель, чат, текст незашифрованных сообщений), подписи — ключи Localizable.strings.
+            let defaultPayload = APNSPayload(aps: APSInfo(mutableContent: nil,
                                                           alert: APSAlert(locKey: "Notification",
-                                                                          locArgs: [])),
-                                             pusherNotificationClientIdentifier: clientProxy.pusherNotificationClientIdentifier)
+                                                                          locArgs: []),
+                                                          sound: "default"),
+                                             pusherNotificationClientIdentifier: clientProxy.pusherNotificationClientIdentifier,
+                                             receiverID: clientProxy.userID)
             
             let configuration = try PusherConfiguration(identifiers: .init(pushkey: deviceToken.base64EncodedString(),
                                                                            appId: appSettings.pusherAppID),
                                                         kind: .http(data: .init(url: appSettings.pushGatewayNotifyEndpoint.absoluteString,
-                                                                                format: .eventIdOnly,
+                                                                                format: nil,
                                                                                 defaultPayload: defaultPayload.toJsonString())),
                                                         appDisplayName: "\(InfoPlistReader.main.bundleDisplayName) (iOS)",
                                                         deviceDisplayName: UIDevice.current.name,

@@ -361,3 +361,5 @@ You can choose to publish your group in your homeserver public group directory."
 "state_event_room_third_party_revoked_invite_by_you" = "You revoked the invitation for %1$@ to join the group";
 "state_event_room_topic_removed" = "%1$@ removed the group topic";
 "state_event_room_topic_removed_by_you" = "You removed the group topic";
+"nyutag_not_in_contacts" = "This person is not in your contacts";
+"nyutag_not_in_contacts_check" = "Check contacts";
