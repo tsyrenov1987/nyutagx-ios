@@ -444,7 +444,8 @@ final nonisolated class AppSettings: @unchecked Sendable {
     @UserPreference(defaultValue: false)
     var messageMultiSelectEnabled: Bool
     
-    @UserPreference(defaultValue: ProcessInfo().isiOSAppOnMac)
+    /// Нютаг: поиск по сообщениям (локальный индекс, в т.ч. шифрованные чаты) включён у всех.
+    @UserPreference(defaultValue: true)
     var globalSearchEnabled: Bool
     
     @UserPreference(defaultValue: false)

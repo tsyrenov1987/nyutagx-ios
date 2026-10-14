@@ -222,6 +222,7 @@
 "screen_edit_profile_title" = "Профиль заһаха";
 "screen_edit_room_address_room_address_section_footer" = "Каталог болон урилгада богони холбоос.";
 "screen_home_tab_chats" = "Хөөрэлдөөнүүд";
+"screen_home_tab_search" = "Бэдэрэлгэ";
 "screen_home_tab_spaces" = "Оршонууд";
 "screen_identity_confirmation_subtitle" = "Хамгаалалтатай харилсаае тохируулхын тула баталгын аргые шэлэгты.";
 "screen_identity_confirmation_title" = "Өөрыгөө баталагты";
@@ -292,6 +293,12 @@
 "screen_roomlist_filter_unreads_empty_state_title" = "Уншаагүй мэдээсэл үгы!";
 "screen_roomlist_knock_event_sent_description" = "Гуйлта эльгээгдэбэ";
 "screen_roomlist_main_space_title" = "Хөөрэлдөөнүүд";
+"screen_search_empty_state_message" = "Чат, зурбас бэдэрэгты";
+"screen_search_empty_state_title" = "Бэдэржэ эхилэгты…";
+"screen_search_no_results_message" = "«%1$@» гэжэ юумэн олдобогүй. Ондоо үгэ оролдогты.";
+"screen_search_recent_searches" = "Һүүлшын бэдэрэлгэнүүд";
+"screen_search_tab_chats" = "Чадууд";
+"screen_search_tab_messages" = "Зурбаснууд";
 "screen_security_and_privacy_room_address_section_footer" = "Каталог болон урилгада богони холбоос.";
 "screen_session_verification_cancelled_subtitle" = "Юумэн буруу болобо: хүсэлтын саг дүүрээ али арсагдаа.";
 "screen_session_verification_complete_subtitle" = "Мүнөө та нүгөө түхеэрэлгэ дээрээ мэдээсэлнүүдые аюулгүйгөөр уншажа, эльгээжэ болохот.";

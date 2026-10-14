@@ -112,6 +112,7 @@
 "screen_create_room_add_people_title" = "Invite people";
 "screen_create_room_room_address_section_footer" = "A short link for the directory and invitations.";
 "screen_edit_room_address_room_address_section_footer" = "A short link for the directory and invitations.";
+"screen_home_tab_search" = "Search";
 "screen_join_room_cancel_knock_action" = "Cancel request";
 "screen_join_room_cancel_knock_alert_title" = "Cancel request?";
 "screen_join_room_knock_action" = "Request to join";
@@ -133,6 +134,12 @@
 "screen_roomlist_empty_title" = "Your chats will appear here";
 "screen_roomlist_filter_people" = "Personal";
 "screen_roomlist_knock_event_sent_description" = "Request sent";
+"screen_search_empty_state_message" = "Search for chats and messages";
+"screen_search_empty_state_title" = "Start searching…";
+"screen_search_no_results_message" = "There are no results for “%1$@”. Try a new search term.";
+"screen_search_recent_searches" = "Recent searches";
+"screen_search_tab_chats" = "Chats";
+"screen_search_tab_messages" = "Messages";
 "screen_security_and_privacy_room_address_section_footer" = "A short link for the directory and invitations.";
 "screen_signout_confirmation_dialog_content" = "Are you sure you want to sign out?";
 "screen_signout_confirmation_dialog_submit" = "Sign out";

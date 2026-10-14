@@ -179,6 +179,7 @@
 "screen_decline_and_block_report_user_option_description" = "Пожаловаться на эту группу серверу Вашего аккаунта.";
 "screen_edit_room_address_room_address_section_footer" = "Короткая ссылка для каталога и приглашений.";
 "screen_edit_room_address_title" = "Редактировать адрес группы";
+"screen_home_tab_search" = "Поиск";
 "screen_home_tab_spaces" = "Сообщества";
 "screen_invite_users_confirm_dialog_subtitle_multiple_users" = "У тебя пока нет чатов с этими контактами. Подтверди приглашение в эту группу, прежде чем продолжить.";
 "screen_invite_users_confirm_dialog_title_mutiple_users" = "Пригласить новых участников в эту группу?";
@@ -273,6 +274,12 @@
 "screen_roomlist_knock_event_sent_description" = "Заявка отправлена";
 "screen_roomlist_tombstoned_room_description" = "Уровень группы был повышен";
 "screen_roomlist_your_spaces" = "Ваши сообщества";
+"screen_search_empty_state_message" = "Ищите чаты и сообщения";
+"screen_search_empty_state_title" = "Начните поиск…";
+"screen_search_no_results_message" = "По запросу «%1$@» ничего не найдено. Попробуйте другие слова.";
+"screen_search_recent_searches" = "Недавние запросы";
+"screen_search_tab_chats" = "Чаты";
+"screen_search_tab_messages" = "Сообщения";
 "screen_security_and_privacy_ask_to_join_multiple_spaces_members_option_description" = "Кто угодно из авторизованных сообществ может присоединиться, а всем остальным необходимо запросить доступ.";
 "screen_security_and_privacy_enable_encryption_alert_description" = "Шифрование группы нельзя будет отключить, история сообщений будет видна только участникам группы с момента их присоединения к группе.
 Никто, кроме членов группы, не сможет читать сообщения. Это может помешать ботам и мостам работать корректно.
