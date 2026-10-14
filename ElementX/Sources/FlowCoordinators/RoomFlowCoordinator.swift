@@ -974,6 +974,8 @@ class RoomFlowCoordinator: FlowCoordinatorProtocol {
                 stateMachine.tryEvent(.presentKnockRequestsListScreen)
             case .presentMediaEventsTimeline:
                 stateMachine.tryEvent(.presentMediaEventsTimeline)
+            case .nyutagPresentSearch:
+                presentNyutagRoomSearch()
             case .presentSecurityAndPrivacyScreen:
                 stateMachine.tryEvent(.presentSecurityAndPrivacyScreen)
             case .presentRecipientDetails(let userID):
@@ -1001,6 +1003,20 @@ class RoomFlowCoordinator: FlowCoordinatorProtocol {
                 }
             }
         }
+    }
+    
+    /// Нютаг: поиск по чату; найденное открывается в ленте чата на этом сообщении.
+    private func presentNyutagRoomSearch() {
+        guard let clientProxy = userSession.clientProxy as? ClientProxy,
+              let model = NyutagRoomSearchModel(roomID: roomProxy.id,
+                                                clientProxy: clientProxy,
+                                                mediaProvider: userSession.mediaProvider,
+                                                onSelect: { [weak self] eventID in
+                                                    self?.stateMachine.tryEvent(.presentRoom(presentationAction: .eventFocus(.init(eventID: eventID, shouldSetPin: false))))
+                                                }) else {
+            return
+        }
+        navigationStackCoordinator.push(NyutagRoomSearchCoordinator(model: model))
     }
     
     private func presentKnockRequestsList() {

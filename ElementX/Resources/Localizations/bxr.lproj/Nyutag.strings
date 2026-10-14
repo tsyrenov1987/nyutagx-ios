@@ -184,6 +184,10 @@
 "nyutag_presence_recently" = "һаяхан байгаа";
 "nyutag_presence_today_at" = "%1$@ сагта байгаа";
 "nyutag_presence_yesterday_at" = "үсэгэлдэр %1$@ сагта байгаа";
+"nyutag_room_search" = "Хөөрэлдөөнөөр бэдэрхэ";
+"nyutag_room_search_empty" = "Юуншье олдобогүй";
+"nyutag_room_search_hint" = "Бэшэг бэдэрхэ";
+"nyutag_room_search_note" = "Энэ утаһан дээрэ бэдэрэлгэ эхилхэһээ урда ерэһэн бэшэгүүд олдохогүй байжа магад.";
 "nyutag_saved_messages" = "Хадагалһан";
 "nyutag_saved_messages_topic" = "Өөртөө тэмдэглэл, холбоос, файлнууд";
 "nyutag_signup_code_title" = "Урилгын кодоо оруулагты";

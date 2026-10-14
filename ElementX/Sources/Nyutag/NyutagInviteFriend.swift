@@ -4,6 +4,8 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import Combine
+import SwiftUI
 import UIKit
 
 /// Одноразовый код от сервиса ядра и системное «Поделиться» с готовым текстом — как приглашение в WhatsApp/Telegram.
@@ -84,5 +86,228 @@ enum NyutagSavedMessages {
             userIndicatorController.submitIndicator(UserIndicator(title: L10n.errorUnknown, icon: \.errorSolid))
             return nil
         }
+    }
+}
+
+// MARK: - Поиск по чату
+
+/// Поиск сообщений внутри одного чата: тот же локальный индекс SDK, что у общего поиска (шифрованные чаты тоже),
+/// но в выдаче только эта комната. Индекс общий на все чаты, поэтому страницы дочитываются, пока не наберётся экран.
+@MainActor
+final class NyutagRoomSearchModel: ObservableObject {
+    struct Item: Identifiable {
+        let message: SearchScreenMessage
+        let senderID: String
+        let senderAvatarURL: URL?
+        
+        var id: String { message.id }
+        
+        /// Текст без префикса «Имя: » — имя и так стоит заголовком строки.
+        var body: AttributedString? {
+            guard let preview = message.preview else { return nil }
+            let prefix = message.senderName.count + 2
+            guard preview.characters.count >= prefix else { return preview }
+            return AttributedString(preview[preview.index(preview.startIndex, offsetByCharacters: prefix)...])
+        }
+    }
+    
+    @Published var query = ""
+    @Published private(set) var items: [Item] = []
+    @Published private(set) var isLoading = false
+    @Published private(set) var searchedQuery = ""
+    
+    let mediaProvider: MediaProviderProtocol
+    let onSelect: (String) -> Void
+    
+    private let roomID: String
+    private let userID: String
+    private let service: SearchServiceProxyProtocol
+    private var endReached = false
+    private var wanted = pageSize
+    private var queryTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
+    
+    private static let pageSize = 20
+    
+    init?(roomID: String, clientProxy: ClientProxy, mediaProvider: MediaProviderProtocol, onSelect: @escaping (String) -> Void) {
+        guard let service = clientProxy.nyutagMakeSearchService() else { return nil }
+        self.roomID = roomID
+        userID = clientProxy.userID
+        self.service = service
+        self.mediaProvider = mediaProvider
+        self.onSelect = onSelect
+        
+        service.resultsPublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] results in self?.update(with: results) }
+            .store(in: &cancellables)
+        
+        service.paginationStatePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                guard let self else { return }
+                isLoading = state == .loading
+                if case .idle(let endReached) = state {
+                    self.endReached = endReached
+                    fillIfNeeded()
+                }
+            }
+            .store(in: &cancellables)
+        
+        $query
+            .removeDuplicates()
+            .sink { [weak self] query in self?.search(query) }
+            .store(in: &cancellables)
+    }
+    
+    func loadMore() {
+        wanted = items.count + Self.pageSize
+        fillIfNeeded()
+    }
+    
+    private func search(_ query: String) {
+        queryTask?.cancel()
+        let query = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else {
+            searchedQuery = ""
+            items = []
+            return
+        }
+        queryTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(250))
+            guard let self, !Task.isCancelled else { return }
+            searchedQuery = query
+            endReached = false
+            wanted = Self.pageSize
+            isLoading = true
+            if case .failure = await service.setQuery(query) {
+                isLoading = false
+            }
+        }
+    }
+    
+    private func update(with results: [SearchServiceResult]) {
+        guard !searchedQuery.isEmpty else {
+            items = []
+            return
+        }
+        items = results
+            .filter { $0.roomID == roomID }
+            .map { result in
+                Item(message: SearchScreenMessage(result, roomSummary: nil, isOutgoing: result.sender.id == userID),
+                     senderID: result.sender.id,
+                     senderAvatarURL: result.sender.avatarURL)
+            }
+        fillIfNeeded()
+    }
+    
+    private func fillIfNeeded() {
+        guard !searchedQuery.isEmpty, !isLoading, !endReached, items.count < wanted else { return }
+        Task { await service.paginate() }
+    }
+}
+
+final class NyutagRoomSearchCoordinator: CoordinatorProtocol {
+    private let model: NyutagRoomSearchModel
+    
+    init(model: NyutagRoomSearchModel) {
+        self.model = model
+    }
+    
+    func toPresentable() -> AnyView {
+        AnyView(NyutagRoomSearchScreen(model: model))
+    }
+}
+
+private struct NyutagRoomSearchScreen: View {
+    @ObservedObject var model: NyutagRoomSearchModel
+    @FocusState private var isSearchFocused: Bool
+    
+    var body: some View {
+        List {
+            if model.searchedQuery.isEmpty {
+                Text(NyutagL10n.roomSearchNote)
+                    .font(.compound.bodySM)
+                    .foregroundStyle(.compound.textSecondary)
+                    .listRowSeparator(.hidden)
+            } else if model.items.isEmpty, !model.isLoading {
+                Text(NyutagL10n.roomSearchEmpty)
+                    .font(.compound.bodyLG)
+                    .foregroundStyle(.compound.textSecondary)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 32)
+                    .listRowSeparator(.hidden)
+            }
+            
+            ForEach(model.items) { item in
+                NyutagRoomSearchCell(item: item, mediaProvider: model.mediaProvider) {
+                    model.onSelect(item.id)
+                }
+                .onAppear {
+                    if item.id == model.items.last?.id {
+                        model.loadMore()
+                    }
+                }
+            }
+            
+            if model.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+            }
+        }
+        .listStyle(.plain)
+        .scrollDismissesKeyboard(.immediately)
+        .searchable(text: $model.query, placement: .navigationBarDrawer(displayMode: .always), prompt: NyutagL10n.roomSearchHint)
+        .searchFocused($isSearchFocused)
+        .navigationTitle(NyutagL10n.roomSearch)
+        .navigationBarTitleDisplayMode(.inline)
+        .onAppear { isSearchFocused = true }
+    }
+}
+
+private struct NyutagRoomSearchCell: View {
+    let item: NyutagRoomSearchModel.Item
+    let mediaProvider: MediaProviderProtocol
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .top, spacing: 12) {
+                LoadableAvatarImage(url: item.senderAvatarURL,
+                                    name: item.message.senderName,
+                                    contentID: item.senderID,
+                                    avatarSize: .user(on: .startChat),
+                                    mediaProvider: mediaProvider)
+                    .accessibilityHidden(true)
+                
+                VStack(alignment: .leading, spacing: 2) {
+                    HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        Text(item.message.senderName)
+                            .font(.compound.bodyMDSemibold)
+                            .foregroundStyle(.compound.textPrimary)
+                            .lineLimit(1)
+                        Spacer()
+                        Text(item.message.timestamp.formattedMinimal())
+                            .font(.compound.bodySM)
+                            .foregroundStyle(.compound.textSecondary)
+                    }
+                    
+                    if let media = item.message.mediaPreview {
+                        Text(media.title)
+                            .font(.compound.bodyMD)
+                            .foregroundStyle(.compound.textSecondary)
+                            .lineLimit(2)
+                    } else if let body = item.body {
+                        Text(body)
+                            .font(.compound.bodyMD)
+                            .foregroundStyle(.compound.textSecondary)
+                            .lineLimit(3)
+                    }
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }

@@ -152,6 +152,11 @@ struct RoomDetailsScreen: View {
     
     private var aboutSection: some View {
         Section {
+            ListRow(label: .default(title: NyutagL10n.roomSearch, icon: \.search),
+                    kind: .navigationLink {
+                        context.send(viewAction: .nyutagProcessTapSearch)
+                    })
+            
             ListRow(label: .default(title: L10n.screenMediaBrowserTitle, icon: \.image),
                     kind: .navigationLink {
                         context.send(viewAction: .processTapMediaEvents)

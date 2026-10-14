@@ -87,6 +87,10 @@
 "nyutag_presence_recently" = "last seen recently";
 "nyutag_presence_today_at" = "last seen at %1$@";
 "nyutag_presence_yesterday_at" = "last seen yesterday at %1$@";
+"nyutag_room_search" = "Search in chat";
+"nyutag_room_search_empty" = "Nothing found";
+"nyutag_room_search_hint" = "Search messages";
+"nyutag_room_search_note" = "Messages that arrived before search was turned on for this device may not be found.";
 "nyutag_saved_messages" = "Saved messages";
 "nyutag_saved_messages_topic" = "Notes, links and files for yourself";
 "nyutag_signup_code_title" = "Enter the invitation code";

@@ -33,6 +33,10 @@ nonisolated enum NyutagL10n {
     static var communityInvite: String { tr("nyutag_community_invite") }
     static var savedMessages: String { tr("nyutag_saved_messages") }
     static var savedMessagesTopic: String { tr("nyutag_saved_messages_topic") }
+    static var roomSearch: String { tr("nyutag_room_search") }
+    static var roomSearchHint: String { tr("nyutag_room_search_hint") }
+    static var roomSearchEmpty: String { tr("nyutag_room_search_empty") }
+    static var roomSearchNote: String { tr("nyutag_room_search_note") }
     static var communityMembers: String { tr("nyutag_community_members") }
     static var communityLeave: String { tr("nyutag_community_leave") }
     static var communityGroups: String { tr("nyutag_community_groups") }

@@ -1745,6 +1745,16 @@ extension ClientProxy {
         }
     }
     
+    /// Отдельный экземпляр поиска (у каждого свой запрос и выдача) — для поиска внутри одного чата.
+    func nyutagMakeSearchService() -> SearchServiceProxyProtocol? {
+        guard let userID = try? client.userId() else { return nil }
+        return SearchServiceProxy(searchService: client.searchService(),
+                                  timelineItemFactory: RoomTimelineItemFactory(userID: userID,
+                                                                               attributedStringBuilder: AttributedStringBuilder(cacheKey: "nyutag-room-search",
+                                                                                                                                mentionBuilder: PlainMentionBuilder()),
+                                                                               stateEventStringBuilder: RoomStateEventStringBuilder(userID: userID)))
+    }
+    
     /// Аватар-закладка «Избранного» (тот же PNG, что в Android `nyutag/saved_avatar.png`): mxc-адрес или nil.
     func nyutagUploadSavedMessagesAvatar() async -> String? {
         guard let data = Data(base64Encoded: Self.nyutagSavedMessagesAvatarPNG) else { return nil }

@@ -26,6 +26,7 @@ enum RoomDetailsScreenViewModelAction: Equatable {
     case startCall(isVoiceCall: Bool)
     case displayPinnedEventsTimeline
     case displayMediaEventsTimeline
+    case nyutagDisplaySearch
     case displayKnockingRequests
     case displaySecurityAndPrivacy
     case displayReportRoom
@@ -231,6 +232,7 @@ enum RoomDetailsScreenViewAction {
     case processTapCall(isVoiceCall: Bool)
     case processTapPinnedEvents
     case processTapMediaEvents
+    case nyutagProcessTapSearch
     case processTapRequestsToJoin
     case processTapReport
 }

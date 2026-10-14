@@ -32,6 +32,7 @@ enum RoomDetailsScreenCoordinatorAction {
     case presentCall(isVoiceCall: Bool)
     case presentPinnedEventsTimeline
     case presentMediaEventsTimeline
+    case nyutagPresentSearch
     case presentKnockingRequestsListScreen
     case presentSecurityAndPrivacyScreen
     case presentReportRoomScreen
@@ -90,6 +91,8 @@ final class RoomDetailsScreenCoordinator: CoordinatorProtocol {
                     actionsSubject.send(.presentPinnedEventsTimeline)
                 case .displayMediaEventsTimeline:
                     actionsSubject.send(.presentMediaEventsTimeline)
+                case .nyutagDisplaySearch:
+                    actionsSubject.send(.nyutagPresentSearch)
                 case .displayKnockingRequests:
                     actionsSubject.send(.presentKnockingRequestsListScreen)
                 case .displaySecurityAndPrivacy:

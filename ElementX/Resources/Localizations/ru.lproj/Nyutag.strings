@@ -134,6 +134,10 @@
 "nyutag_presence_recently" = "был(а) недавно";
 "nyutag_presence_today_at" = "был(а) в %1$@";
 "nyutag_presence_yesterday_at" = "был(а) вчера в %1$@";
+"nyutag_room_search" = "Поиск по чату";
+"nyutag_room_search_empty" = "Ничего не найдено";
+"nyutag_room_search_hint" = "Найти сообщение";
+"nyutag_room_search_note" = "Сообщения, пришедшие до включения поиска на этом устройстве, могут не находиться.";
 "nyutag_saved_messages" = "Избранное";
 "nyutag_saved_messages_topic" = "Заметки, ссылки и файлы для себя";
 "nyutag_signup_code_title" = "Введите код приглашения";
