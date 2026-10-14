@@ -34,6 +34,7 @@ final class MessageTextView: UITextView, PillAttachmentViewProviderDelegate, UIG
     
     @objc func nyutagDoubleTapped() {
         guard let itemID = nyutagQuickReactionItemID else { return }
+        NyutagQuickReaction.feedback()
         timelineContext?.send(viewAction: .toggleReaction(key: NyutagQuickReaction.key, itemID: itemID))
     }
     

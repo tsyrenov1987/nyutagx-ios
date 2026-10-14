@@ -242,6 +242,7 @@ struct TimelineItemBubbledStylerView<Content: View>: View {
     }
     
     private func sendQuickReaction() {
+        NyutagQuickReaction.feedback()
         context.send(viewAction: .toggleReaction(key: NyutagQuickReaction.key, itemID: timelineItem.id))
     }
     
@@ -964,4 +965,9 @@ extension EnvironmentValues {
 /// Нютаг: реакция на двойной тап, как в Telegram.
 enum NyutagQuickReaction {
     static let key = "❤️"
+    
+    /// Тактильный щелчок при двойном тапе — как у реакций.
+    static func feedback() {
+        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    }
 }
