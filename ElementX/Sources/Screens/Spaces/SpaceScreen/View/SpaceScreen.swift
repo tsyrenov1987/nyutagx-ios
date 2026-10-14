@@ -22,11 +22,19 @@ struct SpaceScreen: View {
                 if !isEditModeActive {
                     SpaceHeaderView(spaceServiceRoom: context.viewState.space,
                                     mediaProvider: context.mediaProvider)
+                        .background(alignment: .top) { NyutagCommunityCover() }
+                    
+                    NyutagCommunityActions(context: context)
                 }
                 
                 if context.viewState.shouldShowEmptyState {
                     emptyState
+                } else if context.viewState.shouldShowMemberEmptyState, !isEditModeActive {
+                    NyutagCommunityMemberEmptyState()
                 } else {
+                    if !isEditModeActive, !context.viewState.rooms.isEmpty {
+                        NyutagCommunitySectionHeader(count: context.viewState.rooms.count)
+                    }
                     rooms
                 }
             }
@@ -179,6 +187,109 @@ struct SpaceScreen: View {
                 .accessibilityIdentifier(A11yIdentifiers.spaceScreen.moreMenu)
             }
         }
+    }
+}
+
+// MARK: - Нютаг: страница сообщества
+
+/// Обложка в фирменных цветах за аватаром сообщества (полоса до середины аватара, как во ВКонтакте/Telegram).
+private struct NyutagCommunityCover: View {
+    var body: some View {
+        LinearGradient(colors: [Color(NyutagBrand.blue), Color(NyutagBrand.bluePressed)],
+                       startPoint: .topLeading,
+                       endPoint: .bottomTrailing)
+            .overlay(alignment: .bottomTrailing) {
+                Circle()
+                    .fill(Color.white.opacity(0.12))
+                    .frame(width: 120, height: 120)
+                    .offset(x: 40, y: 50)
+            }
+            .frame(height: 64)
+            .clipped()
+            .accessibilityHidden(true)
+    }
+}
+
+/// Ряд круглых кнопок под шапкой: пригласить, участники, настройки (админу), выйти.
+private struct NyutagCommunityActions: View {
+    @Bindable var context: SpaceScreenViewModel.Context
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 8) {
+            if let permalink = context.viewState.permalink {
+                ShareLink(item: NyutagL10n.communityInviteText(context.viewState.space.name, permalink.absoluteString)) {
+                    label(NyutagL10n.communityInvite, icon: \.userAdd)
+                }
+            }
+            
+            if let roomProxy = context.viewState.roomProxy {
+                Button { context.send(viewAction: .displayMembers(roomProxy: roomProxy)) } label: {
+                    label(NyutagL10n.communityMembers, icon: \.user)
+                }
+                
+                if context.viewState.isSpaceManagementEnabled {
+                    Button { context.send(viewAction: .spaceSettings(roomProxy: roomProxy)) } label: {
+                        label(L10n.commonSettings, icon: \.settings)
+                    }
+                }
+            }
+            
+            Button { context.send(viewAction: .leaveSpace) } label: {
+                label(NyutagL10n.communityLeave, icon: \.leave, isDestructive: true)
+            }
+        }
+        .buttonStyle(.plain)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(Color.compound.borderDisabled)
+                .frame(height: 1 / UIScreen.main.scale)
+        }
+    }
+    
+    private func label(_ title: String, icon: KeyPath<CompoundIcons, Image>, isDestructive: Bool = false) -> some View {
+        VStack(spacing: 6) {
+            CompoundIcon(icon, size: .medium, relativeTo: .compound.bodyLG)
+                .foregroundStyle(isDestructive ? .compound.iconCriticalPrimary : .compound.iconAccentPrimary)
+                .frame(width: 48, height: 48)
+                .background(Circle().fill(Color.compound.bgSubtleSecondary))
+            Text(title)
+                .font(.compound.bodySM)
+                .foregroundStyle(isDestructive ? .compound.textCriticalPrimary : .compound.textPrimary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity)
+        .contentShape(Rectangle())
+    }
+}
+
+/// «Группы · 3» над списком.
+private struct NyutagCommunitySectionHeader: View {
+    let count: Int
+    
+    var body: some View {
+        Text("\(NyutagL10n.communityGroups) · \(count)")
+            .font(.compound.bodySMSemibold)
+            .foregroundStyle(.compound.textSecondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 4)
+            .accessibilityAddTraits(.isHeader)
+    }
+}
+
+/// Пустое сообщество для обычного участника: без кнопок админа, с понятной подсказкой.
+private struct NyutagCommunityMemberEmptyState: View {
+    var body: some View {
+        TitleAndIcon(title: NyutagL10n.communityEmptyTitle,
+                     subtitle: NyutagL10n.communityEmptySubtitle,
+                     icon: \.room,
+                     iconStyle: .defaultSolid)
+            .padding(.horizontal, 24)
+            .padding(.top, 40)
     }
 }
 

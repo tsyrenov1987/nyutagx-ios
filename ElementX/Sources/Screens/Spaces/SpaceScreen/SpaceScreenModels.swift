@@ -47,6 +47,11 @@ struct SpaceScreenViewState: BindableState {
         rooms.isEmpty && paginationState == .endReached && canEditChildren
     }
     
+    /// Нютаг: пустое сообщество глазами обычного участника — без кнопок админа, с подсказкой.
+    var shouldShowMemberEmptyState: Bool {
+        rooms.isEmpty && paginationState == .endReached && !canEditChildren
+    }
+    
     var visibleRooms: [SpaceServiceRoom] {
         if editMode == .inactive {
             rooms

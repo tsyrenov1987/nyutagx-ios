@@ -30,6 +30,13 @@ nonisolated enum NyutagL10n {
     static var communitiesMine: String { tr("nyutag_communities_mine") }
     static var communitiesAll: String { tr("nyutag_communities_all") }
     static var communitiesEmpty: String { tr("nyutag_communities_empty") }
+    static var communityInvite: String { tr("nyutag_community_invite") }
+    static var communityMembers: String { tr("nyutag_community_members") }
+    static var communityLeave: String { tr("nyutag_community_leave") }
+    static var communityGroups: String { tr("nyutag_community_groups") }
+    static var communityEmptyTitle: String { tr("nyutag_community_empty_title") }
+    static var communityEmptySubtitle: String { tr("nyutag_community_empty_subtitle") }
+    static func communityInviteText(_ name: String, _ link: String) -> String { tr("nyutag_community_invite_text", name, link) }
     
     // MARK: Регистрация
     

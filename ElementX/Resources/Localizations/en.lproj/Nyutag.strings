@@ -17,6 +17,13 @@
 "nyutag_community_closed" = "Closed";
 "nyutag_community_closed_badge" = "Closed · by request";
 "nyutag_community_closed_description" = "Anyone can find it in search and send a request. An admin approves new members.";
+"nyutag_community_empty_subtitle" = "The admin will add them soon. Meanwhile, invite friends.";
+"nyutag_community_empty_title" = "No groups yet";
+"nyutag_community_groups" = "Groups";
+"nyutag_community_invite" = "Invite";
+"nyutag_community_invite_text" = "Join the community «%1$@» in Nyutag: %2$@";
+"nyutag_community_leave" = "Leave";
+"nyutag_community_members" = "Members";
 "nyutag_community_open" = "Open";
 "nyutag_community_open_description" = "Anyone can find it in search and join.";
 "nyutag_community_requests" = "Requests to join";

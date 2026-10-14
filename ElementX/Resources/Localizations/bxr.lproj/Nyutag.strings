@@ -114,6 +114,13 @@
 "nyutag_community_closed" = "Хаалттай";
 "nyutag_community_closed_badge" = "Хаалттай · гуйлтаар";
 "nyutag_community_closed_description" = "Хэн бүхэн бэдэржэ олоод, гуйлта эльгээхэ. Шэнэ гэшүүдые админ зүбшөөрнэ.";
+"nyutag_community_empty_subtitle" = "Удангүй админ нэмэхэ. Тиихэдээ нүхэдөө уригты.";
+"nyutag_community_empty_title" = "Эндэ бүлэг одоохондоо үгы";
+"nyutag_community_groups" = "Бүлэгүүд";
+"nyutag_community_invite" = "Уриха";
+"nyutag_community_invite_text" = "Нютаг соо «%1$@» оршондо оро: %2$@";
+"nyutag_community_leave" = "Гараха";
+"nyutag_community_members" = "Гэшүүд";
 "nyutag_community_open" = "Нээлттэй";
 "nyutag_community_open_description" = "Хэн бүхэн бэдэржэ олоод, ороод болохо.";
 "nyutag_community_requests" = "Орохо гуйлтанууд";
