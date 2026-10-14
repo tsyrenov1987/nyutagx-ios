@@ -59,6 +59,19 @@ def ru_terms(value):
         value = value.replace(old, new).replace(old.capitalize(), new.capitalize())
     return value
 
+# Английские термины так же: room -> group, space -> community (только целые слова, «subspaces» не трогаем).
+EN_FORMS = [("Rooms", "Groups"), ("rooms", "groups"), ("Room", "Group"), ("room", "group"),
+            ("Spaces", "Communities"), ("spaces", "communities"), ("Space", "Community"), ("space", "community")]
+
+def en_terms(value):
+    for old, new in EN_FORMS:
+        value = re.sub(rf"\b{old}\b", new, value)
+    return value
+
+EN_PLURAL_FIXES = {
+    "screen_room_timeline_state_changes": {"one": "%1$d change in chat", "other": "%1$d changes in chat"},
+}
+
 # Ошибки склонения в русском переводе Element (few = «2–4»): правим в своей таблице, Localizable не трогаем.
 RU_PLURAL_FIXES = {
     "common_member_count": {"few": "%1$d участника"},
@@ -79,6 +92,11 @@ def main():
         replaced = ru_terms(value)
         if replaced != value:
             tables["ru"][key] = replaced
+    # 3а. Английские термины.
+    for key, value in parse_strings(os.path.join(LOC, "en.lproj/Localizable.strings")).items():
+        replaced = en_terms(value)
+        if replaced != value:
+            tables["en"][key] = replaced
     # 1. Свои ключи из Android.
     tables["en"].update(android_strings("**/src/main/res/values/strings_nyutag.xml"))
     tables["ru"].update(android_strings("**/src/main/res/values-ru/strings_nyutag.xml"))
@@ -92,21 +110,22 @@ def main():
                     if row.get(lang):
                         tables[lang][row["key"]] = row[lang]
     # Множественные формы с терминами (Localizable.stringsdict -> Nyutag.stringsdict).
-    with open(os.path.join(LOC, "ru.lproj/Localizable.stringsdict"), "rb") as f:
-        plurals = plistlib.load(f)
-    changed = {}
-    for key, entry in plurals.items():
-        fixes = RU_PLURAL_FIXES.get(key, {})
-        for variable in entry.values():
-            if isinstance(variable, dict):
-                variable.update(fixes)
-        dumped = plistlib.dumps(entry).decode("utf-8")
-        replaced = ru_terms(dumped)
-        if replaced != dumped or fixes:
-            changed[key] = plistlib.loads(replaced.encode("utf-8"))
-    with open(os.path.join(LOC, "ru.lproj/Nyutag.stringsdict"), "wb") as f:
-        plistlib.dump(changed, f, sort_keys=True)
-    print(f"ru plurals: {len(changed)}")
+    for lang, terms, plural_fixes in (("ru", ru_terms, RU_PLURAL_FIXES), ("en", en_terms, EN_PLURAL_FIXES)):
+        with open(os.path.join(LOC, f"{lang}.lproj/Localizable.stringsdict"), "rb") as f:
+            plurals = plistlib.load(f)
+        changed = {}
+        for key, entry in plurals.items():
+            fixes = plural_fixes.get(key, {})
+            for variable in entry.values():
+                if isinstance(variable, dict):
+                    variable.update(fixes)
+            dumped = plistlib.dumps(entry).decode("utf-8")
+            replaced = terms(dumped)
+            if replaced != dumped or fixes:
+                changed[key] = plistlib.loads(replaced.encode("utf-8"))
+        with open(os.path.join(LOC, f"{lang}.lproj/Nyutag.stringsdict"), "wb") as f:
+            plistlib.dump(changed, f, sort_keys=True)
+        print(f"{lang} plurals: {len(changed)}")
     for lang, table in tables.items():
         os.makedirs(os.path.join(LOC, f"{lang}.lproj"), exist_ok=True)
         with open(os.path.join(LOC, f"{lang}.lproj/Nyutag.strings"), "w", encoding="utf-8") as f:
@@ -163,8 +182,10 @@ def android():
         # Ручные переопределения модуля app важнее, и дублей ресурсов быть не должно.
         manual = android_names(f"app/src/main/res/{qualifier}/strings_nyutag_overrides.xml")
         elements = {}
-        if lang == "ru":
-            for path in sorted(glob.glob(os.path.join(ANDROID, "**/src/main/res/values-ru/translations.xml"), recursive=True)):
+        if lang in ("ru", "en"):
+            source, terms, plural_fixes = {"ru": ("values-ru/translations.xml", ru_terms, RU_PLURAL_FIXES),
+                                           "en": ("values/localazy.xml", en_terms, EN_PLURAL_FIXES)}[lang]
+            for path in sorted(glob.glob(os.path.join(ANDROID, "**/src/main/res/" + source), recursive=True)):
                 if "/build/" in path:
                     continue
                 for el in ET.parse(path).getroot():
@@ -174,12 +195,12 @@ def android():
                     texts = [el] if el.tag == "string" else list(el) if el.tag == "plurals" else []
                     if any(len(t) for t in texts):
                         continue
-                    fixes = RU_PLURAL_FIXES.get(name, {}) if el.tag == "plurals" else {}
+                    fixes = plural_fixes.get(name, {}) if el.tag == "plurals" else {}
                     changed = bool(fixes)
                     for t in texts:
                         if t.get("quantity") in fixes:
                             t.text = '"' + fixes[t.get("quantity")] + '"'
-                        new = ru_terms(t.text or "")
+                        new = terms(t.text or "")
                         changed |= new != (t.text or "")
                         t.text = new
                     if changed:

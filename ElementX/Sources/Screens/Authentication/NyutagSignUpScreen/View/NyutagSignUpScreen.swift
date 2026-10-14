@@ -125,7 +125,15 @@ struct NyutagSignUpScreen: View {
     private var title: String {
         switch state.step {
         case .code: NyutagL10n.signUpCodeTitle
-        case .contact: state.canSkipContact ? NyutagL10n.signUpContactTitleOptional : NyutagL10n.signUpContactTitle
+        case .contact:
+            if state.canSkipContact {
+                NyutagL10n.signUpContactTitleOptional
+            } else if state.availableMedia.count > 1 {
+                NyutagL10n.signUpContactTitle
+            } else {
+                // Один способ (сейчас только почта) — называем его, а не «Телефон или e-mail».
+                context.medium == .phone ? NyutagL10n.contactPhone : NyutagL10n.contactEmail
+            }
         case .name: NyutagL10n.signUpNameTitle
         case .password: NyutagL10n.signUpPasswordTitle
         }

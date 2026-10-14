@@ -310,6 +310,7 @@
 "screen_search_tab_chats" = "Чадууд";
 "screen_search_tab_messages" = "Зурбаснууд";
 "screen_security_and_privacy_room_address_section_footer" = "Каталог болон урилгада богони холбоос.";
+"screen_server_confirmation_message_login_matrix_dot_org" = "Өөрынхидтэеэ бэшэлгэ, дуудалга. Бүхы юумэн таны утаһан дээрэ шифрлэгдэнэ.";
 "screen_session_verification_cancelled_subtitle" = "Юумэн буруу болобо: хүсэлтын саг дүүрээ али арсагдаа.";
 "screen_session_verification_complete_subtitle" = "Мүнөө та нүгөө түхеэрэлгэ дээрээ мэдээсэлнүүдые аюулгүйгөөр уншажа, эльгээжэ болохот.";
 "screen_session_verification_enter_recovery_key" = "Һэргээлгын түлхюур оруулха";

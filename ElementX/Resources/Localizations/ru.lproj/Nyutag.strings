@@ -313,6 +313,7 @@
 Кроме того, вы можете опубликовать свою группу в каталоге групп сервера.";
 "screen_security_and_privacy_room_publishing_section_header" = "Публикация групп";
 "screen_security_and_privacy_room_visibility_section_footer" = "Адреса групп позволяют находить группы и присоединяться к ним. Также вы сможете делиться группой с другими пользователями.";
+"screen_server_confirmation_message_login_matrix_dot_org" = "Переписка и звонки для своих. Всё шифруется на ваших устройствах.";
 "screen_share_location_live_location_disclaimer_title" = "История вашего местоположения в режиме реального времени будет сохранена в группе и станет доступна участникам после окончания сессии.";
 "screen_share_location_live_location_missing_permissions" = "У тебя нет прав на то, чтобы делиться своим текущим местоположением в этой группе";
 "screen_signout_confirmation_dialog_content" = "Вы уверены, что хотите выйти из аккаунта на этом устройстве?";

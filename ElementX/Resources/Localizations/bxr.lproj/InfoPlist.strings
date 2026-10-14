@@ -1,0 +1,6 @@
+"NSCameraUsageDescription" = "Нютагта фото, видео буулгажа эльгээхын тула камера хэрэгтэй.";
+"NSFaceIDUsageDescription" = "Таны аккаунт Face ID-гаар хамгаалагдана.";
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Чатуудта мүнөө байһан газараа харуулхын тула программа ара талада ажаллажа байхада байрлалда хандаха хэрэгтэй.";
+"NSLocationWhenInUseUsageDescription" = "Чатуудта мүнөө байһан газараа али ойрын газарнуудые эльгээхэ аргатай болгоно.";
+"NSMicrophoneUsageDescription" = "Нютагта дуун мэдээсэлнүүд болон дуудалгада микрофон хэрэгтэй.";
+"NSPhotoLibraryUsageDescription" = "Зураг, видео фото сангта хадагалха аргатай болгоно.";
