@@ -67,8 +67,11 @@ struct RoomScreenViewState: BindableState {
     var activeRoomCallIntent: CallIntent?
     /// Whether or not the user is already part of a call in another room.
     var isParticipatingInOngoingCall = false
+    /// Нютаг: в комнате только вы (например «Избранное») — звонить некому.
+    var nyutagIsAlone = false
     var shouldShowCallButton: Bool {
         isCallingEnabled && !isParticipatingInOngoingCall // Hide the join call button when already in the call
+            && (hasOngoingCall || !nyutagIsAlone)
     }
     
     /// Whether the current room is a DM

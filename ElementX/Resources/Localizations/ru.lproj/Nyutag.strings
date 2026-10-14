@@ -21,6 +21,8 @@
 "common_creating_space" = "Создание сообщества…";
 "common_current_user_left_room" = "Покинул группу";
 "common_current_user_left_space" = "Покинуть сообщество";
+"common_favourite" = "Отмеченный";
+"common_favourited" = "Отмеченный";
 "common_invite_unknown_profile" = "Такой пользователь не найден, приглашение может не дойти.";
 "common_leaving_room" = "Покидаем группу";
 "common_leaving_space" = "Покидаем сообщество";
@@ -260,6 +262,7 @@
 "screen_room_roles_and_permissions_room_details" = "Информация о группе";
 "screen_room_roles_and_permissions_space_details" = "Информация о сообществе";
 "screen_room_single_knock_request_title" = "%1$@ хочет присоединиться к этой группе";
+"screen_room_timeline_beginning_of_room" = "Это начало чата «%1$@».";
 "screen_room_timeline_legacy_call" = "Звонок не поддерживается. Попросите собеседника обновить Нютаг.";
 "screen_room_timeline_no_permission_to_post" = "Вы не можете писать сообщения в этой группе";
 "screen_room_timeline_tombstoned_room_action" = "Перейти в новую группу";
@@ -268,6 +271,9 @@
 "screen_roomlist_a11y_create_message" = "Создать новую беседу или группу";
 "screen_roomlist_empty_message" = "В Нютаг попадают по приглашению. Позовите друзей и родных.";
 "screen_roomlist_empty_title" = "Здесь появятся ваши чаты";
+"screen_roomlist_filter_favourites" = "Отмеченные";
+"screen_roomlist_filter_favourites_empty_state_subtitle" = "Отметить чат можно в его настройках.\nА пока снимите фильтр, чтобы увидеть остальные чаты.";
+"screen_roomlist_filter_favourites_empty_state_title" = "Отмеченных чатов пока нет";
 "screen_roomlist_filter_people" = "Личные";
 "screen_roomlist_filter_rooms" = "Группы";
 "screen_roomlist_filter_rooms_empty_state_title" = "Вас пока нет ни в одной группе";

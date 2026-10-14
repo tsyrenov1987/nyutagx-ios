@@ -69,12 +69,13 @@ enum NyutagSavedMessages {
         userIndicatorController.submitIndicator(UserIndicator(id: indicatorID, type: .modal, title: L10n.commonLoading, persistent: true))
         defer { userIndicatorController.retractIndicatorWithId(indicatorID) }
         
+        let avatarURL = await proxy.nyutagUploadSavedMessagesAvatar()
         switch await clientProxy.createRoom(name: NyutagL10n.savedMessages,
                                             topic: NyutagL10n.savedMessagesTopic,
                                             accessType: .private,
                                             isSpace: false,
                                             userIDs: [],
-                                            avatarURL: nil,
+                                            avatarURL: avatarURL.flatMap(URL.init(string:)),
                                             aliasLocalPart: nil) {
         case .success(let roomID):
             _ = await proxy.nyutagSetSavedMessagesRoomID(roomID)

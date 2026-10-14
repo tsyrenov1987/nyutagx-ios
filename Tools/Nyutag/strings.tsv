@@ -80,3 +80,9 @@ screen_search_tab_messages	Messages	Сообщения	Зурбаснууд
 screen_search_no_results_message	There are no results for “%1$@”. Try a new search term.	По запросу «%1$@» ничего не найдено. Попробуйте другие слова.	«%1$@» гэжэ юумэн олдобогүй. Ондоо үгэ оролдогты.
 screen_search_recent_searches	Recent searches	Недавние запросы	Һүүлшын бэдэрэлгэнүүд
 screen_home_tab_search	Search	Поиск	Бэдэрэлгэ
+common_favourite		Отмеченный	
+common_favourited		Отмеченный	
+screen_roomlist_filter_favourites		Отмеченные	
+screen_roomlist_filter_favourites_empty_state_title		Отмеченных чатов пока нет	
+screen_roomlist_filter_favourites_empty_state_subtitle		Отметить чат можно в его настройках.\nА пока снимите фильтр, чтобы увидеть остальные чаты.	
+screen_room_timeline_beginning_of_room		Это начало чата «%1$@».	

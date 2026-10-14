@@ -94,7 +94,7 @@ struct RoomDetailsScreenViewState: BindableState {
     
     var shortcuts: [RoomDetailsScreenViewShortcut] {
         var shortcuts: [RoomDetailsScreenViewShortcut] = [.mute]
-        if !ProcessInfo.processInfo.isiOSAppOnMac, isCallingEnabled, canJoinCall {
+        if !ProcessInfo.processInfo.isiOSAppOnMac, isCallingEnabled, canJoinCall, isDirect || joinedMembersCount > 1 { // Нютаг: одному звонить некому
             if isDirect {
                 shortcuts.append(.voiceCall)
             }

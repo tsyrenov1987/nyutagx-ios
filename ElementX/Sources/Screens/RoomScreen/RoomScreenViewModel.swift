@@ -372,6 +372,7 @@ class RoomScreenViewModel: RoomScreenViewModelType, RoomScreenViewModelProtocol 
         state.activeRoomCallIntent = roomInfo.activeRoomCallIntent
         state.hasSuccessor = roomInfo.successor != nil
         state.isDM = roomInfo.isDM
+        state.nyutagIsAlone = !roomInfo.isDM && roomInfo.activeMembersCount <= 1
         
         let pinnedEventIDs = roomInfo.pinnedEventIDs
         // Only update the loading state of the banner
