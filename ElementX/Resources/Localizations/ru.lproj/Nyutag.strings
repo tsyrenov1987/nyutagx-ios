@@ -134,6 +134,7 @@
 "nyutag_signup_title" = "Регистрация";
 "nyutag_signup_username_edit" = "Изменить ник";
 "nyutag_signup_username_footer" = "Ник для входа: %1$@";
+"nyutag_source_code" = "Исходный код";
 "nyutag_start_have_invite" = "У меня есть приглашение";
 "nyutag_start_sign_in" = "Войти";
 "screen_advanced_settings_show_media_timeline_private_rooms" = "В приватных группах";

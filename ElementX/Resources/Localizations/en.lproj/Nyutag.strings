@@ -89,6 +89,7 @@
 "nyutag_signup_title" = "Create an account";
 "nyutag_signup_username_edit" = "Change username";
 "nyutag_signup_username_footer" = "Username for signing in: %1$@";
+"nyutag_source_code" = "Source code";
 "nyutag_start_have_invite" = "I have an invitation";
 "nyutag_start_sign_in" = "Sign in";
 "screen_create_room_add_people_title" = "Invite people";

@@ -15,6 +15,7 @@ nonisolated enum NyutagL10n {
     static var loginIdentifierHint: String { tr("nyutag_login_identifier_hint") }
     static var loginNoAccount: String { tr("nyutag_login_no_account") }
     static var inviteFriend: String { tr("nyutag_invite_friend") }
+    static var sourceCode: String { tr("nyutag_source_code") }
     static var newChat: String { tr("nyutag_new_chat") }
     static var newGroup: String { tr("nyutag_new_group") }
     

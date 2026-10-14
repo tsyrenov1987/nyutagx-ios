@@ -12,6 +12,7 @@ import SwiftUI
 struct LegalInformationScreen: View {
     let context: LegalInformationScreenViewModel.Context
     @Environment(\.openURL) private var openURL
+    private static let nyutagSourceURL = URL(string: "https://github.com/tsyrenov1987/nyutagx-ios")! // swiftlint:disable:this force_unwrapping
     
     var body: some View {
         Form {
@@ -22,6 +23,12 @@ struct LegalInformationScreen: View {
                         kind: .button { openURL(context.viewState.acceptableUseURL) })
                 ListRow(label: .plain(title: L10n.commonPrivacyPolicy),
                         kind: .button { openURL(context.viewState.privacyURL) })
+            }
+            
+            // Нютаг: исходники этой сборки (AGPL-3.0) — ссылка обязана быть доступна каждому пользователю.
+            Section {
+                ListRow(label: .plain(title: NyutagL10n.sourceCode),
+                        kind: .button { openURL(Self.nyutagSourceURL) })
             }
         }
         .compoundList()
