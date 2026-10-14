@@ -13,7 +13,6 @@ import SwiftUI
 struct SettingsScreen: View {
     @Bindable var context: SettingsScreenViewModel.Context
     @State private var language = NyutagLanguage.current
-    @State private var isLanguageChanged = false
     
     private var shouldHideManageAccountSection: Bool {
         context.viewState.accountProfileURL == nil &&
@@ -122,13 +121,7 @@ struct SettingsScreen: View {
                                   items: NyutagLanguage.allCases.map { (title: $0.nativeName, tag: $0) }))
                 .onChange(of: language) { _, newValue in
                     NyutagLanguage.select(newValue)
-                    isLanguageChanged = true
                 }
-        } footer: {
-            if isLanguageChanged {
-                Text(NyutagL10n.languageRestart)
-                    .compoundListSectionFooter()
-            }
         }
     }
     

@@ -17,9 +17,17 @@ struct AuthenticationStartScreen: View {
     
     /// Нютаг: язык выбирается прямо на старте — бурятского нет среди языков iOS.
     @State private var language = NyutagLanguage.current
+    /// Нютаг: при первом запуске сначала выбор языка, потом всё остальное.
+    @State private var isChoosingLanguage = !NyutagLanguage.isChosen
     
     var body: some View {
-        if case let .welcomeBack(classicAppAccount) = context.viewState.classicAppMode,
+        if isChoosingLanguage {
+            NyutagLanguageChoiceView { choice in
+                NyutagLanguage.select(choice)
+                language = choice
+                isChoosingLanguage = false
+            }
+        } else if case let .welcomeBack(classicAppAccount) = context.viewState.classicAppMode,
            classicAppAccount.state.isServerSupported != false {
             AuthenticationClassicAppAccountView(context: context, classicAppAccount: classicAppAccount)
         } else {
@@ -227,5 +235,49 @@ struct AuthenticationStartScreen_Previews: PreviewProvider, TestablePreview {
                                                   appSettings: .volatile(),
                                                   mediaProvider: MediaProviderMock(.init()),
                                                   userIndicatorController: UserIndicatorControllerMock())
+    }
+}
+
+/// Нютаг: первый экран — выбор языка. Подписи на всех трёх языках сразу, чтобы их понял любой.
+private struct NyutagLanguageChoiceView: View {
+    let onSelect: (NyutagLanguage) -> Void
+    
+    private let languages: [NyutagLanguage] = [.buryat, .russian, .english]
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            Spacer()
+            
+            Image(systemName: "globe")
+                .font(.system(size: 56))
+                .foregroundStyle(Color(NyutagBrand.blue))
+                .padding(.bottom, 24)
+                .accessibilityHidden(true)
+            
+            Text("Хэлэн · Язык · Language")
+                .font(.compound.headingMDBold)
+                .foregroundStyle(.compound.textPrimary)
+                .multilineTextAlignment(.center)
+                .padding(.bottom, 40)
+            
+            VStack(spacing: 12) {
+                ForEach(languages) { language in
+                    Button { onSelect(language) } label: {
+                        Text(language.nativeName)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.compound(.secondary))
+                    .accessibilityIdentifier("nyutagLanguageChoice-\(language.rawValue)")
+                }
+            }
+            
+            Spacer()
+            Spacer()
+        }
+        .padding(.horizontal, 24)
+        .readableFrame()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.compound.bgCanvasDefault.ignoresSafeArea())
+        .navigationBarHidden(true)
     }
 }

@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import Observation
 
 /// Бурятского нет среди языков iOS, поэтому язык выбирается в самом приложении (на старте и в настройках).
 /// Для бурятского запасной язык — русский: чего нет в черновике перевода, покажется по-русски.
@@ -28,6 +29,11 @@ nonisolated enum NyutagLanguage: String, CaseIterable, Identifiable {
         }
     }
     
+    /// Язык уже выбран (на первом экране или в настройках) — иначе первым показывается выбор языка.
+    static var isChosen: Bool {
+        UserDefaults.standard.object(forKey: key) != nil
+    }
+    
     static var current: NyutagLanguage {
         NyutagLanguage(rawValue: UserDefaults.standard.string(forKey: key) ?? "") ?? .system
     }
@@ -41,6 +47,7 @@ nonisolated enum NyutagLanguage: String, CaseIterable, Identifiable {
             UserDefaults.standard.removeObject(forKey: "AppleLanguages")
         }
         apply()
+        Task { @MainActor in NyutagLanguageRevision.shared.value += 1 }
     }
     
     /// Вызывается при запуске до первого экрана.
@@ -56,4 +63,11 @@ nonisolated enum NyutagLanguage: String, CaseIterable, Identifiable {
         case .english: ["en"]
         }
     }
+}
+
+/// Счётчик смен языка: корневой экран привязан к нему через `.id`, поэтому весь интерфейс перерисовывается сразу.
+@MainActor @Observable
+final class NyutagLanguageRevision {
+    static let shared = NyutagLanguageRevision()
+    var value = 0
 }

@@ -37,6 +37,7 @@ struct Application: App {
     var body: some Scene {
         WindowGroup(id: SceneDelegate.mainSceneID) {
             appCoordinator.toPresentable()
+                .id(NyutagLanguageRevision.shared.value) // Нютаг: новый язык — сразу на всех экранах
                 .statusBarHidden(shouldHideStatusBar)
                 .overlay(alignment: .top) {
                     if #available(iOS 26, *), ProcessInfo.processInfo.isiOSAppOnMac {
