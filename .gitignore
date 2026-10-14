@@ -36,3 +36,6 @@ test_output
 # Only commit Pkl packages (there may be other caches in here).
 Components/Secrets/vendor/*
 !Components/Secrets/vendor/package-2
+
+# Нютаг: путь кильватера с ключом клиента — только локально (см. nyutag-catalogue.txt.example)
+ElementX/Resources/Nyutag/nyutag-catalogue.txt

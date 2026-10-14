@@ -1,3 +1,9 @@
+## Нютаг (Nyutag)
+
+Форк [Element X iOS](https://github.com/element-hq/element-x-ios) под мессенджер «Нютаг» (nyutag.chat): транспорт «Кильватер», регистрация по приглашению, сообщества, бурятский язык. Лицензия та же — AGPL-3.0-only (см. `LICENSE`).
+
+Для сборки нужен путь до входа с клиентским ключом, которого в репозитории нет: положите его в `ElementX/Resources/Nyutag/nyutag-catalogue.txt` (образец — `nyutag-catalogue.txt.example`), затем `xcodegen`. Без файла приложение собирается, но не подключается.
+
 [![Element iOS Matrix room #element-x-ios:matrix.org](https://img.shields.io/matrix/element-x-ios:matrix.org.svg?label=%23element-x-ios:matrix.org&logo=matrix&server_fqdn=matrix.org)](https://matrix.to/#/#element-x-ios:matrix.org)
 ![GitHub](https://img.shields.io/github/license/element-hq/element-x-ios)
 

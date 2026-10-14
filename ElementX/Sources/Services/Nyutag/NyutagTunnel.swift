@@ -25,8 +25,15 @@ nonisolated enum NyutagTunnel {
     /// Наш CA как `SecCertificate` — якорь для URLSession и WKWebView.
     static let caCertificate = SecCertificateCreateWithData(nil, caDER as CFData)! // swiftlint:disable:this force_unwrapping
 
-    /// Путь: kilvaterd de3:8080 с ключом Нютага (свой, не ключ флота Farvater).
-    private static let catalogue = "kilvater://REDACTED-OLD-NYUTAG-KEY@188.245.11.63:8080?sni=kv.assetnorth.org&fp=chrome&path=%2Fconnect#de3-kilvater-8080"
+    /// Путь до входа (`kilvater://<ключ>@host:port?…`) с ключом Нютага, не ключом флота Farvater.
+    /// В репозитории его нет: `ElementX/Resources/Nyutag/nyutag-catalogue.txt` лежит в `.gitignore`,
+    /// рядом — `nyutag-catalogue.txt.example`. Без файла туннель не поднимется и приложение не подключится.
+    private static let catalogue: String? = {
+        guard let url = Bundle.main.url(forResource: "nyutag-catalogue", withExtension: "txt"),
+              let text = try? String(contentsOf: url, encoding: .utf8) else { return nil }
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }()
 
     private static let state = Mutex(State())
 
@@ -70,6 +77,10 @@ nonisolated enum NyutagTunnel {
 
     /// Случайный порт на loopback; повтор, если порт занят.
     private static func start(network: String) -> Int? {
+        guard let catalogue else {
+            MXLog.error("Nyutag tunnel: nyutag-catalogue.txt is missing from the bundle — see nyutag-catalogue.txt.example")
+            return nil
+        }
         for _ in 0..<5 {
             let port = Int.random(in: 20000..<60000)
             var error: NSError?
