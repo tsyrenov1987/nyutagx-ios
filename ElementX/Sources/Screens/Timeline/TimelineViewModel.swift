@@ -950,6 +950,7 @@ class TimelineViewModel: TimelineViewModelType, TimelineViewModelProtocol {
         
         state.timelineState.itemsDictionary = timelineItemsDictionary
         state.timelineState.recomputeReadMarkerUniqueID()
+        state.timelineState.nyutagReadOutgoingIDs = nyutagReadOutgoingIDs(in: timelineItems)
     }
     
     private func updateViewState(item: RoomTimelineItemProtocol, groupStyle: TimelineGroupStyle) -> RoomTimelineItemViewState {
@@ -1300,4 +1301,21 @@ extension EnvironmentValues {
 
 private enum SlashCommand: String, CaseIterable {
     case join = "/join "
+}
+
+// MARK: - Нютаг
+
+private extension TimelineViewModel {
+    func nyutagReadOutgoingIDs(in timelineItems: [RoomTimelineItemProtocol]) -> Set<TimelineItemIdentifier.UniqueID> {
+        let ownUserID = roomProxy.ownUserID
+        guard let lastReadIndex = timelineItems.lastIndex(where: { item in
+            (item as? EventBasedTimelineItemProtocol)?.properties.orderedReadReceipts.contains { $0.userID != ownUserID } ?? false
+        }) else {
+            return []
+        }
+        return Set(timelineItems[...lastReadIndex].compactMap { item in
+            guard let event = item as? EventBasedTimelineItemProtocol, event.isOutgoing else { return nil }
+            return event.id.uniqueID
+        })
+    }
 }

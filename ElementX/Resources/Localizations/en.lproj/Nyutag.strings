@@ -70,8 +70,16 @@
 "nyutag_language_title" = "Language";
 "nyutag_login_identifier_hint" = "Username, phone or email";
 "nyutag_login_no_account" = "No account yet? You need an invitation code.";
+"nyutag_message_read" = "Read";
 "nyutag_new_chat" = "New chat";
 "nyutag_new_group" = "New group";
+"nyutag_presence_date" = "last seen %1$@";
+"nyutag_presence_just_now" = "last seen just now";
+"nyutag_presence_minutes_ago" = "last seen %1$d min ago";
+"nyutag_presence_online" = "online";
+"nyutag_presence_recently" = "last seen recently";
+"nyutag_presence_today_at" = "last seen at %1$@";
+"nyutag_presence_yesterday_at" = "last seen yesterday at %1$@";
 "nyutag_signup_code_title" = "Enter the invitation code";
 "nyutag_signup_contact_subtitle" = "We will send a code to confirm it. Nobody else will see it.";
 "nyutag_signup_creating" = "Creating the account…";
@@ -111,7 +119,7 @@
 "screen_onboarding_welcome_title" = "Nyutag";
 "screen_room_details_invite_people_title" = "Invite people";
 "screen_room_details_requests_to_join_title" = "Requests to join";
-"screen_room_timeline_legacy_call" = "Unsupported call. The other person should update Nyutag.";
+"screen_room_timeline_legacy_call" = "Unsupported call. Ask the caller to update Nyutag.";
 "screen_roomlist_empty_message" = "Nyutag is invite-only. Invite your friends and family.";
 "screen_roomlist_empty_title" = "Your chats will appear here";
 "screen_roomlist_filter_people" = "Personal";

@@ -90,6 +90,12 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         return NyutagCommunityPage(communities: chunk.compactMap(NyutagCommunity.init(json:)), nextBatch: json["next_batch"] as? String)
     }
     
+    /// «В сети» / «был(а) …» собеседника: SDK умеет только отправлять своё присутствие, читаем чужое сами.
+    func presence(userID: String, accessToken: String) async throws(NyutagInviteError) -> NyutagPresence {
+        let path = "/_matrix/client/v3/presence/\(userID.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed.subtracting(.init(charactersIn: "/"))) ?? userID)/status"
+        return NyutagPresence(json: try await request("GET", path, bearer: accessToken))
+    }
+    
     // MARK: - Transport
     
     private func request(_ method: String, _ path: String, body: [String: Any]? = nil, bearer: String? = nil) async throws(NyutagInviteError) -> [String: Any] {
@@ -271,5 +277,49 @@ extension String {
         if value.hasPrefix("@") || value.contains(":") { return false }
         if value.contains("@") { return true }
         return value.count(where: \.isNumber) >= 10 && value.allSatisfy { $0.isNumber || "+-() ".contains($0) }
+    }
+}
+
+// MARK: - Присутствие собеседника в шапке личного чата, как в Telegram
+
+nonisolated struct NyutagPresence: Equatable {
+    let isOnline: Bool
+    /// Когда собеседник был активен в последний раз (если сервер это знает).
+    let lastActiveDate: Date?
+    
+    init(isOnline: Bool, lastActiveDate: Date?) {
+        self.isOnline = isOnline
+        self.lastActiveDate = lastActiveDate
+    }
+    
+    init(json: [String: Any], now: Date = .now) {
+        let presence = json["presence"] as? String
+        isOnline = presence == "online" && (json["currently_active"] as? Bool ?? false)
+        lastActiveDate = (json["last_active_ago"] as? NSNumber).map { now.addingTimeInterval(-$0.doubleValue / 1000) }
+    }
+    
+    /// Подпись под именем: «в сети», «был(а) 5 мин. назад», «был(а) в 14:05», «был(а) вчера в 09:30», «был(а) 03.10.26».
+    func subtitle(now: Date = .now, calendar: Calendar = .current, locale: Locale = .current) -> String {
+        if isOnline {
+            return NyutagL10n.presenceOnline
+        }
+        guard let lastActiveDate else {
+            return NyutagL10n.presenceRecently
+        }
+        let seconds = max(0, now.timeIntervalSince(lastActiveDate))
+        if seconds < 60 {
+            return NyutagL10n.presenceJustNow
+        }
+        if seconds < 3600 {
+            return NyutagL10n.presenceMinutesAgo(Int(seconds / 60))
+        }
+        let time = lastActiveDate.formatted(Date.FormatStyle(date: .omitted, time: .shortened, locale: locale, calendar: calendar))
+        if calendar.isDate(lastActiveDate, inSameDayAs: now) {
+            return NyutagL10n.presenceTodayAt(time)
+        }
+        if let yesterday = calendar.date(byAdding: .day, value: -1, to: now), calendar.isDate(lastActiveDate, inSameDayAs: yesterday) {
+            return NyutagL10n.presenceYesterdayAt(time)
+        }
+        return NyutagL10n.presenceDate(lastActiveDate.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: locale, calendar: calendar)))
     }
 }

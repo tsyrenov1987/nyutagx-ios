@@ -64,6 +64,9 @@ RU_PLURAL_FIXES = {
     "common_member_count": {"few": "%1$d участника"},
     "common_rooms": {"one": "%1$d комната", "few": "%1$d комнаты", "many": "%1$d комнат"},
     "screen_leave_space_submit": {"few": "Покинуть %1$d комнаты и пространство"},
+    # Свёрнутые служебные события бывают и в личных чатах: «в чате», а не «в группе».
+    "screen_room_timeline_state_changes": {"one": "%1$d изменение в чате", "few": "%1$d изменения в чате",
+                                           "many": "%1$d изменений в чате", "other": "%1$d изменения в чате"},
 }
 
 def main():

@@ -309,6 +309,7 @@ class ClientProxy: ClientProxyProtocol {
         Task {
             guard case .success(true) = await isUserStatusSupported() else { return }
             client.enableAutomaticCallStatus(enabled: true)
+            await clearStaleCallStatus()
         }
         
         liveLocationOwnInfoUpdatesListenerTaskHandle = createLiveLocationOwnInfoUpdatesObserver()
@@ -783,6 +784,23 @@ class ClientProxy: ClientProxyProtocol {
         } catch {
             MXLog.error("Failed setting user status with error: \(error)")
             return .failure(.sdkError(error))
+        }
+    }
+    
+    /// Нютаг: у Tuwunel нет отложенных событий (MSC4140), поэтому если приложение закрыли посреди звонка,
+    /// `m.call` в профиле остаётся навсегда и все видят «В звонке 🎧». Отметку, поставленную до запуска
+    /// приложения и старше часа, снимаем, а свой статус пользователя ставим обратно.
+    private func clearStaleCallStatus() async {
+        let launchDate = Date.now
+        try? await Task.sleep(for: .seconds(20)) // профиль приходит с первым /sync
+        let status = userProfileSubject.value.status
+        guard let call = status.call else { return }
+        let joinedDate = call.joinedDate ?? .distantPast
+        guard joinedDate < launchDate, launchDate.timeIntervalSince(joinedDate) > 3600 else { return }
+        MXLog.info("Clearing a stale call status joined at \(joinedDate)")
+        guard case .success = await clearUserStatus() else { return }
+        if let raw = status.raw {
+            _ = await setUserStatus(raw)
         }
     }
     

@@ -27,6 +27,9 @@ struct TimelineItemStatusView: View {
         if context.viewState.timelineKind == .pinned {
             // Do not display any status when is a pinned events timeline
             EmptyView()
+        } else if context.viewState.isDM {
+            // Нютаг: в личном чате прочтение показывают ✓✓ в пузыре, аватарки под сообщениями лишние.
+            EmptyView()
         } else if context.viewState.showReadReceipts, !timelineItem.properties.orderedReadReceipts.isEmpty {
             readReceipts
         } else {

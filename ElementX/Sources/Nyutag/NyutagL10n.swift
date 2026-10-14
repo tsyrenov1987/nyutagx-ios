@@ -103,6 +103,15 @@ nonisolated enum NyutagL10n {
     }
     
     /// Как `L10n.tr`: перебирает языки пользователя (или выбранный в приложении), иначе английский.
+    static var messageRead: String { tr("nyutag_message_read") }
+    static var presenceOnline: String { tr("nyutag_presence_online") }
+    static var presenceJustNow: String { tr("nyutag_presence_just_now") }
+    static var presenceRecently: String { tr("nyutag_presence_recently") }
+    static func presenceMinutesAgo(_ minutes: Int) -> String { tr("nyutag_presence_minutes_ago", minutes) }
+    static func presenceTodayAt(_ time: String) -> String { tr("nyutag_presence_today_at", time) }
+    static func presenceYesterdayAt(_ time: String) -> String { tr("nyutag_presence_yesterday_at", time) }
+    static func presenceDate(_ date: String) -> String { tr("nyutag_presence_date", date) }
+    
     private static func tr(_ key: String, _ args: CVarArg...) -> String {
         let languages = (Bundle.overrideLocalizations ?? Bundle.app.preferredLocalizations) + ["en"]
         for language in languages {

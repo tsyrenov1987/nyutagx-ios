@@ -43,6 +43,8 @@ struct RoomScreenViewState: BindableState {
     var roomTitle = ""
     var roomAvatar: RoomAvatar
     var dmRecipientDetails = RoomHeaderView.DMRecipientDetails()
+    /// Нютаг: «в сети» / «был(а) …» собеседника под именем в личном чате.
+    var dmPresenceSubtitle: String?
     
     var lastScrollDirection: ScrollDirection?
     // This is used to control the banner

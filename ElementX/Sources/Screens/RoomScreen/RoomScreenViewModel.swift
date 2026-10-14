@@ -82,6 +82,35 @@ class RoomScreenViewModel: RoomScreenViewModelType, RoomScreenViewModelProtocol 
         Task {
             await updateVerificationBadge()
         }
+        
+        startDMPresenceUpdates()
+    }
+    
+    /// Нютаг: присутствие собеседника в личном чате, пока экран открыт (раз в 30 с, как подпись в Telegram).
+    private func startDMPresenceUpdates() {
+        Task { [weak self] in
+            while !Task.isCancelled {
+                await self?.updateDMPresence()
+                try? await Task.sleep(for: .seconds(30))
+            }
+        }
+        .store(in: &cancellables)
+    }
+    
+    private func updateDMPresence() async {
+        guard roomProxy.infoPublisher.value.isDM,
+              let dmRecipient = roomProxy.membersPublisher.value.first(where: { $0.userID != roomProxy.ownUserID }),
+              let accessToken = (clientProxy as? ClientProxy)?.nyutagAccessToken else {
+            state.dmPresenceSubtitle = nil
+            return
+        }
+        do throws(NyutagInviteError) {
+            let presence = try await NyutagInvitesService.shared.presence(userID: dmRecipient.userID, accessToken: accessToken)
+            state.dmPresenceSubtitle = presence.subtitle()
+        } catch {
+            // Сервер не отдал присутствие (выключено или сеть): подпись просто не показываем.
+            state.dmPresenceSubtitle = nil
+        }
     }
     
     override func process(viewAction: RoomScreenViewAction) {

@@ -167,8 +167,16 @@
 "nyutag_language_title" = "Хэлэн";
 "nyutag_login_identifier_hint" = "Нэрэ, утаһан али e-mail";
 "nyutag_login_no_account" = "Аккаунт үгы гү? Урилгын код хэрэгтэй.";
+"nyutag_message_read" = "Уншагдаһан";
 "nyutag_new_chat" = "Шэнэ чат";
 "nyutag_new_group" = "Шэнэ бүлэг";
+"nyutag_presence_date" = "%1$@ байгаа";
+"nyutag_presence_just_now" = "дөнгөж һая байгаа";
+"nyutag_presence_minutes_ago" = "%1$d мин. урда байгаа";
+"nyutag_presence_online" = "онлайн";
+"nyutag_presence_recently" = "һаяхан байгаа";
+"nyutag_presence_today_at" = "%1$@ сагта байгаа";
+"nyutag_presence_yesterday_at" = "үсэгэлдэр %1$@ сагта байгаа";
 "nyutag_signup_code_title" = "Урилгын кодоо оруулагты";
 "nyutag_signup_contact_subtitle" = "Баталха код эльгээхэбди. Үөр хүн харахагүй.";
 "nyutag_signup_creating" = "Аккаунт бүтээжэ байна…";

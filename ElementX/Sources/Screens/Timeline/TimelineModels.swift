@@ -315,6 +315,10 @@ struct TimelineState {
     
     var itemsDictionary = OrderedDictionary<TimelineItemIdentifier.UniqueID, RoomTimelineItemViewState>()
     
+    /// Нютаг: свои сообщения, которые кто-то другой уже прочитал (✓✓ как в Telegram). Квитанция Matrix стоит
+    /// только на последнем прочитанном событии, поэтому прочитанными считаются все свои сообщения до него.
+    var nyutagReadOutgoingIDs = Set<TimelineItemIdentifier.UniqueID>()
+    
     var uniqueIDs: [TimelineItemIdentifier.UniqueID] {
         itemsDictionary.keys.elements
     }

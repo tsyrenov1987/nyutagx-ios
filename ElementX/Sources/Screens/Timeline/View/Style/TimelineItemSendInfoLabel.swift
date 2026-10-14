@@ -17,7 +17,8 @@ extension View {
                               context: TimelineViewModel.Context) -> some View {
         modifier(TimelineItemSendInfoModifier(sendInfo: .init(timelineItem: timelineItem,
                                                               adjustedDeliveryStatus: adjustedDeliveryStatus,
-                                                              hasContentScanningFailure: hasContentScanningFailure),
+                                                              hasContentScanningFailure: hasContentScanningFailure,
+                                                              isReadByOthers: context.viewState.timelineState.nyutagReadOutgoingIDs.contains(timelineItem.id.uniqueID)),
                                               // A gallery announces this when entering it instead.
                                               isAccessibilityHidden: timelineItem is GalleryRoomTimelineItem,
                                               context: context))
@@ -113,6 +114,8 @@ private struct TimelineItemSendInfoLabel: View {
                 CompoundIcon(statusIcon, size: .xSmall, relativeTo: .compound.bodyXS)
                     .accessibilityLabel(statusIconAccessibilityLabel ?? "")
                     .accessibilityHidden(statusIconAccessibilityLabel == nil)
+            } else if let delivery = sendInfo.delivery {
+                NyutagDeliveryMarks(delivery: delivery)
             }
         }
         .font(.compound.bodyXS)
@@ -136,9 +139,17 @@ private struct TimelineItemSendInfo {
         case hidden
     }
     
+    /// Нютаг: отметки у своих сообщений, как в Telegram: 🕓 отправляется, ✓ отправлено, ✓✓ прочитано.
+    enum Delivery {
+        case sending
+        case sent
+        case read
+    }
+    
     let itemID: TimelineItemIdentifier
     let localizedString: String
     var status: Status?
+    var delivery: Delivery?
     let layoutType: LayoutType
     
     var foregroundStyle: Color {
@@ -158,9 +169,20 @@ private struct TimelineItemSendInfo {
 private extension TimelineItemSendInfo {
     init(timelineItem: EventBasedTimelineItemProtocol,
          adjustedDeliveryStatus: TimelineItemDeliveryStatus?,
-         hasContentScanningFailure: Bool = false) {
+         hasContentScanningFailure: Bool = false,
+         isReadByOthers: Bool = false) {
         itemID = timelineItem.id
         localizedString = timelineItem.localizedSendInfo
+        
+        delivery = if !timelineItem.isOutgoing {
+            nil
+        } else if case .sending = adjustedDeliveryStatus {
+            .sending
+        } else if case .sendingFailed = adjustedDeliveryStatus {
+            nil
+        } else {
+            isReadByOthers ? .read : .sent
+        }
         
         status = if case .sendingFailed = adjustedDeliveryStatus {
             .sendingFailed
@@ -262,6 +284,33 @@ struct TimelineItemSendInfoLabel_Previews: PreviewProvider, TestablePreview {
                                                       localizedString: "09:47 AM",
                                                       status: .encryptionForwarder(.test),
                                                       layoutType: .horizontal()))
+        }
+    }
+}
+
+/// Нютаг: 🕓 / ✓ / ✓✓ рядом со временем своего сообщения.
+private struct NyutagDeliveryMarks: View {
+    let delivery: TimelineItemSendInfo.Delivery
+    
+    var body: some View {
+        switch delivery {
+        case .sending:
+            Image(systemName: "clock")
+                .font(.compound.bodyXS)
+                .accessibilityLabel(L10n.commonSending)
+        case .sent:
+            Image(systemName: "checkmark")
+                .font(.compound.bodyXS.weight(.semibold))
+                .accessibilityLabel(L10n.commonSent)
+        case .read:
+            HStack(spacing: -6) {
+                Image(systemName: "checkmark")
+                Image(systemName: "checkmark")
+            }
+            .font(.compound.bodyXS.weight(.semibold))
+            .foregroundStyle(.compound.iconAccentPrimary)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(NyutagL10n.messageRead)
         }
     }
 }

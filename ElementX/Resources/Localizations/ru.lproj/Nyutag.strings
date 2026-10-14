@@ -115,8 +115,16 @@
 "nyutag_language_title" = "Язык";
 "nyutag_login_identifier_hint" = "Имя, телефон или e-mail";
 "nyutag_login_no_account" = "Нет аккаунта? Нужен код приглашения.";
+"nyutag_message_read" = "Прочитано";
 "nyutag_new_chat" = "Новый чат";
 "nyutag_new_group" = "Новая группа";
+"nyutag_presence_date" = "был(а) %1$@";
+"nyutag_presence_just_now" = "был(а) только что";
+"nyutag_presence_minutes_ago" = "был(а) %1$d мин. назад";
+"nyutag_presence_online" = "в сети";
+"nyutag_presence_recently" = "был(а) недавно";
+"nyutag_presence_today_at" = "был(а) в %1$@";
+"nyutag_presence_yesterday_at" = "был(а) вчера в %1$@";
 "nyutag_signup_code_title" = "Введите код приглашения";
 "nyutag_signup_contact_subtitle" = "Пришлём код для подтверждения. Его никто не увидит.";
 "nyutag_signup_creating" = "Создаём аккаунт…";
@@ -242,7 +250,7 @@
 "screen_room_roles_and_permissions_room_details" = "Информация о группе";
 "screen_room_roles_and_permissions_space_details" = "Информация о сообществе";
 "screen_room_single_knock_request_title" = "%1$@ хочет присоединиться к этой группе";
-"screen_room_timeline_legacy_call" = "Звонок не поддерживается. Собеседнику нужно обновить Нютаг.";
+"screen_room_timeline_legacy_call" = "Звонок не поддерживается. Попросите собеседника обновить Нютаг.";
 "screen_room_timeline_no_permission_to_post" = "Вы не можете писать сообщения в этой группе";
 "screen_room_timeline_tombstoned_room_action" = "Перейти в новую группу";
 "screen_room_timeline_tombstoned_room_message" = "Эта группа была заменена и больше не активна";

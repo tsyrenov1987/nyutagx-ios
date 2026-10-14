@@ -91,6 +91,9 @@ nonisolated extension EventBasedTimelineItemProtocol {
             let iconSize = UIFontMetrics(forTextStyle: textStyle).scaledValue(for: 16)
             width += iconSize + 4
             height = max(height, iconSize)
+        } else if isOutgoing {
+            // Нютаг: 🕓 / ✓ / ✓✓ у своих сообщений (NyutagDeliveryMarks), самая широкая отметка — ✓✓.
+            width += UIFontMetrics(forTextStyle: textStyle).scaledValue(for: 18) + 4
         }
         // Small visual gap between the text content and the overlaid timestamp.
         width += 4

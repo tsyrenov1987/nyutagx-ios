@@ -119,11 +119,13 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>few</key>
-			<string>%1$d изменения в группе</string>
+			<string>%1$d изменения в чате</string>
 			<key>many</key>
-			<string>%1$d изменений в группе</string>
+			<string>%1$d изменений в чате</string>
 			<key>one</key>
-			<string>%1$d изменение в группе</string>
+			<string>%1$d изменение в чате</string>
+			<key>other</key>
+			<string>%1$d изменения в чате</string>
 		</dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@COUNT@</string>
