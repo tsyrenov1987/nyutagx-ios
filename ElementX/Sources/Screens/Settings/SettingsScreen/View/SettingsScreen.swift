@@ -39,6 +39,8 @@ struct SettingsScreen: View {
             
             nyutagLanguageSection
             
+            nyutagWallpaperSection
+            
             generalSection
             
             signOutSection
@@ -127,6 +129,16 @@ struct SettingsScreen: View {
                 Text(NyutagL10n.languageRestart)
                     .compoundListSectionFooter()
             }
+        }
+    }
+    
+    private var nyutagWallpaperSection: some View {
+        Section {
+            NyutagWallpaperPicker()
+                .listRowInsets(EdgeInsets())
+        } header: {
+            Text(NyutagL10n.wallpaperTitle)
+                .compoundListSectionHeader()
         }
     }
     

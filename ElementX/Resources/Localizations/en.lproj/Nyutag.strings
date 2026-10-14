@@ -113,6 +113,12 @@
 "nyutag_source_code" = "Source code";
 "nyutag_start_have_invite" = "I have an invitation";
 "nyutag_start_sign_in" = "Sign in";
+"nyutag_wallpaper_dusk" = "Dusk";
+"nyutag_wallpaper_plain" = "No pattern";
+"nyutag_wallpaper_sand" = "Sand";
+"nyutag_wallpaper_sky" = "Sky";
+"nyutag_wallpaper_steppe" = "Steppe";
+"nyutag_wallpaper_title" = "Chat background";
 "screen_create_room_add_people_title" = "Invite people";
 "screen_create_room_room_address_section_footer" = "A short link for the directory and invitations.";
 "screen_edit_room_address_room_address_section_footer" = "A short link for the directory and invitations.";

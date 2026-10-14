@@ -160,6 +160,12 @@
 "nyutag_source_code" = "Исходный код";
 "nyutag_start_have_invite" = "У меня есть приглашение";
 "nyutag_start_sign_in" = "Войти";
+"nyutag_wallpaper_dusk" = "Сумерки";
+"nyutag_wallpaper_plain" = "Без узора";
+"nyutag_wallpaper_sand" = "Песок";
+"nyutag_wallpaper_sky" = "Небо";
+"nyutag_wallpaper_steppe" = "Степь";
+"nyutag_wallpaper_title" = "Фон чатов";
 "screen_advanced_settings_show_media_timeline_private_rooms" = "В приватных группах";
 "screen_bottom_sheet_manage_room_member_ban_member_from_space_confirmation_description" = "Пользователь не сможет снова присоединиться к этому сообществу, если будет приглашен, но он по-прежнему сохранит свое членство в любых группах или подсообществах.";
 "screen_bottom_sheet_manage_room_member_kick_member_confirmation_description" = "Они снова смогут присоединиться в эту группу если их пригласят.";

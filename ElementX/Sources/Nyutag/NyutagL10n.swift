@@ -37,6 +37,12 @@ nonisolated enum NyutagL10n {
     static var roomSearchHint: String { tr("nyutag_room_search_hint") }
     static var roomSearchEmpty: String { tr("nyutag_room_search_empty") }
     static var roomSearchNote: String { tr("nyutag_room_search_note") }
+    static var wallpaperTitle: String { tr("nyutag_wallpaper_title") }
+    static var wallpaperSky: String { tr("nyutag_wallpaper_sky") }
+    static var wallpaperSteppe: String { tr("nyutag_wallpaper_steppe") }
+    static var wallpaperSand: String { tr("nyutag_wallpaper_sand") }
+    static var wallpaperDusk: String { tr("nyutag_wallpaper_dusk") }
+    static var wallpaperPlain: String { tr("nyutag_wallpaper_plain") }
     static var communityMembers: String { tr("nyutag_community_members") }
     static var communityLeave: String { tr("nyutag_community_leave") }
     static var communityGroups: String { tr("nyutag_community_groups") }
