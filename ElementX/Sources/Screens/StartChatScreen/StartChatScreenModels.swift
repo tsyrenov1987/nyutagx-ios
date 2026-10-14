@@ -44,6 +44,8 @@ struct StartChatScreenViewStateBindings {
     
     var selectedUserToInvite: UserToInvite?
     var isJoinRoomByAddressSheetPresented = false
+    /// Нютаг: открытый экран «По номеру телефона».
+    var nyutagFindByPhone: NyutagFindByPhoneModel?
 }
 
 enum StartChatScreenViewAction {
@@ -56,6 +58,8 @@ enum StartChatScreenViewAction {
     /// Нютаг: выпустить код приглашения и поделиться им.
     case nyutagInviteFriend
     case nyutagSavedMessages
+    /// Нютаг: найти знакомого по номеру; нет в Нютаге — пригласить ссылкой, QR или SMS.
+    case nyutagFindByPhone
 }
 
 enum JoinByAddressState: Equatable {

@@ -57,6 +57,8 @@ class StartChatScreenViewModel: StartChatScreenViewModelType, StartChatScreenVie
             actionsSubject.send(.createRoom)
         case .nyutagInviteFriend:
             Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
+        case .nyutagFindByPhone:
+            state.bindings.nyutagFindByPhone = NyutagFindByPhoneModel(clientProxy: userSession.clientProxy, mediaProvider: userSession.mediaProvider)
         case .nyutagSavedMessages:
             Task {
                 if let roomID = await NyutagSavedMessages.roomID(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) {

@@ -14,6 +14,8 @@ import MatrixRustSDK
 enum AppRoute: Hashable {
     /// An account provisioning link generated externally.
     case accountProvisioningLink(AccountProvisioningParameters)
+    /// Нютаг: ссылка-приглашение (`https://nyutag.chat/i/#КОД` или `nyutag://invite/КОД`) — регистрация с этим кодом.
+    case nyutagInvite(code: String)
     /// An external callback used to complete login with OAuth. This is only used when authentication
     /// requires an external app so cannot be handled directly by the web authentication session.
     case oAuthCallback(url: URL)
@@ -61,6 +63,7 @@ enum AppRoute: Hashable {
     var isAuthenticationRoute: Bool {
         switch self {
         case .accountProvisioningLink: true
+        case .nyutagInvite: true
         case .oAuthCallback: true
         default: false
         }
@@ -92,6 +95,9 @@ struct AppRouteURLParser {
     }
     
     func route(from url: URL) -> AppRoute? {
+        if let code = NyutagInvite.code(fromLink: url) {
+            return .nyutagInvite(code: code)
+        }
         for parser in urlParsers {
             if let appRoute = parser.route(from: url) {
                 return appRoute

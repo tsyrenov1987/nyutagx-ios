@@ -11,7 +11,7 @@ struct NyutagSignUpScreen: View {
     @Bindable var context: NyutagSignUpScreenViewModel.Context
     
     private enum Field: Hashable {
-        case code, contact, verifyCode, displayName, username, password, passwordRepeat
+        case code, contact, verifyCode, phone, displayName, username, password, passwordRepeat
     }
     
     @FocusState private var focus: Field?
@@ -34,6 +34,7 @@ struct NyutagSignUpScreen: View {
                     switch state.step {
                     case .code: codeStep
                     case .contact: contactStep
+                    case .phone: phoneStep
                     case .name: nameStep
                     case .password: passwordStep
                     }
@@ -68,6 +69,7 @@ struct NyutagSignUpScreen: View {
         .onChange(of: context.contact) { context.send(viewAction: .contactChanged) }
         .onChange(of: context.medium) { context.send(viewAction: .contactChanged) }
         .onChange(of: context.verifyCode) { context.send(viewAction: .verifyCodeChanged) }
+        .onChange(of: context.phone) { context.send(viewAction: .phoneChanged) }
         .onChange(of: context.displayName) { context.send(viewAction: .inputChanged) }
         .onChange(of: context.username) { context.send(viewAction: .inputChanged) }
         .onChange(of: context.password) { context.send(viewAction: .inputChanged) }
@@ -117,6 +119,7 @@ struct NyutagSignUpScreen: View {
         switch state.step {
         case .code: "envelope.open.fill"
         case .contact: context.medium == .phone ? "iphone.gen3" : "at"
+        case .phone: "iphone.gen3"
         case .name: "person.fill"
         case .password: "lock.fill"
         }
@@ -134,6 +137,7 @@ struct NyutagSignUpScreen: View {
                 // Один способ (сейчас только почта) — называем его, а не «Телефон или e-mail».
                 context.medium == .phone ? NyutagL10n.contactPhone : NyutagL10n.contactEmail
             }
+        case .phone: NyutagL10n.contactPhone
         case .name: NyutagL10n.signUpNameTitle
         case .password: NyutagL10n.signUpPasswordTitle
         }
@@ -143,6 +147,7 @@ struct NyutagSignUpScreen: View {
         switch state.step {
         case .code: NyutagL10n.signUpCodeSubtitle
         case .contact: NyutagL10n.signUpContactSubtitle
+        case .phone: NyutagL10n.signUpPhoneSubtitle
         case .name: NyutagL10n.signUpNameSubtitle
         case .password: NyutagL10n.signUpPasswordSubtitle
         }
@@ -199,6 +204,7 @@ struct NyutagSignUpScreen: View {
         let field: Field = switch step {
         case .code: .code
         case .contact: state.verification == nil ? .contact : .verifyCode
+        case .phone: .phone
         case .name: .displayName
         case .password: .password
         }
@@ -338,6 +344,22 @@ struct NyutagSignUpScreen: View {
             }
         }
         .animation(.easeInOut, value: state.verification)
+    }
+    
+    // MARK: - Phone
+    
+    private var phoneStep: some View {
+        TextField(text: $context.phone) {
+            Text(NyutagL10n.contactPhoneHint)
+                .foregroundStyle(.compound.textSecondary)
+        }
+        .textFieldStyle(.compound(labelText: NyutagL10n.contactPhone))
+        .keyboardType(.phonePad)
+        .textContentType(.telephoneNumber)
+        .autocorrectionDisabled()
+        .focused($focus, equals: .phone)
+        .onSubmit { context.send(viewAction: .next) }
+        .accessibilityIdentifier("nyutagSignUp-phone")
     }
     
     // MARK: - Name

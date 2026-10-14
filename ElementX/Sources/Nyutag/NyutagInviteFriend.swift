@@ -24,7 +24,7 @@ enum NyutagInviteFriend {
         do throws(NyutagInviteError) {
             let invite = try await NyutagInvitesService.shared.createInvite(accessToken: accessToken)
             userIndicatorController.retractIndicatorWithId(indicatorID)
-            present(text: NyutagL10n.inviteShareText(appName: InfoPlistReader.main.bundleDisplayName, code: invite.code))
+            present(text: NyutagL10n.inviteShareText(appName: InfoPlistReader.main.bundleDisplayName, code: invite.code, link: invite.link))
         } catch {
             userIndicatorController.retractIndicatorWithId(indicatorID)
             let message = switch error.errcode {

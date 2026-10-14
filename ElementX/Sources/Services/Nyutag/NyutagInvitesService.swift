@@ -17,7 +17,10 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         return NyutagSignUpConfiguration(requiresInvite: json["require_invite"] as? Bool ?? true,
                                          requiresContact: json["require_contact"] as? Bool ?? false,
                                          isEmailAvailable: json["email"] as? Bool ?? false,
-                                         isPhoneAvailable: json["msisdn"] as? Bool ?? false)
+                                         isPhoneAvailable: json["msisdn"] as? Bool ?? false,
+                                         requiresEmail: json["require_email"] as? Bool ?? false,
+                                         requiresPhone: json["require_phone"] as? Bool ?? false,
+                                         isPhoneUnverified: json["phone_unverified"] as? Bool ?? false)
     }
     
     /// Проверяет код приглашения на первом шаге регистрации; возвращает Matrix ID пригласившего.
@@ -49,10 +52,19 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         guard json["verified"] as? Bool == true else { throw .init(errcode: NyutagInviteError.verifyWrong) }
     }
     
+    /// Шаг «Телефон»: номер годен и ещё не занят; возвращает его в виде `+79…`. Нужен годный код приглашения.
+    func checkPhone(_ phone: String, inviteCode: String) async throws(NyutagInviteError) -> String {
+        let json = try await request("POST", "/_nyutag/v1/phone/check", body: ["phone": phone, "code": inviteCode])
+        guard let normalized = json["phone"] as? String else { throw .init(errcode: "NYUTAG_CLIENT_ERROR") }
+        return normalized
+    }
+    
     /// Регистрирует аккаунт и возвращает его Matrix ID; войти нужно обычным паролем.
-    func register(code: String, username: String, password: String, sid: String?) async throws(NyutagInviteError) -> String {
+    /// `phone` — номер без подтверждения (пока у сервера нет SMS): по нему человека найдут друзья.
+    func register(code: String, username: String, password: String, sid: String?, phone: String? = nil) async throws(NyutagInviteError) -> String {
         var body = ["code": code, "username": username, "password": password]
         body["sid"] = sid
+        body["phone"] = phone
         let json = try await request("POST", "/_nyutag/v1/register", body: body)
         guard let userID = json["user_id"] as? String else { throw .init(errcode: "NYUTAG_CLIENT_ERROR") }
         MXLog.info("Nyutag: registered \(userID) by invite")
@@ -72,6 +84,26 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         guard let code = json["code"] as? String else { throw .init(errcode: "NYUTAG_CLIENT_ERROR") }
         let expiresAt = (json["expires_at"] as? Double).map { Date(timeIntervalSince1970: $0 / 1000) }
         return NyutagInvite(code: code, expiresAt: expiresAt)
+    }
+    
+    /// Ищет участников по номерам телефонов: номер (как передан) → Matrix ID. Ненайденных в ответе нет.
+    func lookupPhones(_ phones: [String], accessToken: String) async throws(NyutagInviteError) -> [String: String] {
+        let json = try await request("POST", "/_nyutag/v1/lookup", body: ["phones": phones], bearer: accessToken)
+        let matches = json["matches"] as? [[String: Any]] ?? []
+        return Dictionary(matches.compactMap { match in
+            guard let phone = match["phone"] as? String, let userID = match["user_id"] as? String else { return nil }
+            return (phone, userID)
+        }, uniquingKeysWith: { first, _ in first })
+    }
+    
+    /// Указан ли у участника свой номер телефона.
+    func hasPhone(accessToken: String) async throws(NyutagInviteError) -> Bool {
+        try await request("GET", "/_nyutag/v1/me", bearer: accessToken)["phone"] as? Bool ?? false
+    }
+    
+    /// Указывает или меняет свой номер телефона.
+    func setPhone(_ phone: String, accessToken: String) async throws(NyutagInviteError) {
+        _ = try await request("POST", "/_nyutag/v1/me/phone", body: ["phone": phone], bearer: accessToken)
     }
     
     /// Каталог сообществ, как поиск сообществ во «ВКонтакте»: все пространства сервера, опубликованные в каталоге.
@@ -187,6 +219,12 @@ struct NyutagSignUpConfiguration: Equatable, Sendable {
     let requiresContact: Bool
     let isEmailAvailable: Bool
     let isPhoneAvailable: Bool
+    /// Почта обязательна (с кодом из письма).
+    var requiresEmail = false
+    /// Телефон обязателен.
+    var requiresPhone = false
+    /// Телефон пока без подтверждения: у сервера нет SMS, номер вводится на своём шаге.
+    var isPhoneUnverified = false
 }
 
 struct NyutagVerification: Equatable, Sendable {
@@ -243,6 +281,25 @@ struct NyutagInvite: Equatable, Sendable {
     /// Код вида `XXXX-XXXX`.
     let code: String
     let expiresAt: Date?
+    
+    /// Ссылка-приглашение: страница на nyutag.chat с кодом и QR; код в `#` не уходит на сервер сайта.
+    var link: String {
+        "https://nyutag.chat/i/#\(code)"
+    }
+    
+    /// Код из ссылки-приглашения (`https://nyutag.chat/i/#КОД` или `nyutag://invite/КОД`); nil — ссылка не наша.
+    static func code(fromLink url: URL) -> String? {
+        let raw: String?
+        if url.scheme == "nyutag", url.host == "invite" {
+            raw = url.pathComponents.dropFirst().first
+        } else if url.scheme == "https", url.host == "nyutag.chat", url.path.hasPrefix("/i") {
+            raw = url.fragment
+        } else {
+            raw = nil
+        }
+        guard let raw, raw.wholeMatch(of: /[0-9A-Za-z]{4}-?[0-9A-Za-z]{4}/) != nil else { return nil }
+        return raw.uppercased()
+    }
 }
 
 /// Отказ сервиса приглашений; `errcode` — машинный код: `NYUTAG_CODE_USED`, `M_USER_IN_USE` и т.п.

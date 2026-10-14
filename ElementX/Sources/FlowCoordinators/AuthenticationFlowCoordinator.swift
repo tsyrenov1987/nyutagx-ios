@@ -143,6 +143,12 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
             }
             
             stateMachine.tryEvent(.applyProvisioningParameters, userInfo: provisioningParameters)
+        case .nyutagInvite(let code):
+            if stateMachine.state != .startScreen {
+                clearRoute(animated: animated)
+            }
+            nyutagInviteCode = code
+            stateMachine.tryEvent(.nyutagSignUp)
         default:
             fatalError()
         }
@@ -438,11 +444,16 @@ class AuthenticationFlowCoordinator: FlowCoordinatorProtocol {
     
     // MARK: - Нютаг: регистрация
     
+    /// Код из ссылки-приглашения для следующего открытия регистрации.
+    private var nyutagInviteCode: String?
+    
     private func showNyutagSignUpScreen() {
         guard let serverNameOrBaseURL = appSettings.accountProviders.first?.serverNameOrBaseURL else { fatalError("Nyutag requires a managed account provider") }
         let coordinator = NyutagSignUpScreenCoordinator(parameters: .init(authenticationService: authenticationService,
                                                                           serverNameOrBaseURL: serverNameOrBaseURL,
-                                                                          userIndicatorController: userIndicatorController))
+                                                                          userIndicatorController: userIndicatorController,
+                                                                          initialCode: nyutagInviteCode ?? ""))
+        nyutagInviteCode = nil
         coordinator.actions
             .sink { [weak self] action in
                 guard let self else { return }

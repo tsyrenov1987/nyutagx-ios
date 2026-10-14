@@ -16,6 +16,8 @@ enum NyutagSignUpScreenViewModelAction {
 enum NyutagSignUpStep: Hashable {
     case code
     case contact
+    /// Телефон без SMS-кода (пока у сервера нет SMS): по номеру человека находят друзья.
+    case phone
     case name
     case password
 }
@@ -31,6 +33,8 @@ struct NyutagSignUpScreenViewState: BindableState {
     
     var verification: NyutagVerification?
     var isContactVerified = false
+    /// Номер, который сервер признал годным и свободным, в виде `+79…`.
+    var checkedPhone: String?
     var resendIn = 0
     
     /// Аккаунт уже создан, осталось войти (если вход после регистрации сорвался).
@@ -48,11 +52,13 @@ struct NyutagSignUpScreenViewState: BindableState {
     
     var availableMedia: [NyutagContactMedium] {
         guard let configuration else { return [] }
-        return [configuration.isPhoneAvailable ? .phone : nil, configuration.isEmailAvailable ? .email : nil].compactMap(\.self)
+        // Почта обязательна — на шаге «Контакт» только она, телефон спрашивается отдельно.
+        let phone = configuration.isPhoneAvailable && !configuration.requiresEmail
+        return [phone ? .phone : nil, configuration.isEmailAvailable ? .email : nil].compactMap(\.self)
     }
     
     var canSkipContact: Bool {
-        configuration?.requiresContact == false
+        configuration.map { !$0.requiresContact && !$0.requiresEmail } ?? false
     }
     
     /// Ник для входа: придуманный самим человеком или из имени.
@@ -70,6 +76,8 @@ struct NyutagSignUpScreenViewState: BindableState {
                 return !bindings.contact.trimmingCharacters(in: .whitespaces).isEmpty
             }
             return bindings.verifyCode.count == Self.verifyCodeLength
+        case .phone:
+            return bindings.phone.count(where: \.isNumber) >= Self.minPhoneDigits
         case .name:
             return !bindings.displayName.trimmingCharacters(in: .whitespaces).isEmpty && !username.isEmpty
         case .password:
@@ -84,6 +92,7 @@ struct NyutagSignUpScreenViewState: BindableState {
     static let codeLength = 9 // XXXX-XXXX
     static let verifyCodeLength = 6
     static let minPasswordLength = 8
+    static let minPhoneDigits = 10
 }
 
 struct NyutagSignUpScreenBindings {
@@ -91,6 +100,7 @@ struct NyutagSignUpScreenBindings {
     var medium: NyutagContactMedium = .phone
     var contact = ""
     var verifyCode = ""
+    var phone = ""
     var displayName = ""
     var username = ""
     var isEditingUsername = false
@@ -107,6 +117,7 @@ enum NyutagSignUpScreenViewAction {
     case codeChanged
     case contactChanged
     case verifyCodeChanged
+    case phoneChanged
     case inputChanged
 }
 

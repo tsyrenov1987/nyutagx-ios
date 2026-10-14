@@ -269,6 +269,15 @@ class AppCoordinator: AppCoordinatorProtocol, AuthenticationFlowCoordinatorDeleg
                 authenticationFlowCoordinator.handleAppRoute(appRoute, animated: appMediator.appState == .active)
                 handled = true
             }
+        case .nyutagInvite:
+            if let authenticationFlowCoordinator {
+                authenticationFlowCoordinator.handleAppRoute(appRoute, animated: appMediator.appState == .active)
+                handled = true
+            } else if userSessionFlowCoordinator != nil {
+                // Уже вошли — приглашение для нового человека, здесь ему делать нечего.
+                MXLog.info("Nyutag: invitation link ignored, already signed in")
+                handled = true
+            }
         default:
             if let userSessionFlowCoordinator {
                 userSessionFlowCoordinator.handleAppRoute(appRoute, animated: appMediator.appState == .active)
@@ -286,7 +295,7 @@ class AppCoordinator: AppCoordinatorProtocol, AuthenticationFlowCoordinatorDeleg
         
         if let route = appRouteURLParser.route(from: url) {
             switch route {
-            case .accountProvisioningLink:
+            case .accountProvisioningLink, .nyutagInvite:
                 handleAppRoute(route,
                                windowType: windowType)
             case .oAuthCallback(let url):

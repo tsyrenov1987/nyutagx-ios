@@ -86,11 +86,46 @@ nonisolated enum NyutagL10n {
     static var signUpCreating: String { tr("nyutag_signup_creating") }
     static func signUpInvitedBy(_ inviter: String) -> String { tr("nyutag_signup_invited_by", inviter) }
     static var signUpLoginAfterRegisterFailed: String { tr("nyutag_invite_error_login_after_register") }
+    static var signUpPhoneSubtitle: String { tr("nyutag_signup_phone_subtitle") }
+    
+    // MARK: Поиск по номеру телефона
+    
+    static var byPhoneTitle: String { tr("nyutag_by_phone_title") }
+    static var byPhoneSubtitle: String { tr("nyutag_by_phone_subtitle") }
+    static var byPhoneLabel: String { tr("nyutag_by_phone_label") }
+    static var byPhonePickContact: String { tr("nyutag_by_phone_pick_contact") }
+    static var byPhoneSearch: String { tr("nyutag_by_phone_search") }
+    static var byPhoneFound: String { tr("nyutag_by_phone_found") }
+    static var byPhoneWrite: String { tr("nyutag_by_phone_write") }
+    static var byPhoneNotFoundTitle: String { tr("nyutag_by_phone_not_found_title") }
+    static var byPhoneNotFoundSubtitle: String { tr("nyutag_by_phone_not_found_subtitle") }
+    static var byPhoneInvite: String { tr("nyutag_by_phone_invite") }
+    static var byPhoneQRHint: String { tr("nyutag_by_phone_qr_hint") }
+    static func byPhoneCode(_ code: String) -> String { tr("nyutag_by_phone_code", code) }
+    static var byPhoneSMS: String { tr("nyutag_by_phone_sms") }
+    static var byPhoneShare: String { tr("nyutag_by_phone_share") }
+    static func byPhoneInviteText(code: String, link: String) -> String { tr("nyutag_by_phone_invite_text", code, link) }
+    static var byPhoneOwnTitle: String { tr("nyutag_by_phone_own_title") }
+    static var byPhoneOwnSubtitle: String { tr("nyutag_by_phone_own_subtitle") }
+    static var byPhoneOwnLabel: String { tr("nyutag_by_phone_own_label") }
+    
+    /// Ошибка экрана «По номеру телефона».
+    static func byPhoneError(_ errcode: String) -> String {
+        let key = switch errcode {
+        case NyutagInviteError.network: "nyutag_by_phone_error_network"
+        case "M_LIMIT_EXCEEDED": "nyutag_by_phone_error_limit"
+        case "NYUTAG_INVITE_LIMIT": "nyutag_by_phone_error_invite_limit"
+        case "NYUTAG_BAD_CONTACT": "nyutag_by_phone_error_bad_phone"
+        case "NYUTAG_CONTACT_IN_USE": "nyutag_by_phone_error_phone_in_use"
+        default: "nyutag_by_phone_error_generic"
+        }
+        return tr(key)
+    }
     
     // MARK: Приглашения
     
     static var inviteCreating: String { tr("nyutag_invite_creating") }
-    static func inviteShareText(appName: String, code: String) -> String { tr("nyutag_invite_share_text", appName, code) }
+    static func inviteShareText(appName: String, code: String, link: String) -> String { tr("nyutag_invite_share_text", appName, code, link) }
     static var inviteLimit: String { tr("nyutag_invite_limit") }
     static var inviteNetwork: String { tr("nyutag_invite_network") }
     static var inviteFailed: String { tr("nyutag_invite_failed") }
@@ -110,6 +145,8 @@ nonisolated enum NyutagL10n {
         case "NYUTAG_BAD_CONTACT": "nyutag_contact_error_bad"
         case "NYUTAG_CONTACT_IN_USE": "nyutag_contact_error_in_use"
         case "NYUTAG_CONTACT_REQUIRED": "nyutag_contact_error_required"
+        case "NYUTAG_EMAIL_REQUIRED": "nyutag_signup_error_email_required"
+        case "NYUTAG_PHONE_REQUIRED": "nyutag_signup_error_phone_required"
         case "NYUTAG_CONTACT_NOT_VERIFIED": "nyutag_contact_error_not_verified"
         case "NYUTAG_CHANNEL_UNAVAILABLE": "nyutag_contact_error_channel_unavailable"
         case "NYUTAG_DELIVERY_FAILED": "nyutag_contact_error_delivery"

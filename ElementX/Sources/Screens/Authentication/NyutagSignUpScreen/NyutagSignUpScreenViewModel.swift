@@ -26,14 +26,21 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
     init(authenticationService: AuthenticationServiceProtocol,
          serverNameOrBaseURL: String,
          userIndicatorController: UserIndicatorControllerProtocol,
+         initialCode: String = "",
          invites: NyutagInvitesService = .shared) {
         self.authenticationService = authenticationService
         self.serverNameOrBaseURL = serverNameOrBaseURL
         self.userIndicatorController = userIndicatorController
         self.invites = invites
-        super.init(initialViewState: NyutagSignUpScreenViewState())
+        var initialState = NyutagSignUpScreenViewState()
+        initialState.bindings.code = NyutagInviteCode.format(initialCode)
+        super.init(initialViewState: initialState)
         
         Task { await loadConfiguration() }
+        // Код пришёл из ссылки-приглашения — проверяем сразу, как при вводе вручную.
+        if state.bindings.code.count == NyutagSignUpScreenViewState.codeLength {
+            checkTask = Task { await checkCode(advanceOnSuccess: false) }
+        }
     }
     
     override func process(viewAction: NyutagSignUpScreenViewAction) {
@@ -73,6 +80,9 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
             if digits.count == NyutagSignUpScreenViewState.verifyCodeLength, !state.isBusy {
                 checkTask = Task { await checkVerification() }
             }
+        case .phoneChanged:
+            state.checkedPhone = nil
+            state.errorMessage = nil
         case .inputChanged:
             state.errorMessage = nil
         }
@@ -112,6 +122,12 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
             } else {
                 checkTask = Task { await checkVerification() }
             }
+        case .phone:
+            if state.checkedPhone != nil {
+                advance()
+            } else {
+                checkTask = Task { await checkPhone() }
+            }
         case .name:
             checkTask = Task { await checkUsername() }
         case .password:
@@ -122,9 +138,27 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
     private func loadConfiguration() async {
         guard state.configuration == nil, let configuration = try? await invites.signUpConfiguration() else { return }
         state.configuration = configuration
-        if configuration.isPhoneAvailable || configuration.isEmailAvailable {
-            state.steps = [.code, .contact, .name, .password]
-            state.bindings.medium = configuration.isPhoneAvailable ? .phone : .email
+        let hasContact = configuration.isPhoneAvailable || configuration.isEmailAvailable
+        // Телефон без SMS — свой шаг: номер вводится без кода, по нему человека находят друзья.
+        let hasPhoneStep = configuration.requiresPhone && configuration.isPhoneUnverified
+        state.steps = [.code, hasContact ? .contact : nil, hasPhoneStep ? .phone : nil, .name, .password].compactMap(\.self)
+        if hasContact {
+            state.bindings.medium = state.availableMedia.first ?? .email
+        }
+    }
+    
+    private func checkPhone() async {
+        let phone = state.bindings.phone
+        state.isBusy = true
+        defer { state.isBusy = false }
+        do throws(NyutagInviteError) {
+            let normalized = try await invites.checkPhone(phone.trimmingCharacters(in: .whitespaces), inviteCode: state.bindings.code)
+            guard !Task.isCancelled, state.bindings.phone == phone else { return }
+            state.checkedPhone = normalized
+            advance()
+        } catch {
+            guard !Task.isCancelled, state.bindings.phone == phone else { return }
+            state.errorMessage = NyutagL10n.inviteError(error.errcode)
         }
     }
     
@@ -232,7 +266,8 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
                 state.registeredUserID = try await invites.register(code: state.bindings.code,
                                                                     username: username,
                                                                     password: password,
-                                                                    sid: state.isContactVerified ? state.verification?.sid : nil)
+                                                                    sid: state.isContactVerified ? state.verification?.sid : nil,
+                                                                    phone: state.steps.contains(.phone) ? state.checkedPhone : nil)
             } catch {
                 state.errorMessage = NyutagL10n.inviteError(error.errcode)
                 return

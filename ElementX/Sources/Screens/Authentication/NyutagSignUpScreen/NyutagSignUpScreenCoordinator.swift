@@ -12,6 +12,8 @@ struct NyutagSignUpScreenCoordinatorParameters {
     /// Сервер из `accountProviders` — к нему входим после регистрации.
     let serverNameOrBaseURL: String
     let userIndicatorController: UserIndicatorControllerProtocol
+    /// Код из ссылки-приглашения; пусто — человек введёт его сам.
+    var initialCode = ""
 }
 
 enum NyutagSignUpScreenCoordinatorAction {
@@ -32,7 +34,8 @@ final class NyutagSignUpScreenCoordinator: CoordinatorProtocol {
     init(parameters: NyutagSignUpScreenCoordinatorParameters) {
         viewModel = NyutagSignUpScreenViewModel(authenticationService: parameters.authenticationService,
                                                 serverNameOrBaseURL: parameters.serverNameOrBaseURL,
-                                                userIndicatorController: parameters.userIndicatorController)
+                                                userIndicatorController: parameters.userIndicatorController,
+                                                initialCode: parameters.initialCode)
     }
     
     func start() {

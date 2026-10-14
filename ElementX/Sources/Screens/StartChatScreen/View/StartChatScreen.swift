@@ -38,6 +38,16 @@ struct StartChatScreen: View {
                 context.send(viewAction: .createDM(user: userToInvite.user))
             }
         }
+        .sheet(item: $context.nyutagFindByPhone) { model in
+            NyutagFindByPhoneView(model: model) { user in
+                context.nyutagFindByPhone = nil
+                // Сначала закрывается этот экран, потом обычный «Начать чат» (открыть чат или подтвердить новый).
+                Task {
+                    try? await Task.sleep(for: .milliseconds(450))
+                    context.send(viewAction: .selectUser(user))
+                }
+            }
+        }
         .sheet(isPresented: $context.isJoinRoomByAddressSheetPresented) {
             context.roomAddress = ""
         } content: {
@@ -70,6 +80,9 @@ struct StartChatScreen: View {
         Section {
             ListRow(label: .default(title: NyutagL10n.savedMessages, icon: \.favourite),
                     kind: .button { context.send(viewAction: .nyutagSavedMessages) })
+            ListRow(label: .default(title: NyutagL10n.byPhoneTitle, icon: \.mobile),
+                    kind: .button { context.send(viewAction: .nyutagFindByPhone) })
+                .accessibilityIdentifier("startChat-nyutagFindByPhone")
             ListRow(label: .default(title: NyutagL10n.newGroup, icon: \.plus),
                     kind: .navigationLink { context.send(viewAction: .createRoom) })
                 .accessibilityIdentifier(A11yIdentifiers.startChatScreen.createRoom)

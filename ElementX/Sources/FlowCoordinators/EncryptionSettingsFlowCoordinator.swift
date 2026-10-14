@@ -83,7 +83,7 @@ class EncryptionSettingsFlowCoordinator: FlowCoordinatorProtocol {
         MXLog.info("Handling app route: \(appRoute)")
         
         switch appRoute {
-        case .accountProvisioningLink, .oAuthCallback:
+        case .accountProvisioningLink, .nyutagInvite, .oAuthCallback:
             break // We always ignore these flows when logged in.
         case .roomList, .room, .roomAlias, .childRoom, .childRoomAlias,
              .roomDetails, .roomMemberDetails, .userProfile, .thread,
