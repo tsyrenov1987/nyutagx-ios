@@ -87,6 +87,8 @@
 "nyutag_presence_recently" = "last seen recently";
 "nyutag_presence_today_at" = "last seen at %1$@";
 "nyutag_presence_yesterday_at" = "last seen yesterday at %1$@";
+"nyutag_saved_messages" = "Saved messages";
+"nyutag_saved_messages_topic" = "Notes, links and files for yourself";
 "nyutag_signup_code_title" = "Enter the invitation code";
 "nyutag_signup_contact_subtitle" = "We will send a code to confirm it. Nobody else will see it.";
 "nyutag_signup_creating" = "Creating the account…";

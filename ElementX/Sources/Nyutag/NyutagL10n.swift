@@ -31,6 +31,8 @@ nonisolated enum NyutagL10n {
     static var communitiesAll: String { tr("nyutag_communities_all") }
     static var communitiesEmpty: String { tr("nyutag_communities_empty") }
     static var communityInvite: String { tr("nyutag_community_invite") }
+    static var savedMessages: String { tr("nyutag_saved_messages") }
+    static var savedMessagesTopic: String { tr("nyutag_saved_messages_topic") }
     static var communityMembers: String { tr("nyutag_community_members") }
     static var communityLeave: String { tr("nyutag_community_leave") }
     static var communityGroups: String { tr("nyutag_community_groups") }

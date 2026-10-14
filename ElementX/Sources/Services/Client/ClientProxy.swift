@@ -1721,4 +1721,29 @@ extension ClientProxy {
     var nyutagAccessToken: String? {
         try? client.session().accessToken
     }
+    
+    /// Комната «Избранного» (чат с собой) из account data `chat.nyutag.saved_messages`: одна на аккаунт, видна со всех устройств.
+    func nyutagSavedMessagesRoomID() async -> String? {
+        guard let json = try? await client.accountData(eventType: Self.nyutagSavedMessagesType),
+              let object = try? JSONSerialization.jsonObject(with: Data(json.utf8)) as? [String: Any] else {
+            return nil
+        }
+        return object["room_id"] as? String
+    }
+    
+    func nyutagSetSavedMessagesRoomID(_ roomID: String) async -> Bool {
+        guard let data = try? JSONSerialization.data(withJSONObject: ["room_id": roomID]),
+              let json = String(data: data, encoding: .utf8) else {
+            return false
+        }
+        do {
+            try await client.setAccountData(eventType: Self.nyutagSavedMessagesType, content: json)
+            return true
+        } catch {
+            MXLog.error("Nyutag: failed storing saved messages room: \(error)")
+            return false
+        }
+    }
+    
+    private static let nyutagSavedMessagesType = "chat.nyutag.saved_messages"
 }

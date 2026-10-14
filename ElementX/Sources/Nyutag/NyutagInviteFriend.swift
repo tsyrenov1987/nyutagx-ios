@@ -52,3 +52,36 @@ enum NyutagInviteFriend {
         presenter.present(activity, animated: true)
     }
 }
+
+/// «Избранное» как в Telegram: личная комната, где участник только вы. Создаётся при первом открытии,
+/// дальше открывается та же (id в account data).
+@MainActor
+enum NyutagSavedMessages {
+    static func roomID(clientProxy: ClientProxyProtocol, userIndicatorController: UserIndicatorControllerProtocol) async -> String? {
+        guard let proxy = clientProxy as? ClientProxy else { return nil }
+        
+        if let roomID = await proxy.nyutagSavedMessagesRoomID(),
+           case .joined = await clientProxy.roomForIdentifier(roomID) {
+            return roomID
+        }
+        
+        let indicatorID = "NyutagSavedMessages-Creating"
+        userIndicatorController.submitIndicator(UserIndicator(id: indicatorID, type: .modal, title: L10n.commonLoading, persistent: true))
+        defer { userIndicatorController.retractIndicatorWithId(indicatorID) }
+        
+        switch await clientProxy.createRoom(name: NyutagL10n.savedMessages,
+                                            topic: NyutagL10n.savedMessagesTopic,
+                                            accessType: .private,
+                                            isSpace: false,
+                                            userIDs: [],
+                                            avatarURL: nil,
+                                            aliasLocalPart: nil) {
+        case .success(let roomID):
+            _ = await proxy.nyutagSetSavedMessagesRoomID(roomID)
+            return roomID
+        case .failure:
+            userIndicatorController.submitIndicator(UserIndicator(title: L10n.errorUnknown, icon: \.errorSolid))
+            return nil
+        }
+    }
+}

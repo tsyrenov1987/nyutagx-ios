@@ -132,6 +132,8 @@
 "nyutag_presence_recently" = "был(а) недавно";
 "nyutag_presence_today_at" = "был(а) в %1$@";
 "nyutag_presence_yesterday_at" = "был(а) вчера в %1$@";
+"nyutag_saved_messages" = "Избранное";
+"nyutag_saved_messages_topic" = "Заметки, ссылки и файлы для себя";
 "nyutag_signup_code_title" = "Введите код приглашения";
 "nyutag_signup_contact_subtitle" = "Пришлём код для подтверждения. Его никто не увидит.";
 "nyutag_signup_creating" = "Создаём аккаунт…";

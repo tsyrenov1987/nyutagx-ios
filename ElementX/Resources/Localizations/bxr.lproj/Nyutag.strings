@@ -184,6 +184,8 @@
 "nyutag_presence_recently" = "һаяхан байгаа";
 "nyutag_presence_today_at" = "%1$@ сагта байгаа";
 "nyutag_presence_yesterday_at" = "үсэгэлдэр %1$@ сагта байгаа";
+"nyutag_saved_messages" = "Хадагалһан";
+"nyutag_saved_messages_topic" = "Өөртөө тэмдэглэл, холбоос, файлнууд";
 "nyutag_signup_code_title" = "Урилгын кодоо оруулагты";
 "nyutag_signup_contact_subtitle" = "Баталха код эльгээхэбди. Үөр хүн харахагүй.";
 "nyutag_signup_creating" = "Аккаунт бүтээжэ байна…";

@@ -206,6 +206,12 @@ struct TimelineItemBubbledStylerView<Content: View>: View {
     
     var messageBubbleWithActions: some View {
         messageBubble
+            .environment(\.nyutagQuickReactionItemID, isSelectionActive || !isQuickReactionAvailable ? nil : timelineItem.id)
+            // Нютаг: двойной тап — быстрая реакция ❤️ (повторный снимает), как в Telegram.
+            .onTapGesture(count: 2) {
+                guard !isSelectionActive, isQuickReactionAvailable else { return }
+                sendQuickReaction()
+            }
             .onTapGesture {
                 // We need a tap gesture before the long press gesture below, otherwise something
                 // on iOS 17 hijacks the long press and you can't bring up the context menu. This
@@ -233,6 +239,15 @@ struct TimelineItemBubbledStylerView<Content: View>: View {
             }
             .pinnedIndicator(isPinned: isPinned, isOutgoing: timelineItem.isOutgoing)
             .padding(.top, messageBubbleTopPadding)
+    }
+    
+    private func sendQuickReaction() {
+        context.send(viewAction: .toggleReaction(key: NyutagQuickReaction.key, itemID: timelineItem.id))
+    }
+    
+    private var isQuickReactionAvailable: Bool {
+        let kind = context.viewState.timelineKind
+        return timelineItem.isReactable && (kind == .live || kind == .detached || kind.isThread)
     }
     
     @ViewBuilder
@@ -939,4 +954,14 @@ private struct MockTimelineContent: View {
                              eventID: "123",
                              eventContent: .message(.text(.init(body: "Short")))) : nil
     }
+}
+
+extension EnvironmentValues {
+    /// Нютаг: сообщение для быстрой реакции текста внутри пузыря (двойной тап ловит сам `MessageTextView`).
+    @Entry var nyutagQuickReactionItemID: TimelineItemIdentifier?
+}
+
+/// Нютаг: реакция на двойной тап, как в Telegram.
+enum NyutagQuickReaction {
+    static let key = "❤️"
 }

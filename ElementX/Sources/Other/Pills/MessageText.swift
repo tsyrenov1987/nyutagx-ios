@@ -12,6 +12,8 @@ import SwiftUI
 final class MessageTextView: UITextView, PillAttachmentViewProviderDelegate, UIGestureRecognizerDelegate {
     var timelineContext: TimelineViewModel.Context?
     var updateClosure: (() -> Void)?
+    /// Нютаг: сообщение для быстрой реакции на двойной тап по тексту (жест SwiftUI на пузыре сюда не доходит).
+    var nyutagQuickReactionItemID: TimelineItemIdentifier?
     private var pillViews = NSHashTable<UIView>.weakObjects()
     
     override func addGestureRecognizer(_ gestureRecognizer: UIGestureRecognizer) {
@@ -28,6 +30,11 @@ final class MessageTextView: UITextView, PillAttachmentViewProviderDelegate, UIG
             return false
         }
         return true
+    }
+    
+    @objc func nyutagDoubleTapped() {
+        guard let itemID = nyutagQuickReactionItemID else { return }
+        timelineContext?.send(viewAction: .toggleReaction(key: NyutagQuickReaction.key, itemID: itemID))
     }
     
     func invalidateTextAttachmentsDisplay() {
@@ -74,6 +81,7 @@ struct MessageText: UIViewRepresentable {
     @Environment(\.openURL) private var openURLAction
     @Environment(\.timelineContext) private var viewModel
     @Environment(\.layoutDirection) private var layoutDirection
+    @Environment(\.nyutagQuickReactionItemID) private var nyutagQuickReactionItemID
     
     /// Cache key for `sizeThatFits`. Keyed on the reserved trailing size as well as the proposed
     /// width to account for any changes on the send info label that happen after the first rendering.
@@ -199,6 +207,10 @@ struct MessageText: UIViewRepresentable {
             textView.attributedText = attributedText
         }
         textView.delegate = context.coordinator
+        let doubleTap = UITapGestureRecognizer(target: textView, action: #selector(MessageTextView.nyutagDoubleTapped))
+        doubleTap.numberOfTapsRequired = 2
+        textView.addGestureRecognizer(doubleTap)
+        textView.nyutagQuickReactionItemID = nyutagQuickReactionItemID
         return textView
     }
     
@@ -210,6 +222,7 @@ struct MessageText: UIViewRepresentable {
             computedSizes.removeAll()
         }
         context.coordinator.openURLAction = openURLAction
+        uiView.nyutagQuickReactionItemID = nyutagQuickReactionItemID
     }
     
     func sizeThatFits(_ proposal: ProposedViewSize, uiView: MessageTextView, context: Context) -> CGSize? {

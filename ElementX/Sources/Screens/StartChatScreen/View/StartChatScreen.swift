@@ -68,6 +68,8 @@ struct StartChatScreen: View {
     
     private var nyutagActionsSection: some View {
         Section {
+            ListRow(label: .default(title: NyutagL10n.savedMessages, icon: \.favourite),
+                    kind: .button { context.send(viewAction: .nyutagSavedMessages) })
             ListRow(label: .default(title: NyutagL10n.newGroup, icon: \.plus),
                     kind: .navigationLink { context.send(viewAction: .createRoom) })
                 .accessibilityIdentifier(A11yIdentifiers.startChatScreen.createRoom)

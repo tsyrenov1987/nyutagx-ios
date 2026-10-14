@@ -55,6 +55,7 @@ enum StartChatScreenViewAction {
     case openRoomDirectorySearch
     /// Нютаг: выпустить код приглашения и поделиться им.
     case nyutagInviteFriend
+    case nyutagSavedMessages
 }
 
 enum JoinByAddressState: Equatable {
