@@ -1,8 +1,8 @@
-framework module "FarvaterCore" {
+framework module "Nyutag-FarvaterCore" {
 	header "ref.h"
     header "Mobile.objc.h"
     header "Universe.objc.h"
-    header "FarvaterCore.h"
+    header "Nyutag-FarvaterCore.h"
 
     export *
 }
