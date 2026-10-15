@@ -168,6 +168,16 @@ struct CallView: UIViewRepresentable {
         func load(_ url: URL) {
             guard self.url != url else { return }
             self.url = url
+            // Нютаг: пока грузится Element Call, замер UDP до SFU; мёртв — все соединения сразу через TURN (не ждать ~16 с).
+            Task {
+                if await !NyutagIcePolicy.udpReachable() {
+                    webView.configuration.userContentController.addUserScript(WKUserScript(source: NyutagIcePolicy.relayScript, injectionTime: .atDocumentStart, forMainFrameOnly: false))
+                }
+                startLoading(url)
+            }
+        }
+
+        private func startLoading(_ url: URL) {
             // The only file URL we allow is the one coming from our own local ElementCall bundle, so it's okay to allow read permission only to our local EC bundle
             if url.isFileURL {
                 webView.loadFileURL(url, allowingReadAccessTo: EmbeddedElementCall.bundle.bundleURL)
