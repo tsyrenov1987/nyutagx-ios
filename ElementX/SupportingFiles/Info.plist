@@ -70,7 +70,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>To take pictures or videos and send them as a message $(APP_DISPLAY_NAME) needs access to the camera.</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Nyutag compares your contacts with the person you are chatting with to show whether they are in your address book. Numbers are not stored.</string>
+	<string>Nyutag checks which of your contacts are already on Nyutag and whether the person you are chatting with is in your address book. Numbers are checked on the server and not stored.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>Face ID is used to access your app.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
