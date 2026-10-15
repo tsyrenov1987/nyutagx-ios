@@ -417,7 +417,7 @@ class RoomSummaryProvider: RoomSummaryProviderProtocol {
             
             changes.append(.remove(offset: rooms.count - 1, element: value, associatedWith: nil))
         case .popFront:
-            let summary = rooms[0]
+            guard let summary = rooms.first else { return nil }
             changes.append(.remove(offset: 0, element: summary, associatedWith: nil))
         case .pushBack(let value):
             let summary = await buildRoomSummary(from: value, eventStringBuilder: eventStringBuilder)
@@ -426,6 +426,7 @@ class RoomSummaryProvider: RoomSummaryProviderProtocol {
             let summary = await buildRoomSummary(from: value, eventStringBuilder: eventStringBuilder)
             changes.append(.insert(offset: 0, element: summary, associatedWith: nil))
         case .remove(let index):
+            guard Int(index) < rooms.count else { return nil }
             let summary = rooms[Int(index)]
             changes.append(.remove(offset: Int(index), element: summary, associatedWith: nil))
         case .reset(let values):
@@ -437,6 +438,7 @@ class RoomSummaryProvider: RoomSummaryProviderProtocol {
                 await changes.append(.insert(offset: index, element: buildRoomSummary(from: value, eventStringBuilder: eventStringBuilder), associatedWith: nil))
             }
         case .set(let index, let value):
+            guard Int(index) < rooms.count else { return nil }
             let summary = await buildRoomSummary(from: value, eventStringBuilder: eventStringBuilder)
             changes.append(.remove(offset: Int(index), element: summary, associatedWith: nil))
             changes.append(.insert(offset: Int(index), element: summary, associatedWith: nil))
@@ -470,7 +472,11 @@ class RoomSummaryProvider: RoomSummaryProviderProtocol {
     private func rebuildRoomSummaries() async {
         MXLog.info("\(name): Rebuilding room summaries for \(rooms.count) rooms")
         
-        rooms = await Self.rebuiltRoomSummaries(from: rooms, eventStringBuilder: eventStringBuilder)
+        // Пока строятся сводки, список могли изменить диффы: накладываем результат по id,
+        // а не подменяем список снимком (иначе следующие диффы не лягут и `rooms[index]` упадёт).
+        let rebuilt = await Self.rebuiltRoomSummaries(from: rooms, eventStringBuilder: eventStringBuilder)
+        let rebuiltByID = Dictionary(rebuilt.map { ($0.id, $0) }, uniquingKeysWith: { _, last in last })
+        rooms = rooms.map { rebuiltByID[$0.id] ?? $0 }
         
         MXLog.info("\(name): Finished rebuilding room summaries (\(rooms.count) rooms)")
     }
