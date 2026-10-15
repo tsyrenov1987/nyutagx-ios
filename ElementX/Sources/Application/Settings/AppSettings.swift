@@ -264,6 +264,10 @@ final nonisolated class AppSettings: @unchecked Sendable {
     @UserPreference
     var pusherProfileTag: String?
     
+    /// Нютаг: токен PushKit (hex) — регистрируется вторым пушером `<pusherAppID>.voip`, по нему приходит входящий звонок.
+    @UserPreference
+    var nyutagVoipPushToken: String?
+    
     /// The device's last boot time as recorded by the NSE.
     @UserPreference
     var lastNotificationBootTime: TimeInterval?

@@ -317,6 +317,13 @@ struct CallView: UIViewRepresentable {
         /// Заодно шлём в лог необработанные ошибки страницы и сбои сетевых запросов (только адрес и статус, без тел).
         private static let nyutagConfigScript = """
         (() => {
+            // Нютаг: экран Element Call «Режим трубки / Вернуться в режим динамика» лишний — динамик и трубка переключаются кнопкой внизу.
+            const hideHandsetOverlay = () => {
+                const style = document.createElement("style");
+                style.textContent = "._overlay_kh5c3_1 { display: none !important; }";
+                (document.head || document.documentElement).appendChild(style);
+            };
+            if (document.head) { hideHandsetOverlay(); } else { document.addEventListener("DOMContentLoaded", hideHandsetOverlay); }
             const report = (level, message) => window.webkit.messageHandlers.forwardLogs.postMessage({ level, message: "[Nyutag] " + message });
             window.addEventListener("error", (event) => report("error", "error: " + event.message + " @" + event.filename + ":" + event.lineno));
             window.addEventListener("unhandledrejection", (event) => report("error", "unhandled rejection: " + (event.reason && (event.reason.message || event.reason.stack) || event.reason)));

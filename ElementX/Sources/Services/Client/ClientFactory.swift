@@ -144,8 +144,10 @@ nonisolated struct ClientFactory: ClientFactoryProtocol {
                 .roomKeyRecipientStrategy(strategy: .identityBasedStrategy)
                 .decryptionSettings(decryptionSettings: .init(senderDeviceTrustRequirement: .crossSignedOrLegacy))
         } else {
+            // Нютаг: виджет звонка шлёт rtc.notification без диалога «неподписанные устройства» —
+            // с errorOnVerifiedUserProblem вызов тихо не доходит. Раздаём ключи всем устройствам.
             builder = builder
-                .roomKeyRecipientStrategy(strategy: .errorOnVerifiedUserProblem)
+                .roomKeyRecipientStrategy(strategy: .allDevices)
                 .decryptionSettings(decryptionSettings: .init(senderDeviceTrustRequirement: .untrusted))
         }
         

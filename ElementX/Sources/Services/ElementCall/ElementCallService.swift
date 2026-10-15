@@ -316,24 +316,47 @@ class ElementCallService: NSObject, ElementCallServiceProtocol, PKPushRegistryDe
     
     // MARK: - PKPushRegistryDelegate
     
-    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) { }
+    func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
+        // Нютаг: токен PushKit уходит вторым пушером — по нему Sygnal шлёт VoIP-пуш на входящий звонок.
+        let token = pushCredentials.token.base64EncodedString()
+        guard appSettings.nyutagVoipPushToken != token else { return }
+        appSettings.nyutagVoipPushToken = token
+        NotificationCenter.default.post(name: .nyutagVoipPushTokenUpdated, object: nil)
+    }
+    
+    /// Нютаг: VoIP-пуш приходит с сервера (`nyutag_voip.VoipPushkin`) — переводим его в ключи, которые ждёт обработчик.
+    private func nyutagIncomingCallInfo(_ payload: PKPushPayload) -> [String: Any] {
+        let raw = payload.dictionaryPayload
+        guard raw["nyutag_ring"] != nil else { return raw as? [String: Any] ?? [:] }
+        let content = raw["content"] as? [String: Any] ?? [:]
+        let senderTs = (content["sender_ts"] as? Double) ?? Date().timeIntervalSince1970 * 1000
+        let lifetime = (content["lifetime"] as? Double) ?? 90_000
+        var info: [String: Any] = [:]
+        info[ElementCallServiceNotificationKey.roomID.rawValue] = raw["room_id"]
+        info[ElementCallServiceNotificationKey.rtcNotifyEventID.rawValue] = raw["event_id"]
+        info[ElementCallServiceNotificationKey.roomDisplayName.rawValue] = (raw["sender_display_name"] as? String) ?? (raw["room_name"] as? String)
+        info[ElementCallServiceNotificationKey.expirationDate.rawValue] = Date(timeIntervalSince1970: (senderTs + lifetime) / 1000)
+        info[ElementCallServiceNotificationKey.isVoiceCall.rawValue] = (content["m.call.intent"] as? String) != "video"
+        return info
+    }
     
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
-        guard let roomID = payload.dictionaryPayload[ElementCallServiceNotificationKey.roomID.rawValue] as? String else {
+        let dictionaryPayload = nyutagIncomingCallInfo(payload)
+        guard let roomID = dictionaryPayload[ElementCallServiceNotificationKey.roomID.rawValue] as? String else {
             MXLog.error("Something went wrong, missing room identifier for incoming voip call: \(payload)")
             assertionFailure("Incoming voip push is missing the room identifier")
             reportImmediatelyEndedCall(reason: .failed, completion: completion)
             return
         }
         
-        guard let rtcNotificationID = payload.dictionaryPayload[ElementCallServiceNotificationKey.rtcNotifyEventID.rawValue] as? String else {
+        guard let rtcNotificationID = dictionaryPayload[ElementCallServiceNotificationKey.rtcNotifyEventID.rawValue] as? String else {
             MXLog.error("Something went wrong, missing rtc notification event identifier for incoming voip call: \(payload)")
             assertionFailure("Incoming voip push is missing the rtc notification event identifier")
             reportImmediatelyEndedCall(reason: .failed, completion: completion)
             return
         }
         
-        let roomDisplayName = payload.dictionaryPayload[ElementCallServiceNotificationKey.roomDisplayName.rawValue] as? String
+        let roomDisplayName = dictionaryPayload[ElementCallServiceNotificationKey.roomDisplayName.rawValue] as? String
         
         guard ongoingCallID?.roomID != roomID else {
             MXLog.warning("Call already ongoing for room \(roomID), reporting the duplicate push as handled")
@@ -343,12 +366,12 @@ class ElementCallService: NSObject, ElementCallServiceProtocol, PKPushRegistryDe
             return
         }
         
-        let isVoiceCall = payload.dictionaryPayload[ElementCallServiceNotificationKey.isVoiceCall.rawValue] as? Bool ?? false
+        let isVoiceCall = dictionaryPayload[ElementCallServiceNotificationKey.isVoiceCall.rawValue] as? Bool ?? false
         
         let callID = CallID(callKitID: UUID(), roomID: roomID, rtcNotificationID: rtcNotificationID, isVoiceCall: isVoiceCall)
         incomingCallID = callID
         
-        guard let expirationDate = (payload.dictionaryPayload[ElementCallServiceNotificationKey.expirationDate.rawValue] as? Date) else {
+        guard let expirationDate = (dictionaryPayload[ElementCallServiceNotificationKey.expirationDate.rawValue] as? Date) else {
             MXLog.error("Something went wrong, missing expiration timestamp for incoming voip call: \(payload)")
             assertionFailure("Incoming voip push is missing the expiration timestamp")
             clearIncomingCallState()
@@ -719,4 +742,9 @@ class ElementCallService: NSObject, ElementCallServiceProtocol, PKPushRegistryDe
         incomingCallRoomInfoCancellable = nil
         incomingCallID = nil
     }
+}
+
+extension Notification.Name {
+    /// Нютаг: появился или сменился токен PushKit.
+    static let nyutagVoipPushTokenUpdated = Notification.Name("chat.nyutag.voipPushTokenUpdated")
 }

@@ -112,11 +112,61 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
     /// не превращается в пуш, и собеседник не слышит входящий. Ставим правило в аккаунт сами.
     func ensureCallPushRules(accessToken: String) async throws(NyutagInviteError) {
         let rules = [("nyutag.rtc_notification", "org.matrix.msc4075.rtc.notification"),
-                     ("nyutag.call_notify", "org.matrix.msc4075.call.notify")]
+                     ("nyutag.call_notify", "org.matrix.msc4075.call.notify"),
+                     ("nyutag.ring", Self.ringEventType)]
         for (ruleID, eventType) in rules {
             let body: [String: Any] = ["conditions": [["kind": "event_match", "key": "type", "pattern": eventType]],
                                        "actions": ["notify", ["set_tweak": "sound", "value": "default"]]]
             _ = try await request("PUT", "/_matrix/client/v3/pushrules/global/override/\(ruleID)", body: body, bearer: accessToken)
+        }
+    }
+    
+    // MARK: Звонок
+    
+    /// Незашифрованный сигнал «звоню»: шлюз Sygnal делает из него VoIP-пуш (расширение уведомлений без туннеля
+    /// не может расшифровать `rtc.notification`). Содержимое — только то, что сервер и так видит по `call.member`.
+    static let ringEventType = "chat.nyutag.ring"
+    static let ringLifetimeMs = 90_000
+    
+    /// Перед стартом звонка: снимает зависшие участия своих устройств (ушедшее приложение их не чистит, и следующий
+    /// звонок без них не звонит) и, если в комнате никто не разговаривает, кладёт сигнал «звоню».
+    func prepareCallStart(roomID: String, ownUserID: String, isVoiceCall: Bool, accessToken: String) async {
+        let encodedRoomID = roomID.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? roomID
+        var othersInCall = false
+        do {
+            let events = try await requestArray("GET", "/_matrix/client/v3/rooms/\(encodedRoomID)/state", bearer: accessToken)
+            let now = Date().timeIntervalSince1970 * 1000
+            for event in events where event["type"] as? String == "org.matrix.msc3401.call.member" {
+                guard let content = event["content"] as? [String: Any], !content.isEmpty,
+                      let stateKey = event["state_key"] as? String else { continue }
+                let sentAt = (event["origin_server_ts"] as? Double) ?? now
+                let expires = (content["expires"] as? Double) ?? 0
+                let alive = sentAt + expires > now
+                if event["sender"] as? String == ownUserID {
+                    let encodedKey = stateKey.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? stateKey
+                    _ = try? await request("PUT", "/_matrix/client/v3/rooms/\(encodedRoomID)/state/org.matrix.msc3401.call.member/\(encodedKey)",
+                                           body: [:], bearer: accessToken)
+                    MXLog.info("Nyutag call: cleared own stale call membership \(stateKey)")
+                } else if alive {
+                    othersInCall = true
+                }
+            }
+        } catch {
+            MXLog.warning("Nyutag call: state check failed \(error.errcode)")
+        }
+        guard !othersInCall else {
+            MXLog.info("Nyutag call: joining an existing call, no ring")
+            return
+        }
+        let body: [String: Any] = ["sender_ts": Int(Date().timeIntervalSince1970 * 1000),
+                                   "lifetime": Self.ringLifetimeMs,
+                                   "m.call.intent": isVoiceCall ? "audio" : "video"]
+        let txnID = "nyutag-ring-\(UUID().uuidString)"
+        do {
+            _ = try await request("PUT", "/_matrix/client/v3/rooms/\(encodedRoomID)/send/\(Self.ringEventType)/\(txnID)", body: body, bearer: accessToken)
+            MXLog.info("Nyutag call: ring sent to \(roomID)")
+        } catch {
+            MXLog.warning("Nyutag call: ring failed \(error.errcode)")
         }
     }
     
@@ -147,6 +197,31 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
     }
     
     // MARK: - Transport
+    
+    /// То же, что `request`, но для ответов-массивов (например, `/state`).
+    private func requestArray(_ method: String, _ path: String, bearer: String? = nil) async throws(NyutagInviteError) -> [[String: Any]] {
+        guard let endpoint = NyutagTunnel.endpoint,
+              let url = URL(string: NyutagTunnel.homeserverURL + path) else {
+            throw .init(errcode: NyutagInviteError.network)
+        }
+        var request = URLRequest(url: url, timeoutInterval: 30)
+        request.httpMethod = method
+        if let bearer {
+            request.setValue("Bearer \(bearer)", forHTTPHeaderField: "Authorization")
+        }
+        let data: Data
+        let response: URLResponse
+        do {
+            (data, response) = try await session(for: endpoint).data(for: request)
+        } catch {
+            throw .init(errcode: NyutagInviteError.network)
+        }
+        let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+        guard status == 200, let array = (try? JSONSerialization.jsonObject(with: data)) as? [[String: Any]] else {
+            throw .init(errcode: "HTTP_\(status)")
+        }
+        return array
+    }
     
     private func request(_ method: String, _ path: String, body: [String: Any]? = nil, bearer: String? = nil) async throws(NyutagInviteError) -> [String: Any] {
         guard let endpoint = NyutagTunnel.endpoint,

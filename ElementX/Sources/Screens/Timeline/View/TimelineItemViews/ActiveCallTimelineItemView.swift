@@ -97,16 +97,7 @@ struct ActiveCallTimelineItemView: View {
             Spacer()
             
             VStack(spacing: 4) {
-                if !isJoined {
-                    Button { context?.send(viewAction: .joinActiveCall(isVoiceCall: isVoiceCall)) } label: {
-                        Text(L10n.actionJoin)
-                            .font(.compound.bodyMDSemibold)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 4)
-                    }
-                    .buttonStyle(.compound(.primary, size: .small))
-                }
-                
+                // Нютаг: кнопки «Присоединиться» нет — звонок принимают с экрана входящего или кнопкой звонка в шапке.
                 callTimer
                     .font(.compound.bodyXS)
                     .foregroundColor(.compound.textSecondary)

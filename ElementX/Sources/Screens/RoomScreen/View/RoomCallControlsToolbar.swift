@@ -14,10 +14,12 @@ struct RoomCallControlsToolbar: ToolbarContent {
     
     var body: some ToolbarContent {
         if viewState.hasOngoingCall {
+            // Нютаг: без пилюли «Присоединиться» — идущий звонок выглядит как обычная кнопка звонка.
             ToolbarItem(placement: .primaryAction) {
-                JoinCallButton(isVoiceCall: viewState.activeRoomCallIntent == .audio) {
-                    onCallTap(viewState.activeRoomCallIntent == .audio)
+                Button { onCallTap(viewState.activeRoomCallIntent == .audio) } label: {
+                    CompoundIcon(viewState.activeRoomCallIntent == .audio ? \.voiceCallSolid : \.videoCallSolid)
                 }
+                .accessibilityLabel(L10n.a11yJoinCall)
                 .accessibilityIdentifier(A11yIdentifiers.roomScreen.joinCall)
                 .disabled(!viewState.canJoinCall)
             }

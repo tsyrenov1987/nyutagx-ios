@@ -25,6 +25,9 @@ final class NotificationManager: NSObject, NotificationManagerProtocol {
         self.notificationCenter = notificationCenter
         self.appSettings = appSettings
         super.init()
+        NotificationCenter.default.publisher(for: .nyutagVoipPushTokenUpdated)
+            .sink { [weak self] _ in Task { await self?.registerNyutagVoipPusher() } }
+            .store(in: &cancellables)
     }
     
     // MARK: NotificationManagerProtocol
@@ -85,7 +88,28 @@ final class NotificationManager: NSObject, NotificationManagerProtocol {
         guard let userSession else {
             return false
         }
-        return await setPusher(with: deviceToken, clientProxy: userSession.clientProxy)
+        let registered = await setPusher(with: deviceToken, clientProxy: userSession.clientProxy)
+        await registerNyutagVoipPusher()
+        return registered
+    }
+    
+    /// Нютаг: второй пушер `<pusherAppID>.voip` с токеном PushKit — Sygnal шлёт по нему VoIP-пуш на входящий звонок.
+    func registerNyutagVoipPusher() async {
+        guard let userSession, let token = appSettings.nyutagVoipPushToken else { return }
+        do {
+            let configuration = try PusherConfiguration(identifiers: .init(pushkey: token, appId: appSettings.pusherAppID + ".voip"),
+                                                        kind: .http(data: .init(url: appSettings.pushGatewayNotifyEndpoint.absoluteString,
+                                                                                format: nil,
+                                                                                defaultPayload: "{}")),
+                                                        appDisplayName: "\(InfoPlistReader.main.bundleDisplayName) (iOS VoIP)",
+                                                        deviceDisplayName: UIDevice.current.name,
+                                                        profileTag: pusherProfileTag(),
+                                                        lang: Bundle.app.preferredLocalizations.first ?? "en")
+            try await userSession.clientProxy.setPusher(with: configuration)
+            MXLog.info("Nyutag VoIP pusher set")
+        } catch {
+            MXLog.error("Nyutag VoIP pusher failed: \(error)")
+        }
     }
     
     func setUserSession(_ userSession: UserSessionProtocol?) {

@@ -484,6 +484,17 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
             return
         }
         
+        // Нютаг: снять свои зависшие участия и подать сигнал «звоню» (VoIP-пуш собеседнику) до старта виджета.
+        if let token = (flowParameters.userSession.clientProxy as? ClientProxy)?.nyutagAccessToken {
+            let roomProxy = configuration.roomProxy
+            Task {
+                await NyutagInvitesService.shared.prepareCallStart(roomID: roomProxy.id,
+                                                                    ownUserID: roomProxy.ownUserID,
+                                                                    isVoiceCall: configuration.voiceOnly,
+                                                                    accessToken: token)
+            }
+        }
+        
         let callScreenCoordinator = CallScreenCoordinator(parameters: .init(elementCallService: flowParameters.elementCallService,
                                                                             configuration: configuration,
                                                                             allowPictureInPicture: true,
