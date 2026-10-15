@@ -21,6 +21,8 @@ nonisolated enum NyutagL10n {
     static var sourceCode: String { tr("nyutag_source_code") }
     static var newChat: String { tr("nyutag_new_chat") }
     static var newGroup: String { tr("nyutag_new_group") }
+    static var callReturn: String { tr("nyutag_call_return") }
+    static var callEnd: String { tr("nyutag_call_end") }
     
     // MARK: Сообщества
     

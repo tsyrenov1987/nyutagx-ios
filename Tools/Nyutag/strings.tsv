@@ -87,3 +87,5 @@ screen_roomlist_filter_favourites_empty_state_title		Отмеченных чат
 screen_roomlist_filter_favourites_empty_state_subtitle		Отметить чат можно в его настройках.\nА пока снимите фильтр, чтобы увидеть остальные чаты.	Чатые тэрэнэй тохируулгануудта тэмдэглэжэ болохот.\nМүнөөдөө бусад чатнуудые харахын тула шүүлтүүрөө болюулагты.
 screen_room_timeline_beginning_of_room		Это начало чата «%1$@».	«%1$@» чатай эхин.
 screen_server_confirmation_message_login_matrix_dot_org	Chats and calls for your people. Everything is encrypted on your devices.	Переписка и звонки для своих. Всё шифруется на ваших устройствах.	Өөрынхидтэеэ бэшэлгэ, дуудалга. Бүхы юумэн таны утаһан дээрэ шифрлэгдэнэ.
+nyutag_call_return	Back to call	Вернуться к звонку	Дуудалга руу бусаха
+nyutag_call_end	End call	Завершить звонок	Дуудалга дүүргэхэ

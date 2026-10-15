@@ -82,6 +82,8 @@
 "nyutag_by_phone_subtitle" = "Введите номер знакомого. Если он в Нютаге, сразу сможете ему написать. Если нет, отправьте приглашение.";
 "nyutag_by_phone_title" = "По номеру телефона";
 "nyutag_by_phone_write" = "Написать";
+"nyutag_call_end" = "Завершить звонок";
+"nyutag_call_return" = "Вернуться к звонку";
 "nyutag_communities_all" = "Все сообщества";
 "nyutag_communities_empty" = "Сообществ пока нет. Создайте первое!";
 "nyutag_communities_mine" = "Мои сообщества";
@@ -152,6 +154,9 @@
 "nyutag_message_read" = "Прочитано";
 "nyutag_new_chat" = "Новый чат";
 "nyutag_new_group" = "Новая группа";
+"nyutag_not_in_contacts" = "Этого человека нет в ваших контактах";
+"nyutag_not_in_contacts_check" = "Сверить с контактами";
+"nyutag_notification_dm_new_message" = "Новое сообщение";
 "nyutag_presence_date" = "был(а) %1$@";
 "nyutag_presence_just_now" = "был(а) только что";
 "nyutag_presence_minutes_ago" = "был(а) %1$d мин. назад";
@@ -187,8 +192,8 @@
 "nyutag_signup_username_footer" = "Ник для входа: %1$@";
 "nyutag_source_code" = "Исходный код";
 "nyutag_start_have_invite" = "У меня есть приглашение";
-"nyutag_start_sign_up" = "Зарегистрироваться";
 "nyutag_start_sign_in" = "Войти";
+"nyutag_start_sign_up" = "Зарегистрироваться";
 "nyutag_wallpaper_dusk" = "Сумерки";
 "nyutag_wallpaper_plain" = "Без узора";
 "nyutag_wallpaper_sand" = "Песок";
@@ -373,5 +378,3 @@
 "state_event_room_leave_by_you" = "Вы покинули группу";
 "state_event_room_topic_removed" = "%1$@ удалил(а) тему группы";
 "state_event_room_topic_removed_by_you" = "Вы удалили тему группы";
-"nyutag_not_in_contacts" = "Этого человека нет в ваших контактах";
-"nyutag_not_in_contacts_check" = "Сверить с контактами";

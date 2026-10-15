@@ -227,6 +227,12 @@ import SwiftUI
     
     enum OverlayPresentationMode { case fullScreen, minimized }
     fileprivate var overlayPresentationMode: OverlayPresentationMode = .minimized
+    /// Нютаг: вид, который показывается поверх вкладок, пока overlay свёрнут (мини-окно звонка).
+    fileprivate var minimizedOverlayView: AnyView?
+    
+    func setMinimizedOverlayView(_ view: AnyView?) {
+        minimizedOverlayView = view
+    }
     
     /// Present an overlay on top of the tab view
     /// - Parameters:
@@ -377,6 +383,13 @@ private struct NavigationTabCoordinatorView<Tag: Hashable>: View {
                     if let coordinator = navigationTabCoordinator.overlayModule?.coordinator {
                         coordinator.toPresentable()
                             .opacity(navigationTabCoordinator.overlayPresentationMode == .minimized ? 0 : 1)
+                            .allowsHitTesting(navigationTabCoordinator.overlayPresentationMode == .fullScreen)
+                            .transition(.opacity)
+                    }
+                    if navigationTabCoordinator.overlayPresentationMode == .minimized,
+                       navigationTabCoordinator.overlayModule?.coordinator != nil,
+                       let minimizedOverlayView = navigationTabCoordinator.minimizedOverlayView {
+                        minimizedOverlayView
                             .transition(.opacity)
                     }
                 }

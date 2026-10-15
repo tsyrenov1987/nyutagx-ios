@@ -624,6 +624,8 @@
 "nyutag_by_phone_subtitle" = "Танил хүнэйнгөө дугаар оруулагты. Нютагта байгаа һаа, тэрээндэ шууд бэшэжэ болохот. Үгы һаа, урилга эльгээгты.";
 "nyutag_by_phone_title" = "Утаһанай дугаараар";
 "nyutag_by_phone_write" = "Бэшэхэ";
+"nyutag_call_end" = "Дуудалга дүүргэхэ";
+"nyutag_call_return" = "Дуудалга руу бусаха";
 "nyutag_communities_all" = "Бүхы оршонууд";
 "nyutag_communities_empty" = "Оршон одоохондоо үгы. Түрүүшынхиеэ байгуулагты!";
 "nyutag_communities_mine" = "Минии оршонууд";
@@ -694,6 +696,9 @@
 "nyutag_message_read" = "Уншагдаһан";
 "nyutag_new_chat" = "Шэнэ чат";
 "nyutag_new_group" = "Шэнэ бүлэг";
+"nyutag_not_in_contacts" = "Энэ хүн таны контактнуудта үгы";
+"nyutag_not_in_contacts_check" = "Контактнуудтай харюулха";
+"nyutag_notification_dm_new_message" = "Шэнэ бэшэг";
 "nyutag_presence_date" = "%1$@ байгаа";
 "nyutag_presence_just_now" = "дөнгөж һая байгаа";
 "nyutag_presence_minutes_ago" = "%1$d мин. урда байгаа";
@@ -729,8 +734,8 @@
 "nyutag_signup_username_footer" = "Орохо нэрэ: %1$@";
 "nyutag_source_code" = "Эхэ код";
 "nyutag_start_have_invite" = "Намда урилга бии";
-"nyutag_start_sign_up" = "Бүртхүүлхэ";
 "nyutag_start_sign_in" = "Орохо";
+"nyutag_start_sign_up" = "Бүртхүүлхэ";
 "nyutag_wallpaper_dusk" = "Бүрэнхы";
 "nyutag_wallpaper_plain" = "Хээгүй";
 "nyutag_wallpaper_sand" = "Элһэн";
@@ -2072,5 +2077,3 @@
 "verification_emoji_63" = "Хадааһан";
 "vulkan_not_supported_dialog_content_android" = "Таны түхеэрэлгэ хэтэ хуушан, Android 8 али шэнэ хубилбаритай түхеэрэлгэ хэрэгтэй.";
 "vulkan_not_supported_dialog_title_android" = "Газарай зураг харуулха дэмжэгдэдэггүй";
-"nyutag_not_in_contacts" = "Энэ хүн таны контактнуудта үгы";
-"nyutag_not_in_contacts_check" = "Контактнуудтай харюулха";

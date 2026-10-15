@@ -11,6 +11,7 @@ import Combine
 protocol CallScreenViewModelProtocol {
     var actions: AnyPublisher<CallScreenViewModelAction, Never> { get }
     var context: CallScreenViewModelType.Context { get }
+    var miniWindow: NyutagCallMiniWindowModel { get }
     
     func stop()
 }

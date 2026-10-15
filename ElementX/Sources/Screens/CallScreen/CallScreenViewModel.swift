@@ -17,6 +17,9 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
     private let elementCallService: ElementCallServiceProtocol
     private let configuration: ElementCallConfiguration
     private let isPictureInPictureAllowed: Bool
+    /// Нютаг: свёрнутый звонок — плавающее мини-окно с кнопками вместо системного PiP.
+    let miniWindow: NyutagCallMiniWindowModel
+    private var isAudioEnabled = true
     private let appSettings: AppSettings
     private let analyticsService: AnalyticsServiceProtocol
     
@@ -50,9 +53,20 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
         guard let deviceID = configuration.clientProxy.deviceID else { fatalError("Missing device ID for the call.") }
         widgetDriver = configuration.roomProxy.elementCallWidgetDriver(deviceID: deviceID)
         
+        miniWindow = NyutagCallMiniWindowModel(title: configuration.roomProxy.infoPublisher.value.displayName ?? L10n.commonCallInProgress)
+        
         super.init(initialViewState: CallScreenViewState(script: CallScreenJavaScriptMessageName.allCasesInjectionScript))
         
         state.swiftUICallViewCoordinator = .init(viewModelContext: context)
+        
+        miniWindow.onRestore = { [weak self] in self?.actionsSubject.send(.pictureInPictureStopped) }
+        miniWindow.onToggleMute = { [weak self] in
+            guard let self else { return }
+            Task { await self.setAudioEnabled(!self.isAudioEnabled) }
+        }
+        miniWindow.onEnd = { [weak self] in
+            Task { await self?.hangup() }
+        }
         
         elementCallService.actions
             .receive(on: DispatchQueue.main)
@@ -95,6 +109,8 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
                 case .callEnded:
                     actionsSubject.send(.dismiss)
                 case .mediaStateChanged(let audioEnabled, _):
+                    isAudioEnabled = audioEnabled
+                    miniWindow.isMuted = !audioEnabled
                     elementCallService.setAudioEnabled(audioEnabled, roomID: configuration.callRoomID)
                 }
             }
@@ -222,19 +238,12 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
     }
     
     private func handleBackwardsNavigation() async {
-        guard state.url != nil,
-              isPictureInPictureAllowed,
-              let requestPictureInPictureHandler = state.bindings.requestPictureInPictureHandler else {
+        // Нютаг: назад = свернуть в мини-окно (системный PiP не запускаем — он пустой и без кнопок).
+        guard state.url != nil, isPictureInPictureAllowed else {
             actionsSubject.send(.dismiss)
             return
         }
-        
-        switch await requestPictureInPictureHandler() {
-        case .success:
-            actionsSubject.send(.pictureInPictureStarted)
-        case .failure:
-            actionsSubject.send(.dismiss)
-        }
+        actionsSubject.send(.pictureInPictureStarted)
     }
     
     private func setAudioEnabled(_ enabled: Bool) async {

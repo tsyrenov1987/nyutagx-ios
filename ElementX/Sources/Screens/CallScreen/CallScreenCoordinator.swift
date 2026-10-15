@@ -74,4 +74,9 @@ final class CallScreenCoordinator: CoordinatorProtocol {
     func toPresentable() -> AnyView {
         AnyView(CallScreen(context: viewModel.context))
     }
+    
+    /// Нютаг: мини-окно свёрнутого звонка (поверх приложения).
+    var miniWindowView: AnyView {
+        AnyView(NyutagCallMiniWindow(model: viewModel.miniWindow))
+    }
 }

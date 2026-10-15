@@ -480,6 +480,7 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
         guard flowParameters.ongoingCallRoomIDPublisher.value != configuration.callRoomID else {
             MXLog.info("Returning to existing call.")
             callScreenPictureInPictureController?.stopPictureInPicture()
+            navigationTabCoordinator.setOverlayPresentationMode(.fullScreen)
             return
         }
         
@@ -496,13 +497,15 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
                 case .pictureInPictureIsAvailable(let controller):
                     callScreenPictureInPictureController = controller
                 case .pictureInPictureStarted:
-                    MXLog.info("Hiding call for PiP presentation.")
+                    MXLog.info("Hiding call into the mini window.")
+                    navigationTabCoordinator.setMinimizedOverlayView(callScreenCoordinator.miniWindowView)
                     navigationTabCoordinator.setOverlayPresentationMode(.minimized)
                 case .pictureInPictureStopped:
-                    MXLog.info("Restoring call after PiP presentation.")
+                    MXLog.info("Restoring call from the mini window.")
                     navigationTabCoordinator.setOverlayPresentationMode(.fullScreen)
                 case .dismiss:
                     callScreenPictureInPictureController = nil
+                    navigationTabCoordinator.setMinimizedOverlayView(nil)
                     navigationTabCoordinator.setOverlayCoordinator(nil)
                 }
             }
@@ -519,14 +522,15 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
             return
         }
         
-        guard let callScreenPictureInPictureController else {
-            MXLog.warning("Picture in picture isn't available, dismissing the call screen.")
+        // Нютаг: вместо системного PiP — своё мини-окно с кнопками.
+        guard let callScreenCoordinator = navigationTabCoordinator.overlayCoordinator as? CallScreenCoordinator else {
+            MXLog.warning("No call screen to minimize, dismissing the call screen.")
             dismissCallScreenIfNeeded()
             return
         }
         
-        MXLog.info("Starting picture in picture to hide the call screen overlay.")
-        callScreenPictureInPictureController.startPictureInPicture()
+        MXLog.info("Hiding the call screen overlay into the mini window.")
+        navigationTabCoordinator.setMinimizedOverlayView(callScreenCoordinator.miniWindowView)
         navigationTabCoordinator.setOverlayPresentationMode(.minimized)
     }
     

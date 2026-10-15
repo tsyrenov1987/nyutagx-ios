@@ -80,6 +80,8 @@
 "nyutag_by_phone_subtitle" = "Enter the number of someone you know. If they are in Nyutag, you can write to them right away. If not, send them an invitation.";
 "nyutag_by_phone_title" = "Find by phone number";
 "nyutag_by_phone_write" = "Write";
+"nyutag_call_end" = "End call";
+"nyutag_call_return" = "Back to call";
 "nyutag_communities_all" = "All communities";
 "nyutag_communities_empty" = "No communities yet. Create the first one!";
 "nyutag_communities_mine" = "My communities";
@@ -150,6 +152,9 @@
 "nyutag_message_read" = "Read";
 "nyutag_new_chat" = "New chat";
 "nyutag_new_group" = "New group";
+"nyutag_not_in_contacts" = "This person is not in your contacts";
+"nyutag_not_in_contacts_check" = "Check contacts";
+"nyutag_notification_dm_new_message" = "New message";
 "nyutag_presence_date" = "last seen %1$@";
 "nyutag_presence_just_now" = "last seen just now";
 "nyutag_presence_minutes_ago" = "last seen %1$d min ago";
@@ -185,8 +190,8 @@
 "nyutag_signup_username_footer" = "Username for signing in: %1$@";
 "nyutag_source_code" = "Source code";
 "nyutag_start_have_invite" = "I have an invitation";
-"nyutag_start_sign_up" = "Create an account";
 "nyutag_start_sign_in" = "Sign in";
+"nyutag_start_sign_up" = "Create an account";
 "nyutag_wallpaper_dusk" = "Dusk";
 "nyutag_wallpaper_plain" = "No pattern";
 "nyutag_wallpaper_sand" = "Sand";
@@ -361,5 +366,3 @@ You can choose to publish your group in your homeserver public group directory."
 "state_event_room_third_party_revoked_invite_by_you" = "You revoked the invitation for %1$@ to join the group";
 "state_event_room_topic_removed" = "%1$@ removed the group topic";
 "state_event_room_topic_removed_by_you" = "You removed the group topic";
-"nyutag_not_in_contacts" = "This person is not in your contacts";
-"nyutag_not_in_contacts_check" = "Check contacts";
