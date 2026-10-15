@@ -1,5 +1,6 @@
 //
-// Нютаг (форк Element X iOS) — регистрация по приглашению, по шагам.
+// Нютаг (форк Element X iOS) — регистрация в одну форму: имя и ник, телефон, почта, пароль (и код приглашения,
+// если он нужен); затем код из письма, если сервер требует подтверждённую почту; затем обычный вход паролем.
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 //
@@ -14,15 +15,15 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
     private let serverNameOrBaseURL: String
     private let userIndicatorController: UserIndicatorControllerProtocol
     private let invites: NyutagInvitesService
-    
+
     private let actionsSubject: PassthroughSubject<NyutagSignUpScreenViewModelAction, Never> = .init()
     var actions: AnyPublisher<NyutagSignUpScreenViewModelAction, Never> {
         actionsSubject.eraseToAnyPublisher()
     }
-    
+
     @CancellableTask private var resendTimerTask: Task<Void, Never>?
     @CancellableTask private var checkTask: Task<Void, Never>?
-    
+
     init(authenticationService: AuthenticationServiceProtocol,
          serverNameOrBaseURL: String,
          userIndicatorController: UserIndicatorControllerProtocol,
@@ -34,140 +35,161 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
         self.invites = invites
         var initialState = NyutagSignUpScreenViewState()
         initialState.bindings.code = NyutagInviteCode.format(initialCode)
+        initialState.hasInitialCode = !initialState.bindings.code.isEmpty
         super.init(initialViewState: initialState)
-        
+
         Task { await loadConfiguration() }
         // Код пришёл из ссылки-приглашения — проверяем сразу, как при вводе вручную.
         if state.bindings.code.count == NyutagSignUpScreenViewState.codeLength {
-            checkTask = Task { await checkCode(advanceOnSuccess: false) }
+            checkTask = Task { await checkCode() }
         }
     }
-    
+
     override func process(viewAction: NyutagSignUpScreenViewAction) {
         switch viewAction {
         case .back:
             goBack()
         case .next:
             next()
-        case .skipContact:
-            guard state.canSkipContact else { return }
-            advance()
         case .resendCode:
-            guard state.resendIn == 0, !state.isBusy else { return }
+            guard state.step == .verify, state.resendIn == 0, !state.isBusy else { return }
             state.bindings.verifyCode = ""
-            checkTask = Task { await sendVerification() }
+            checkTask = Task {
+                state.isBusy = true
+                defer { state.isBusy = false }
+                _ = await sendVerification()
+            }
         case .editUsername:
             state.bindings.username = state.username
             state.bindings.isEditingUsername = true
-            state.errorMessage = nil
+            clearError()
         case .codeChanged:
-            let formatted = state.bindings.code
             state.isCodeValid = false
             state.inviter = nil
-            state.errorMessage = nil
+            clearError()
             // Как в Telegram: код проверяется сам, как только введён целиком.
-            if formatted.count == NyutagSignUpScreenViewState.codeLength {
-                checkTask = Task { await checkCode(advanceOnSuccess: false) }
+            if state.bindings.code.count == NyutagSignUpScreenViewState.codeLength {
+                checkTask = Task { await checkCode() }
             }
         case .contactChanged:
             state.verification = nil
             state.isContactVerified = false
             state.bindings.verifyCode = ""
-            state.errorMessage = nil
+            clearError()
         case .verifyCodeChanged:
-            let digits = state.bindings.verifyCode
-            state.errorMessage = nil
-            if digits.count == NyutagSignUpScreenViewState.verifyCodeLength, !state.isBusy {
+            clearError()
+            if state.bindings.verifyCode.count == NyutagSignUpScreenViewState.verifyCodeLength, !state.isBusy {
                 checkTask = Task { await checkVerification() }
             }
         case .phoneChanged:
             state.checkedPhone = nil
-            state.errorMessage = nil
+            clearError()
         case .inputChanged:
-            state.errorMessage = nil
+            clearError()
         }
     }
-    
+
     // MARK: - Steps
-    
+
     private func goBack() {
-        guard let index = state.steps.firstIndex(of: state.step), index > 0 else {
+        guard state.step == .verify else {
             actionsSubject.send(.cancel)
             return
         }
         checkTask = nil
         state.isBusy = false
-        state.errorMessage = nil
-        withAnimation { state.step = state.steps[index - 1] }
+        clearError()
+        withAnimation { state.step = .form }
     }
-    
-    private func advance() {
-        guard let index = state.steps.firstIndex(of: state.step), index + 1 < state.steps.count else { return }
-        state.errorMessage = nil
-        withAnimation { state.step = state.steps[index + 1] }
-    }
-    
+
     private func next() {
         guard state.canContinue else { return }
         switch state.step {
-        case .code:
-            if state.isCodeValid {
-                Task { await advanceFromCode() }
-            } else {
-                checkTask = Task { await checkCode(advanceOnSuccess: true) }
-            }
-        case .contact:
-            if state.verification == nil {
-                checkTask = Task { await sendVerification() }
-            } else {
-                checkTask = Task { await checkVerification() }
-            }
-        case .phone:
-            if state.checkedPhone != nil {
-                advance()
-            } else {
-                checkTask = Task { await checkPhone() }
-            }
-        case .name:
-            checkTask = Task { await checkUsername() }
-        case .password:
-            Task { await createAccount() }
+        case .form:
+            checkTask = Task { await submitForm() }
+        case .verify:
+            checkTask = Task { await checkVerification() }
         }
     }
-    
+
+    private func clearError() {
+        state.errorMessage = nil
+        state.errorField = nil
+    }
+
+    private func fail(_ field: NyutagSignUpField, _ errcode: String) {
+        state.errorMessage = NyutagL10n.inviteError(errcode)
+        state.errorField = field
+    }
+
     private func loadConfiguration() async {
         guard state.configuration == nil, let configuration = try? await invites.signUpConfiguration() else { return }
         state.configuration = configuration
-        let hasContact = configuration.isPhoneAvailable || configuration.isEmailAvailable
-        // Телефон без SMS — свой шаг: номер вводится без кода, по нему человека находят друзья.
-        let hasPhoneStep = configuration.requiresPhone && configuration.isPhoneUnverified
-        // Код спрашиваем, только если сервер требует приглашение или код пришёл по ссылке (чтобы запомнить, кто пригласил).
-        let hasCodeStep = configuration.requiresInvite || !state.bindings.code.isEmpty
-        state.steps = [hasCodeStep ? .code : nil, hasContact ? .contact : nil, hasPhoneStep ? .phone : nil, .name, .password].compactMap(\.self)
-        if !state.steps.contains(state.step), let first = state.steps.first {
-            state.step = first
-        }
-        if hasContact {
-            state.bindings.medium = state.availableMedia.first ?? .email
-        }
     }
-    
-    private func checkPhone() async {
-        let phone = state.bindings.phone
+
+    /// Кнопка «Создать аккаунт»: проверки по очереди, затем код из письма (если нужен) или сразу регистрация.
+    private func submitForm() async {
         state.isBusy = true
+        clearError()
         defer { state.isBusy = false }
-        do throws(NyutagInviteError) {
-            let normalized = try await invites.checkPhone(phone.trimmingCharacters(in: .whitespaces), inviteCode: state.bindings.code)
-            guard !Task.isCancelled, state.bindings.phone == phone else { return }
-            state.checkedPhone = normalized
-            advance()
-        } catch {
-            guard !Task.isCancelled, state.bindings.phone == phone else { return }
-            state.errorMessage = NyutagL10n.inviteError(error.errcode)
+        guard await checkForm() else { return }
+        let needsContact = state.contactMedium != nil && !state.bindings.contact.trimmingCharacters(in: .whitespaces).isEmpty && !state.isContactVerified
+        if needsContact {
+            if await sendVerification() {
+                withAnimation { state.step = .verify }
+            }
+            return
         }
+        await createAccount()
     }
-    
-    private func checkCode(advanceOnSuccess: Bool) async {
+
+    /// Код приглашения, ник, телефон — по очереди; первая ошибка останавливает и подсвечивает своё поле.
+    private func checkForm() async -> Bool {
+        if state.configuration == nil {
+            await loadConfiguration()
+            guard state.configuration != nil else {
+                fail(.password, NyutagInviteError.network)
+                return false
+            }
+        }
+        if state.showsCode, !state.isCodeValid {
+            do throws(NyutagInviteError) {
+                state.inviter = try await invites.checkInvite(code: state.bindings.code)
+                state.isCodeValid = true
+            } catch {
+                fail(.code, error.errcode)
+                return false
+            }
+        }
+        let username = state.username
+        if state.checkedUsername != username {
+            do throws(NyutagInviteError) {
+                try await invites.checkUsername(username)
+                state.checkedUsername = username
+            } catch {
+                fail(state.bindings.isEditingUsername ? .username : .name, error.errcode)
+                if !state.bindings.isEditingUsername, error.errcode != NyutagInviteError.network {
+                    // Ник из имени занят или не подходит — даём поправить его самому.
+                    state.bindings.username = username
+                    state.bindings.isEditingUsername = true
+                    state.errorField = .username
+                }
+                return false
+            }
+        }
+        if state.showsPhone, state.checkedPhone == nil {
+            do throws(NyutagInviteError) {
+                state.checkedPhone = try await invites.checkPhone(state.bindings.phone.trimmingCharacters(in: .whitespaces),
+                                                                 inviteCode: state.bindings.code)
+            } catch {
+                fail(.phone, error.errcode)
+                return false
+            }
+        }
+        return true
+    }
+
+    private func checkCode() async {
         let code = state.bindings.code
         state.isBusy = true
         defer { state.isBusy = false }
@@ -176,56 +198,41 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
             guard !Task.isCancelled, state.bindings.code == code else { return }
             state.inviter = inviter
             state.isCodeValid = true
-            if advanceOnSuccess {
-                await advanceFromCode()
-            }
         } catch {
             guard !Task.isCancelled, state.bindings.code == code else { return }
-            state.errorMessage = NyutagL10n.inviteError(error.errcode)
+            fail(.code, error.errcode)
         }
     }
-    
-    /// Шаг «Контакт» появляется только по настройкам сервера — без них дальше не идём.
-    private func advanceFromCode() async {
-        if state.configuration == nil {
-            state.isBusy = true
-            await loadConfiguration()
-            state.isBusy = false
-            guard state.configuration != nil else {
-                state.errorMessage = NyutagL10n.inviteError(NyutagInviteError.network)
-                return
-            }
-        }
-        advance()
-    }
-    
-    private func sendVerification() async {
-        state.isBusy = true
-        defer { state.isBusy = false }
+
+    private func sendVerification() async -> Bool {
+        guard let medium = state.contactMedium else { return false }
         do throws(NyutagInviteError) {
-            let verification = try await invites.startVerification(medium: state.bindings.medium,
+            let verification = try await invites.startVerification(medium: medium,
                                                                    address: state.bindings.contact.trimmingCharacters(in: .whitespaces),
                                                                    inviteCode: state.bindings.code)
             state.verification = verification
             startResendTimer(seconds: verification.resendAfter)
+            return true
         } catch {
-            state.errorMessage = NyutagL10n.inviteError(error.errcode)
+            fail(.contact, error.errcode)
+            return false
         }
     }
-    
+
     private func checkVerification() async {
         guard let verification = state.verification else { return }
         state.isBusy = true
+        clearError()
         defer { state.isBusy = false }
         do throws(NyutagInviteError) {
             try await invites.checkVerification(sid: verification.sid, token: state.bindings.verifyCode)
             state.isContactVerified = true
-            advance()
+            await createAccount()
         } catch {
-            state.errorMessage = NyutagL10n.inviteError(error.errcode)
+            fail(.verifyCode, error.errcode)
         }
     }
-    
+
     private func startResendTimer(seconds: Int) {
         state.resendIn = seconds
         resendTimerTask = Task { [weak self] in
@@ -236,49 +243,26 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
             }
         }
     }
-    
-    private func checkUsername() async {
-        let username = state.username
-        state.isBusy = true
-        defer { state.isBusy = false }
-        do throws(NyutagInviteError) {
-            try await invites.checkUsername(username)
-            guard state.username == username else { return }
-            advance()
-        } catch {
-            guard state.username == username else { return }
-            state.errorMessage = NyutagL10n.inviteError(error.errcode)
-            if !state.bindings.isEditingUsername, error.errcode != NyutagInviteError.network {
-                // Ник из имени занят или не подходит — даём поправить его самому.
-                state.bindings.username = username
-                state.bindings.isEditingUsername = true
-            }
-        }
-    }
-    
+
     private func createAccount() async {
         let username = state.username
         let password = state.bindings.password
-        state.isBusy = true
         userIndicatorController.submitIndicator(UserIndicator(id: Self.loadingIndicatorID, type: .modal, title: NyutagL10n.signUpCreating, persistent: true))
-        defer {
-            state.isBusy = false
-            userIndicatorController.retractIndicatorWithId(Self.loadingIndicatorID)
-        }
-        
+        defer { userIndicatorController.retractIndicatorWithId(Self.loadingIndicatorID) }
+
         if state.registeredUserID == nil {
             do throws(NyutagInviteError) {
                 state.registeredUserID = try await invites.register(code: state.bindings.code,
                                                                     username: username,
                                                                     password: password,
                                                                     sid: state.isContactVerified ? state.verification?.sid : nil,
-                                                                    phone: state.steps.contains(.phone) ? state.checkedPhone : nil)
+                                                                    phone: state.showsPhone ? state.checkedPhone : nil)
             } catch {
-                state.errorMessage = NyutagL10n.inviteError(error.errcode)
+                fail(Self.registerErrorField(error.errcode, step: state.step), error.errcode)
                 return
             }
         }
-        
+
         // Аккаунт создан: дальше обычный вход тем же паролем, как с экрана «Войти».
         guard case .success = await authenticationService.configure(for: serverNameOrBaseURL, flow: .login),
               case .success(let userSession) = await authenticationService.login(username: username,
@@ -287,15 +271,27 @@ class NyutagSignUpScreenViewModel: NyutagSignUpScreenViewModelType {
                                                                                 deviceID: nil) else {
             MXLog.warning("Nyutag: sign-in after registration failed")
             state.errorMessage = NyutagL10n.signUpLoginAfterRegisterFailed
+            state.errorField = state.step == .verify ? .verifyCode : .password
             return
         }
-        
+
         let displayName = state.bindings.displayName.trimmingCharacters(in: .whitespaces)
         if case .failure(let error) = await userSession.clientProxy.setUserDisplayName(displayName) {
             MXLog.warning("Nyutag: display name not set after registration: \(error)")
         }
         actionsSubject.send(.signedIn(userSession))
     }
-    
+
+    /// Под каким полем показать отказ сервера при регистрации.
+    private static func registerErrorField(_ errcode: String, step: NyutagSignUpStep) -> NyutagSignUpField {
+        switch errcode {
+        case "NYUTAG_UNKNOWN_CODE", "NYUTAG_CODE_USED", "NYUTAG_CODE_EXPIRED", "NYUTAG_BAD_CODE": .code
+        case "M_USER_IN_USE", "M_INVALID_USERNAME": .username
+        case "M_WEAK_PASSWORD": .password
+        case "NYUTAG_CONTACT_IN_USE", "NYUTAG_BAD_CONTACT": .contact
+        default: step == .verify ? .verifyCode : .password
+        }
+    }
+
     private static let loadingIndicatorID = "\(NyutagSignUpScreenViewModel.self)-Loading"
 }

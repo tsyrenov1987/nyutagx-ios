@@ -13,7 +13,7 @@ nyutag_login_no_account	No account yet? You need an invitation code.	Нет ак
 nyutag_signup_step	Step %1$d of %2$d	Шаг %1$d из %2$d	%2$d алхамһаа %1$d-дэхи
 nyutag_signup_code_title	Enter the invitation code	Введите код приглашения	Урилгын кодоо оруулагты
 nyutag_signup_paste	Paste	Вставить	Оруулха
-nyutag_signup_name_title	What is your name?	Как вас зовут?	Таныень нэрэ хэн бэ?
+nyutag_signup_name_title	What is your name?	Как вас зовут?	Таниие хэн гэдэг бэ?
 nyutag_signup_name_subtitle	Friends will see this name in chats.	Это имя друзья увидят в чатах.	Энэ нэрые нүхэд чатнуудта харана.
 nyutag_signup_name_label	Name	Имя	Нэрэ
 nyutag_signup_username_footer	Username for signing in: %1$@	Ник для входа: %1$@	Орохо нэрэ: %1$@
@@ -23,7 +23,7 @@ nyutag_signup_password_subtitle	At least 8 characters. You will use it to sign i
 nyutag_signup_password_repeat	Repeat the password	Повторите пароль	Нюуса үгөө дахин оруулагты
 nyutag_signup_password_mismatch	The passwords do not match.	Пароли не совпадают.	Нюуса үгэнүүд таарахагүй.
 nyutag_signup_creating	Creating the account…	Создаём аккаунт…	Аккаунт бүтээжэ байна…
-nyutag_signup_contact_subtitle	We will send a code to confirm it. Nobody else will see it.	Пришлём код для подтверждения. Его никто не увидит.	Баталха код эльгээхэбди. Үөр хүн харахагүй.
+nyutag_signup_contact_subtitle	We will send a code to confirm it. Nobody else will see it.	Пришлём код для подтверждения. Его никто не увидит.	Баталха код эльгээхэбди. Ондоо хүн харахагүй.
 screen_roomlist_filter_people	Personal	Личные	Хубиин
 screen_roomlist_empty_title	Your chats will appear here	Здесь появятся ваши чаты	Эндэ таны чатнууд гараха
 screen_roomlist_empty_message	Nyutag is invite-only. Invite your friends and family.	В Нютаг попадают по приглашению. Позовите друзей и родных.	Нютаг руу урилгаар ороно. Нүхэдөө, түрэлөө уригты.
@@ -39,12 +39,12 @@ banner_set_up_recovery_content	Without it, you can't restore your chats if you l
 nyutag_community_open	Open	Открытое	Нээлттэй
 nyutag_community_open_description	Anyone can find it in search and join.	Любой найдёт его в поиске и сможет вступить.	Хэн бүхэн бэдэржэ олоод, ороод болохо.
 nyutag_community_closed	Closed	Закрытое	Хаалттай
-nyutag_community_closed_description	Anyone can find it in search and send a request. An admin approves new members.	Любой найдёт его в поиске и подаст заявку. Новых участников одобряет админ.	Хэн бүхэн бэдэржэ олоод, гуйлта эльгээхэ. Шэнэ гэшүүдые админ зүбшөөрнэ.
+nyutag_community_closed_description	Anyone can find it in search and send a request. An admin approves new members.	Любой найдёт его в поиске и подаст заявку. Новых участников одобряет админ.	Хэн бүхэн бэдэржэ олоод, гуйлта эльгээхэ. Шэнэ гэшүүдые админ зүбшөөнэ.
 nyutag_community_closed_badge	Closed · by request	Закрытое · по заявке	Хаалттай · гуйлтаар
 nyutag_communities_search	Search communities	Поиск сообществ	Оршон бэдэрхэ
 nyutag_communities_mine	My communities	Мои сообщества	Минии оршонууд
 nyutag_communities_all	All communities	Все сообщества	Бүхы оршонууд
-nyutag_communities_empty	No communities yet. Create the first one!	Сообществ пока нет. Создайте первое!	Оршон одоохондоо үгы. Түрүүшынхиеэ байгуулагты!
+nyutag_communities_empty	No communities yet. Create the first one!	Сообществ пока нет. Создайте первое!	Оршон үшөө үгы. Түрүүшынхиеэ байгуулагты!
 common_public_space	Open community	Открытое сообщество	Нээлттэй оршон
 common_private_space	Closed community	Закрытое сообщество	Хаалттай оршон
 action_signout	Sign out	Выйти	Гараха
@@ -74,8 +74,8 @@ screen_knock_requests_list_empty_state_title	No new requests	Новых заяв
 screen_knock_requests_list_empty_state_description	Requests to join will appear here.	Здесь появятся заявки на вступление.	Орохо гуйлтанууд эндэ гараха.
 screen_room_timeline_legacy_call	Unsupported call. Ask the caller to update Nyutag.	Звонок не поддерживается. Попросите собеседника обновить Нютаг.	Дуудалга дэмжэгдэхэгүй. Хүндэ Нютагаа шэнэлхэ хэрэгтэй.
 screen_search_empty_state_title	Start searching…	Начните поиск…	Бэдэржэ эхилэгты…
-screen_search_empty_state_message	Search for chats and messages	Ищите чаты и сообщения	Чат, зурбас бэдэрэгты
-screen_search_tab_chats	Chats	Чаты	Чадууд
+screen_search_empty_state_message	Search for chats and messages	Ищите чаты и сообщения	Чат, бэшэг бэдэрэгты
+screen_search_tab_chats	Chats	Чаты	Чатнууд
 screen_search_tab_messages	Messages	Сообщения	Зурбаснууд
 screen_search_no_results_message	There are no results for “%1$@”. Try a new search term.	По запросу «%1$@» ничего не найдено. Попробуйте другие слова.	«%1$@» гэжэ юумэн олдобогүй. Ондоо үгэ оролдогты.
 screen_search_recent_searches	Recent searches	Недавние запросы	Һүүлшын бэдэрэлгэнүүд
@@ -89,3 +89,15 @@ screen_room_timeline_beginning_of_room		Это начало чата «%1$@».	�
 screen_server_confirmation_message_login_matrix_dot_org	Chats and calls for your people. Everything is encrypted on your devices.	Переписка и звонки для своих. Всё шифруется на ваших устройствах.	Өөрынхидтэеэ бэшэлгэ, дуудалга. Бүхы юумэн таны утаһан дээрэ шифрлэгдэнэ.
 nyutag_call_return	Back to call	Вернуться к звонку	Дуудалга руу бусаха
 nyutag_call_end	End call	Завершить звонок	Дуудалга дүүргэхэ
+common_encryption	Recovery key	Ключ восстановления	Сэргээхэ түлхюур
+common_moderation_and_safety	Privacy	Приватность	Нюуса байдал
+common_advanced_settings	More	Дополнительно	Нэмэлтэ
+screen_moderation_and_safety_share_presence_heading	Presence	Присутствие	Онлайн байдал
+screen_moderation_and_safety_other_users_heading	Other people	Другие люди	Бусад хүнүүд
+screen_advanced_settings_share_presence	Share presence	Статус активности	Байһанаа харуулха
+screen_advanced_settings_share_presence_description	People see when you are typing and have read a message, and you see the same about them.	Собеседники видят, когда вы печатаете и прочитали сообщение, а вы — когда они.	Хөөрэлдэгшэд таны бэшэжэ байһые, уншаһые харана, та — тэдэнэйхиие.
+common_location_sharing		Геолокация	
+screen_chat_backup_recovery_action_setup_description	Without a recovery key you cannot get your chats back if you lose all your devices.	Без ключа восстановления переписку не вернуть, если потеряете все устройства.	Сэргээхэ түлхюургүйгөөр бүхы түхеэрэлгэнүүдээ алдабал, бэшэлгэеэ бусааха аргагүй.
+screen_chat_backup_recovery_action_change_description	Without a recovery key you cannot get your chats back if you lose all your devices.	Без ключа восстановления переписку не вернуть, если потеряете все устройства.	Сэргээхэ түлхюургүйгөөр бүхы түхеэрэлгэнүүдээ алдабал, бэшэлгэеэ бусааха аргагүй.
+screen_chat_backup_recovery_action_confirm_description	Enter your recovery key to see your chat history on this device.	Введите ключ восстановления, чтобы история чатов появилась на этом устройстве.	Энэ түхеэрэлгэ дээрэ чатнуудайнгаа түүхые харахын тула сэргээхэ түлхюураа оруулагты.
+screen_advanced_settings_show_media_timeline_title	Show photos and videos in chats	Показывать фото и видео в чатах	Чат соо фото, видео харуулха

@@ -26,9 +26,7 @@ struct SettingsScreen: View {
             
             nyutagInviteSection
             
-            if context.viewState.showUserStatusInput {
-                userStatusSection
-            }
+            // Нютаг: статус «Как у Вас дела?» не показываем — лишний пункт для простого мессенджера.
             
             if !shouldHideManageAccountSection {
                 manageAccountSection

@@ -1,5 +1,5 @@
 //
-// Нютаг (форк Element X iOS) — регистрация по приглашению, по шагам.
+// Нютаг (форк Element X iOS) — регистрация в одну форму (имя, телефон, почта, пароль) и код из письма.
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 //
@@ -7,88 +7,95 @@
 import Foundation
 
 enum NyutagSignUpScreenViewModelAction {
-    /// Назад с первого шага — закрыть экран.
+    /// Назад с формы — закрыть экран.
     case cancel
     case signedIn(UserSessionProtocol)
 }
 
-/// Шаги как в Telegram/WhatsApp: одно поле — одно решение. Шаг «Контакт» есть, только когда на сервере настроены SMS или почта.
 enum NyutagSignUpStep: Hashable {
-    case code
-    case contact
-    /// Телефон без SMS-кода (пока у сервера нет SMS): по номеру человека находят друзья.
-    case phone
-    case name
-    case password
+    /// Все поля на одном экране.
+    case form
+    /// Код из письма (или SMS) для подтверждения контакта.
+    case verify
+}
+
+/// Поле формы, под которым показывается ошибка.
+enum NyutagSignUpField: Hashable {
+    case code, name, username, phone, contact, password, verifyCode
 }
 
 struct NyutagSignUpScreenViewState: BindableState {
-    var steps: [NyutagSignUpStep] = [.code, .name, .password]
-    var step: NyutagSignUpStep = .code
+    var step: NyutagSignUpStep = .form
     var configuration: NyutagSignUpConfiguration?
-    
+    /// Код из ссылки-приглашения: поле кода показывается и без требования сервера.
+    var hasInitialCode = false
+
     /// Код проверен сервером; `inviter` — Matrix ID пригласившего.
     var isCodeValid = false
     var inviter: String?
-    
+
     var verification: NyutagVerification?
     var isContactVerified = false
     /// Номер, который сервер признал годным и свободным, в виде `+79…`.
     var checkedPhone: String?
+    /// Ник, который сервер признал свободным.
+    var checkedUsername: String?
     var resendIn = 0
-    
+
     /// Аккаунт уже создан, осталось войти (если вход после регистрации сорвался).
     var registeredUserID: String?
-    
+
     var isBusy = false
-    /// Ошибка текущего шага — показывается под полем, без всплывающих окон.
+    /// Ошибка — под полем `errorField`, без всплывающих окон.
     var errorMessage: String?
-    
+    var errorField: NyutagSignUpField?
+
     var bindings = NyutagSignUpScreenBindings()
-    
-    var stepNumber: Int {
-        (steps.firstIndex(of: step) ?? 0) + 1
+
+    /// Код спрашиваем, только если сервер требует приглашение или код пришёл по ссылке (чтобы запомнить, кто пригласил).
+    var showsCode: Bool {
+        configuration.map { $0.requiresInvite || hasInitialCode } ?? true
     }
-    
-    var availableMedia: [NyutagContactMedium] {
-        guard let configuration else { return [] }
-        // Почта обязательна — на шаге «Контакт» только она, телефон спрашивается отдельно.
-        let phone = configuration.isPhoneAvailable && !configuration.requiresEmail
-        return [phone ? .phone : nil, configuration.isEmailAvailable ? .email : nil].compactMap(\.self)
+
+    /// Телефон без SMS — своё поле: номер вводится без кода, по нему человека находят друзья.
+    var showsPhone: Bool {
+        configuration.map { $0.requiresPhone && $0.isPhoneUnverified } ?? false
     }
-    
-    var canSkipContact: Bool {
+
+    /// Контакт с кодом: почта обязательна — только она (телефон спрашивается отдельно), иначе SMS, если настроены.
+    var contactMedium: NyutagContactMedium? {
+        guard let configuration else { return nil }
+        if configuration.isEmailAvailable, configuration.requiresEmail || !configuration.isPhoneAvailable { return .email }
+        return configuration.isPhoneAvailable ? .phone : nil
+    }
+
+    var isContactOptional: Bool {
         configuration.map { !$0.requiresContact && !$0.requiresEmail } ?? false
     }
-    
+
     /// Ник для входа: придуманный самим человеком или из имени.
     var username: String {
         bindings.isEditingUsername ? NyutagUsername.sanitize(bindings.username) : NyutagUsername.suggest(from: bindings.displayName)
     }
-    
+
     var canContinue: Bool {
         guard !isBusy else { return false }
         switch step {
-        case .code:
-            return bindings.code.count == Self.codeLength
-        case .contact:
-            if verification == nil {
-                return !bindings.contact.trimmingCharacters(in: .whitespaces).isEmpty
-            }
+        case .form:
+            let codeOK = !showsCode || bindings.code.count == Self.codeLength
+            let nameOK = !bindings.displayName.trimmingCharacters(in: .whitespaces).isEmpty && !username.isEmpty
+            let phoneOK = !showsPhone || bindings.phone.count(where: \.isNumber) >= Self.minPhoneDigits
+            let contactOK = contactMedium == nil || isContactOptional || !bindings.contact.trimmingCharacters(in: .whitespaces).isEmpty
+            return codeOK && nameOK && phoneOK && contactOK && bindings.password.count >= Self.minPasswordLength
+        case .verify:
             return bindings.verifyCode.count == Self.verifyCodeLength
-        case .phone:
-            return bindings.phone.count(where: \.isNumber) >= Self.minPhoneDigits
-        case .name:
-            return !bindings.displayName.trimmingCharacters(in: .whitespaces).isEmpty && !username.isEmpty
-        case .password:
-            return bindings.password.count >= Self.minPasswordLength && bindings.password == bindings.passwordRepeat
         }
     }
-    
-    var showsPasswordMismatch: Bool {
-        !bindings.passwordRepeat.isEmpty && bindings.passwordRepeat.count >= bindings.password.count && bindings.password != bindings.passwordRepeat
+
+    func error(for field: NyutagSignUpField) -> String? {
+        errorField == field ? errorMessage : nil
     }
-    
+
     static let codeLength = 9 // XXXX-XXXX
     static let verifyCodeLength = 6
     static let minPasswordLength = 8
@@ -97,7 +104,6 @@ struct NyutagSignUpScreenViewState: BindableState {
 
 struct NyutagSignUpScreenBindings {
     var code = ""
-    var medium: NyutagContactMedium = .phone
     var contact = ""
     var verifyCode = ""
     var phone = ""
@@ -105,13 +111,11 @@ struct NyutagSignUpScreenBindings {
     var username = ""
     var isEditingUsername = false
     var password = ""
-    var passwordRepeat = ""
 }
 
 enum NyutagSignUpScreenViewAction {
     case back
     case next
-    case skipContact
     case resendCode
     case editUsername
     case codeChanged
@@ -133,7 +137,7 @@ enum NyutagUsername {
         .joined()
         return sanitize(latin)
     }
-    
+
     /// Только то, что примет сервер: `a-z 0-9 . _ -`, без точек по краям и двойных точек, не длиннее 24.
     static func sanitize(_ value: String) -> String {
         var result = value.lowercased()
@@ -147,7 +151,7 @@ enum NyutagUsername {
         result = result.trimmingCharacters(in: CharacterSet(charactersIn: "._-"))
         return String(result.prefix(24))
     }
-    
+
     private static let transliteration: [String: String] = [
         "а": "a", "б": "b", "в": "v", "г": "g", "д": "d", "е": "e", "ё": "e", "ж": "zh", "з": "z", "и": "i", "й": "y",
         "к": "k", "л": "l", "м": "m", "н": "n", "о": "o", "п": "p", "р": "r", "с": "s", "т": "t", "у": "u", "ф": "f",
@@ -166,7 +170,7 @@ enum NyutagInviteCode {
         let code = String(characters.prefix(8))
         return code.count > 4 ? "\(code.prefix(4))-\(code.dropFirst(4))" : code
     }
-    
+
     private static let alphabet = Set("0123456789ABCDEFGHJKMNPQRSTVWXYZ")
     private static let lookalikes: [Character: Character] = [
         "А": "A", "В": "B", "С": "C", "Е": "E", "Н": "H", "К": "K", "М": "M", "О": "0", "Р": "P", "Т": "T",

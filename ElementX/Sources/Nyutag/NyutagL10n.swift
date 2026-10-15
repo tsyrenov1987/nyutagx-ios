@@ -59,6 +59,10 @@ nonisolated enum NyutagL10n {
     
     static func signUpStep(_ step: Int, of total: Int) -> String { tr("nyutag_signup_step", step, total) }
     static var signUpCodeTitle: String { tr("nyutag_signup_code_title") }
+    static var signUpTitle: String { tr("nyutag_signup_title") }
+    static var signUpFormSubtitle: String { tr("nyutag_signup_form_subtitle") }
+    static func signUpVerifySubtitle(_ contact: String) -> String { tr("nyutag_signup_verify_subtitle", contact) }
+    static var signUpOptional: String { tr("nyutag_signup_optional") }
     static var signUpCodeSubtitle: String { tr("nyutag_invite_signup_subtitle") }
     static var signUpCodeLabel: String { tr("nyutag_invite_code_label") }
     static var signUpPaste: String { tr("nyutag_signup_paste") }

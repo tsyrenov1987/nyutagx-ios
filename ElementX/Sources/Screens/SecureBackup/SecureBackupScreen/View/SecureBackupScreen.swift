@@ -15,18 +15,8 @@ struct SecureBackupScreen: View {
     
     var body: some View {
         Form {
-            // Show recovery options for confirming the recovery key and
-            // getting access to secrets and implicitly the key backup
-            if context.viewState.recoveryState == .incomplete {
-                recoveryKeySection
-            } else {
-                keyBackupSection
-                
-                // Don't show recovery options until key backup is enabled
-                if context.viewState.keyBackupState != .unknown {
-                    recoveryKeySection
-                }
-            }
+            // Нютаг: «Хранилище ключей» с переключателем убрано — человеку нужен только ключ восстановления.
+            recoveryKeySection
         }
         .compoundList()
         .navigationTitle(L10n.commonEncryption)

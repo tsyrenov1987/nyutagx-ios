@@ -26,10 +26,6 @@ struct AdvancedSettingsScreen: View {
                         kind: .picker(selection: $context.appAppearance,
                                       items: AppAppearance.allCases.map { (title: $0.name, tag: $0) }))
                 
-                ListRow(label: .plain(title: L10n.actionViewSource,
-                                      description: L10n.screenAdvancedSettingsViewSourceDescription),
-                        kind: .toggle($context.viewSourceEnabled))
-                
                 ListRow(label: .plain(title: L10n.screenAdvancedSettingsSharePresence,
                                       description: L10n.screenAdvancedSettingsSharePresenceDescription),
                         kind: .toggle($context.sharePresence))
@@ -42,9 +38,8 @@ struct AdvancedSettingsScreen: View {
                     }
             }
             
-            moderationAndSafetySection
+            // Нютаг: «аватары в приглашениях» и настройка геолокации убраны — лишнее для обычного человека.
             timelineMediaSection
-            liveLocationSection
         }
         .compoundList()
         .navigationTitle(L10n.commonAdvancedSettings)
