@@ -19,11 +19,11 @@ struct NyutagAppSettingsHook: AppSettingsHookProtocol {
                              pushGatewayBaseURL: "http://127.0.0.1:5000",
                              oAuthRedirectURL: appSettings.oAuthRedirectURL,
                              oAuthClientURIPath: appSettings.oAuthClientURIPath,
-                             websiteURL: appSettings.websiteURL,
+                             websiteURL: URL(string: "https://nyutag.chat")!, // swiftlint:disable:this force_unwrapping
                              logoURL: appSettings.logoURL,
                              copyrightURL: appSettings.copyrightURL,
-                             acceptableUseURL: appSettings.acceptableUseURL,
-                             privacyURL: appSettings.privacyURL,
+                             acceptableUseURL: URL(string: "https://nyutag.chat/terms/")!, // swiftlint:disable:this force_unwrapping
+                             privacyURL: URL(string: "https://nyutag.chat/privacy/")!, // swiftlint:disable:this force_unwrapping
                              encryptionURL: appSettings.encryptionURL,
                              deviceVerificationURL: appSettings.deviceVerificationURL,
                              chatBackupDetailsURL: appSettings.chatBackupDetailsURL,
