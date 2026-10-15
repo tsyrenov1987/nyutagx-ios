@@ -147,6 +147,8 @@ class ClientProxy: ClientProxyProtocol {
     }
     
     private var cancellables = Set<AnyCancellable>()
+    /// Нютаг: приглашения принимаем сами (см. NyutagInviteAutoJoin).
+    private let nyutagInviteAutoJoin = NyutagInviteAutoJoin()
     
     /// Will be `true` whilst the app cleans up and forces a logout. Prevents the sync service from restarting
     /// before the client is released which ends up running in a loop. This is a workaround until the sync service
@@ -288,6 +290,19 @@ class ClientProxy: ClientProxyProtocol {
         }
         
         await setupSubscriptions(canSubscribeToUserProfile: canSubscribeToUserProfile)
+        
+        // Нютаг: приглашения принимаем сами и ставим правило пуша для входящего звонка (см. NyutagInviteAutoJoin, NyutagInvitesService).
+        nyutagInviteAutoJoin.start(provider: roomSummaryProvider, client: self)
+        if let token = nyutagAccessToken {
+            Task {
+                do {
+                    try await NyutagInvitesService.shared.ensureCallPushRules(accessToken: token)
+                    MXLog.info("Nyutag call push rules: ok")
+                } catch {
+                    MXLog.warning("Nyutag call push rules failed: \(error)")
+                }
+            }
+        }
         
         Task {
             do {

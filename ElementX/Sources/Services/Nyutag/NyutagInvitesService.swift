@@ -108,6 +108,18 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
     }
     
     /// Указывает или меняет свой номер телефона.
+    /// Нютаг: Tuwunel не знает правила `.m.rule.rtc_notification` (MSC4075) — событие «звонок» от Element Call
+    /// не превращается в пуш, и собеседник не слышит входящий. Ставим правило в аккаунт сами.
+    func ensureCallPushRules(accessToken: String) async throws(NyutagInviteError) {
+        let rules = [("nyutag.rtc_notification", "org.matrix.msc4075.rtc.notification"),
+                     ("nyutag.call_notify", "org.matrix.msc4075.call.notify")]
+        for (ruleID, eventType) in rules {
+            let body: [String: Any] = ["conditions": [["kind": "event_match", "key": "type", "pattern": eventType]],
+                                       "actions": ["notify", ["set_tweak": "sound", "value": "default"]]]
+            _ = try await request("PUT", "/_matrix/client/v3/pushrules/global/override/\(ruleID)", body: body, bearer: accessToken)
+        }
+    }
+    
     func setPhone(_ phone: String, accessToken: String) async throws(NyutagInviteError) {
         _ = try await request("POST", "/_nyutag/v1/me/phone", body: ["phone": phone], bearer: accessToken)
     }
