@@ -33,6 +33,22 @@ struct StartChatScreenViewState: BindableState {
     }
     
     var joinByAddressState: JoinByAddressState = .example
+    
+    /// Нютаг: кто из записной книжки уже здесь.
+    var nyutagContacts: NyutagContactsState = .needsPermission
+}
+
+/// Нютаг: раздел «Контакты в Нютаге» на экране «Начать чат».
+enum NyutagContactsState: Equatable {
+    /// Разрешение на контакты ещё не спрашивали — строка «Найти знакомых из контактов».
+    case needsPermission
+    /// Разрешение отклонено — подсказка про настройки телефона.
+    case denied
+    /// Сверка идёт; `cached` — прошлый итог, чтобы список не мигал.
+    case syncing(cached: [NyutagMatchedContact]?)
+    case loaded([NyutagMatchedContact])
+    /// Сверка не удалась и прошлого итога нет.
+    case failed
 }
 
 struct StartChatScreenViewStateBindings {
@@ -60,6 +76,10 @@ enum StartChatScreenViewAction {
     case nyutagSavedMessages
     /// Нютаг: найти знакомого по номеру; нет в Нютаге — пригласить ссылкой, QR или SMS.
     case nyutagFindByPhone
+    /// Нютаг: спросить разрешение на контакты (или обновить список) и сверить книжку с сервером.
+    case nyutagSyncContacts
+    /// Нютаг: чат с человеком из записной книжки — без вопроса «начать чат?», как при поиске по номеру.
+    case nyutagOpenContact(NyutagMatchedContact)
 }
 
 enum JoinByAddressState: Equatable {

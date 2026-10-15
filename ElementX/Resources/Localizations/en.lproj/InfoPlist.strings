@@ -4,4 +4,4 @@
 "NSLocationWhenInUseUsageDescription" = "This lets you send your current location or nearby places in chats.";
 "NSMicrophoneUsageDescription" = "To record and send messages with audio, Nyutag needs to access the microphone.";
 "NSPhotoLibraryUsageDescription" = "This lets you save images and videos to your photo library.";
-"NSContactsUsageDescription" = "Nyutag compares your contacts with the person you are chatting with to show whether they are in your address book. Numbers are not stored.";
+"NSContactsUsageDescription" = "Nyutag checks which of your contacts are already on Nyutag and whether the person you are chatting with is in your address book. Numbers are checked on the server and not stored.";

@@ -7,6 +7,7 @@
 //
 
 import Combine
+import Contacts
 import MatrixRustSDK
 import SwiftUI
 
@@ -37,6 +38,7 @@ class StartChatScreenViewModel: StartChatScreenViewModelType, StartChatScreenVie
         super.init(initialViewState: StartChatScreenViewState(userID: userSession.clientProxy.userID), mediaProvider: userSession.mediaProvider)
         
         setupBindings()
+        syncNyutagContacts(requestPermission: false)
         
         Task {
             suggestedUsers = await userSession.clientProxy.recentConversationCounterparts()
@@ -59,6 +61,10 @@ class StartChatScreenViewModel: StartChatScreenViewModelType, StartChatScreenVie
             Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
         case .nyutagFindByPhone:
             state.bindings.nyutagFindByPhone = NyutagFindByPhoneModel(clientProxy: userSession.clientProxy, mediaProvider: userSession.mediaProvider)
+        case .nyutagSyncContacts:
+            syncNyutagContacts(requestPermission: true)
+        case .nyutagOpenContact(let contact):
+            Task { await openNyutagContact(contact) }
         case .nyutagSavedMessages:
             Task {
                 if let roomID = await NyutagSavedMessages.roomID(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) {
@@ -94,6 +100,45 @@ class StartChatScreenViewModel: StartChatScreenViewModelType, StartChatScreenVie
             joinRoomByAddress()
         case .openRoomDirectorySearch:
             actionsSubject.send(.openRoomDirectorySearch)
+        }
+    }
+    
+    // MARK: - Нютаг: контакты
+    
+    /// Разрешение на контакты есть — книжка сверяется с сервером (сразу прошлый итог, потом свежий).
+    private func syncNyutagContacts(requestPermission: Bool) {
+        Task {
+            var status = CNContactStore.authorizationStatus(for: .contacts)
+            if status == .notDetermined, requestPermission {
+                _ = try? await CNContactStore().requestAccess(for: .contacts)
+                status = CNContactStore.authorizationStatus(for: .contacts)
+            }
+            switch status {
+            case .authorized, .limited:
+                break
+            case .notDetermined:
+                state.nyutagContacts = .needsPermission
+                return
+            default:
+                state.nyutagContacts = .denied
+                return
+            }
+            let cached = NyutagContactsSync.cached(userID: userSession.clientProxy.userID)
+            state.nyutagContacts = .syncing(cached: cached)
+            do throws(NyutagInviteError) {
+                state.nyutagContacts = try await .loaded(NyutagContactsSync.sync(clientProxy: userSession.clientProxy, force: requestPermission))
+            } catch {
+                state.nyutagContacts = cached.map { .loaded($0) } ?? .failed
+            }
+        }
+    }
+    
+    /// Чат с человеком из книжки: есть личный чат — открываем, нет — создаём без подтверждения.
+    private func openNyutagContact(_ contact: NyutagMatchedContact) async {
+        if case .success(.some(let roomID)) = userSession.clientProxy.directRoomForUserID(contact.userID) {
+            actionsSubject.send(.showRoom(roomID: roomID))
+        } else {
+            await createDirectRoom(user: contact.profile)
         }
     }
     

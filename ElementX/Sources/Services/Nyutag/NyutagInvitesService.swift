@@ -388,6 +388,98 @@ enum NyutagAddressBook {
         }
         return Array(phones.prefix(maxPhones))
     }
+    
+    /// Записи книжки с именами (один номер — одна запись): для списка «Контакты в Нютаге».
+    nonisolated static func contacts() -> [NyutagContact] {
+        var seen = Set<String>()
+        var contacts = [NyutagContact]()
+        let keys = [CNContactPhoneNumbersKey, CNContactGivenNameKey, CNContactFamilyNameKey, CNContactOrganizationNameKey] as [CNKeyDescriptor]
+        let request = CNContactFetchRequest(keysToFetch: keys)
+        request.sortOrder = .userDefault
+        try? CNContactStore().enumerateContacts(with: request) { contact, stop in
+            let name = [contact.givenName, contact.familyName].filter { !$0.isEmpty }.joined(separator: " ")
+            for number in contact.phoneNumbers {
+                let phone = number.value.stringValue
+                // Один и тот же номер, записанный по-разному (+7… и 8…), — одна запись.
+                guard seen.insert(String(phone.filter(\.isNumber).suffix(10))).inserted else { continue }
+                contacts.append(NyutagContact(name: name.isEmpty ? (contact.organizationName.isEmpty ? phone : contact.organizationName) : name, phone: phone))
+            }
+            if contacts.count >= maxPhones {
+                stop.pointee = true
+            }
+        }
+        return contacts
+    }
+}
+
+/// Запись телефонной книги: имя, как записано у человека, и номер.
+nonisolated struct NyutagContact: Hashable {
+    let name: String
+    let phone: String
+}
+
+/// Контакт из книжки, найденный в Нютаге: имя — как записано у человека, профиль — с сервера.
+nonisolated struct NyutagMatchedContact: Hashable, Codable, Identifiable {
+    let name: String
+    let phone: String
+    let userID: String
+    let displayName: String?
+    let avatarURL: URL?
+    
+    var id: String { userID }
+    
+    /// Профиль для строки списка: имя из книжки, аватар из Нютага.
+    var profile: UserProfile { UserProfile(userID: userID, displayName: name, avatarURL: avatarURL) }
+}
+
+/// Сверка записной книжки с сервером: номера уходят пачками, сервер отвечает только совпадениями и номера не хранит.
+/// Итог запоминается на устройстве, чтобы список показывался сразу, а сверка шла не чаще раза в час.
+enum NyutagContactsSync {
+    /// Столько номеров сервер принимает в одном запросе поиска.
+    private static let batch = 500
+    private static let interval: TimeInterval = 60 * 60
+    
+    private static func key(_ userID: String) -> String { "nyutagMatchedContacts." + userID }
+    
+    static func cached(userID: String) -> [NyutagMatchedContact]? {
+        guard let data = UserDefaults.standard.data(forKey: key(userID)) else { return nil }
+        return try? JSONDecoder().decode([NyutagMatchedContact].self, from: data)
+    }
+    
+    /// Без `force` — только если прошлая сверка старше часа (тогда отдаёт `cached`).
+    static func sync(clientProxy: ClientProxyProtocol, force: Bool) async throws(NyutagInviteError) -> [NyutagMatchedContact] {
+        let userID = clientProxy.userID
+        let syncedAt = UserDefaults.standard.double(forKey: key(userID) + ".at")
+        if !force, Date().timeIntervalSince1970 - syncedAt < interval, let cached = cached(userID: userID) {
+            return cached
+        }
+        guard let accessToken = (clientProxy as? ClientProxy)?.nyutagAccessToken else { throw .init(errcode: "NYUTAG_CLIENT_ERROR") }
+        let contacts = await Task.detached { NyutagAddressBook.contacts() }.value
+        let byPhone = Dictionary(contacts.map { ($0.phone, $0) }, uniquingKeysWith: { first, _ in first })
+        let previous = Dictionary((cached(userID: userID) ?? []).map { ($0.userID, $0) }, uniquingKeysWith: { first, _ in first })
+        var matched = [NyutagMatchedContact]()
+        var seen = Set<String>()
+        for start in stride(from: 0, to: contacts.count, by: batch) {
+            let phones = contacts[start..<min(start + batch, contacts.count)].map(\.phone)
+            let matches = try await NyutagInvitesService.shared.lookupPhones(phones, accessToken: accessToken)
+            for (phone, matchedUserID) in matches {
+                guard let contact = byPhone[phone], seen.insert(matchedUserID).inserted else { continue }
+                // Профиль (аватар, имя в Нютаге) — с сервера; не вышло — берём прошлый.
+                let profile = try? await clientProxy.profile(for: matchedUserID).get()
+                matched.append(NyutagMatchedContact(name: contact.name,
+                                                    phone: phone,
+                                                    userID: matchedUserID,
+                                                    displayName: profile?.displayName ?? previous[matchedUserID]?.displayName,
+                                                    avatarURL: profile?.avatarURL ?? previous[matchedUserID]?.avatarURL))
+            }
+        }
+        matched.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        if let data = try? JSONEncoder().encode(matched) {
+            UserDefaults.standard.set(data, forKey: key(userID))
+            UserDefaults.standard.set(Date().timeIntervalSince1970, forKey: key(userID) + ".at")
+        }
+        return matched
+    }
 }
 
 /// Личные чаты, принятые сами (написал незнакомый), где мы ещё не ответили: пока чат здесь, в нём надпись «Вне контактов».

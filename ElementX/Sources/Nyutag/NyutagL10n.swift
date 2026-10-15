@@ -117,6 +117,12 @@ nonisolated enum NyutagL10n {
     static var byPhoneOwnTitle: String { tr("nyutag_by_phone_own_title") }
     static var byPhoneOwnSubtitle: String { tr("nyutag_by_phone_own_subtitle") }
     static var byPhoneOwnLabel: String { tr("nyutag_by_phone_own_label") }
+    static var contactsSection: String { tr("nyutag_contacts_section") }
+    static var contactsAllow: String { tr("nyutag_contacts_allow") }
+    static var contactsAllowSubtitle: String { tr("nyutag_contacts_allow_subtitle") }
+    static var contactsEmpty: String { tr("nyutag_contacts_empty") }
+    static var contactsDenied: String { tr("nyutag_contacts_denied") }
+    static var contactsSyncing: String { tr("nyutag_contacts_syncing") }
     
     /// Ошибка экрана «По номеру телефона».
     static func byPhoneError(_ errcode: String) -> String {

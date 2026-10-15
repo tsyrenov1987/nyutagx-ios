@@ -63,6 +63,7 @@ struct StartChatScreen: View {
         // Нютаг: как в Telegram — одним блоком «Новая группа», «Пригласить друга», «Каталог групп», ниже люди.
         // Вход по адресу #группа:сервер убран как технический.
         nyutagActionsSection
+        nyutagContactsSection
         usersSection
     }
     
@@ -92,6 +93,66 @@ struct StartChatScreen: View {
                 .accessibilityIdentifier(A11yIdentifiers.startChatScreen.inviteFriends)
             ListRow(label: .default(title: L10n.screenRoomDirectorySearchTitle, icon: \.listBulleted),
                     kind: .navigationLink { context.send(viewAction: .openRoomDirectorySearch) })
+        }
+    }
+    
+    /// Нютаг: кто из записной книжки уже здесь. Без разрешения — строка «Найти знакомых из контактов».
+    @ViewBuilder
+    private var nyutagContactsSection: some View {
+        switch context.viewState.nyutagContacts {
+        case .needsPermission, .denied:
+            Section {
+                ListRow(label: .default(title: NyutagL10n.contactsAllow,
+                                        description: context.viewState.nyutagContacts == .denied ? NyutagL10n.contactsDenied : NyutagL10n.contactsAllowSubtitle,
+                                        icon: \.userAdd),
+                        kind: .button { context.send(viewAction: .nyutagSyncContacts) })
+                    .accessibilityIdentifier("startChat-nyutagContactsAllow")
+            }
+        case .syncing(let cached):
+            nyutagContactsList(cached, isSyncing: true)
+        case .loaded(let contacts):
+            nyutagContactsList(contacts, isSyncing: false)
+        case .failed:
+            Section {
+                ListRow(kind: .custom {
+                    Text(NyutagL10n.byPhoneError(NyutagInviteError.network))
+                        .font(.compound.bodyMD)
+                        .foregroundColor(.compound.textSecondary)
+                        .padding(.horizontal, ListRowPadding.horizontal)
+                        .padding(.vertical, ListRowPadding.vertical)
+                })
+            } header: {
+                Text(NyutagL10n.contactsSection).compoundListSectionHeader()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private func nyutagContactsList(_ contacts: [NyutagMatchedContact]?, isSyncing: Bool) -> some View {
+        Section {
+            if let contacts, !contacts.isEmpty {
+                ForEach(contacts) { contact in
+                    UserProfileListRow(user: contact.profile,
+                                       membership: nil,
+                                       mediaProvider: context.mediaProvider,
+                                       kind: .button { context.send(viewAction: .nyutagOpenContact(contact)) })
+                }
+            } else {
+                ListRow(kind: .custom {
+                    HStack(spacing: 12) {
+                        if isSyncing {
+                            ProgressView()
+                        }
+                        Text(contacts == nil ? NyutagL10n.contactsSyncing : NyutagL10n.contactsEmpty)
+                            .font(.compound.bodyMD)
+                            .foregroundColor(.compound.textSecondary)
+                    }
+                    .padding(.horizontal, ListRowPadding.horizontal)
+                    .padding(.vertical, ListRowPadding.vertical)
+                })
+            }
+        } header: {
+            Text(NyutagL10n.contactsSection).compoundListSectionHeader()
         }
     }
     

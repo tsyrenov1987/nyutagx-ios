@@ -126,6 +126,12 @@
 "nyutag_contact_sending" = "Отправляем код…";
 "nyutag_contact_title" = "Телефон или e-mail";
 "nyutag_contact_title_optional" = "Телефон или e-mail (необязательно)";
+"nyutag_contacts_allow" = "Найти знакомых из контактов";
+"nyutag_contacts_allow_subtitle" = "Номера сверяются на сервере и не сохраняются.";
+"nyutag_contacts_denied" = "Разрешите доступ к контактам в настройках телефона, чтобы увидеть, кто уже в Нютаге.";
+"nyutag_contacts_empty" = "Из ваших контактов в Нютаге пока никого нет. Пригласите их по номеру телефона.";
+"nyutag_contacts_section" = "Контакты в Нютаге";
+"nyutag_contacts_syncing" = "Сверяем контакты…";
 "nyutag_invite_code_label" = "Код приглашения";
 "nyutag_invite_creating" = "Создаю приглашение…";
 "nyutag_invite_error_bad_code" = "Код выглядит так: XXXX-XXXX.";

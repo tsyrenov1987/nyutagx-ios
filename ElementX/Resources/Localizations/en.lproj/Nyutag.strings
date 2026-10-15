@@ -123,6 +123,12 @@
 "nyutag_contact_sending" = "Sending the code…";
 "nyutag_contact_title" = "Phone or email";
 "nyutag_contact_title_optional" = "Phone or email (optional)";
+"nyutag_contacts_allow" = "Find friends from your contacts";
+"nyutag_contacts_allow_subtitle" = "Numbers are checked on the server and not stored.";
+"nyutag_contacts_denied" = "Allow access to contacts in the phone settings to see who is already on Nyutag.";
+"nyutag_contacts_empty" = "None of your contacts are on Nyutag yet. Invite them by phone number.";
+"nyutag_contacts_section" = "Contacts on Nyutag";
+"nyutag_contacts_syncing" = "Checking contacts…";
 "nyutag_invite_code_label" = "Invitation code";
 "nyutag_invite_creating" = "Creating an invitation…";
 "nyutag_invite_error_bad_code" = "The code looks like XXXX-XXXX.";

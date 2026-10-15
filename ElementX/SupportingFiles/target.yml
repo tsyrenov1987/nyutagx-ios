@@ -93,7 +93,7 @@ targets:
           INSendMessageIntent,
           INStartCallIntent,
         ]
-        NSContactsUsageDescription: Nyutag compares your contacts with the person you are chatting with to show whether they are in your address book. Numbers are not stored.
+        NSContactsUsageDescription: Nyutag checks which of your contacts are already on Nyutag and whether the person you are chatting with is in your address book. Numbers are checked on the server and not stored.
         NSCameraUsageDescription: To take pictures or videos and send them as a message $(APP_DISPLAY_NAME) needs access to the camera.
         NSMicrophoneUsageDescription: To record and send messages with audio, $(APP_DISPLAY_NAME) needs to access the microphone.
         NSPhotoLibraryAddUsageDescription: This lets you save images and videos to your photo library.
