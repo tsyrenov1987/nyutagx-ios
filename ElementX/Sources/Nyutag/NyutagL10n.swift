@@ -101,6 +101,13 @@ nonisolated enum NyutagL10n {
     static var signUpLoginAfterRegisterFailed: String { tr("nyutag_invite_error_login_after_register") }
     static var signUpPhoneSubtitle: String { tr("nyutag_signup_phone_subtitle") }
     
+    // MARK: Сброс пароля
+    
+    static var passwordResetTitle: String { tr("nyutag_password_reset_title") }
+    static var passwordResetSubtitle: String { tr("nyutag_password_reset_subtitle") }
+    static var passwordResetNew: String { tr("nyutag_password_reset_new") }
+    static var passwordResetSubmit: String { tr("nyutag_password_reset_submit") }
+    
     // MARK: Поиск по номеру телефона
     
     static var byPhoneTitle: String { tr("nyutag_by_phone_title") }
@@ -172,6 +179,7 @@ nonisolated enum NyutagL10n {
         case "NYUTAG_VERIFY_WRONG": "nyutag_contact_error_wrong_code"
         case "NYUTAG_VERIFY_EXPIRED": "nyutag_contact_error_code_expired"
         case "NYUTAG_VERIFY_ATTEMPTS": "nyutag_contact_error_attempts"
+        case "NYUTAG_CONTACT_UNKNOWN": "nyutag_password_reset_error_unknown"
         default: "nyutag_invite_error_generic"
         }
         return tr(key)

@@ -171,6 +171,11 @@
 "nyutag_not_in_contacts" = "Этого человека нет в ваших контактах";
 "nyutag_not_in_contacts_check" = "Сверить с контактами";
 "nyutag_notification_dm_new_message" = "Новое сообщение";
+"nyutag_password_reset_error_unknown" = "К этой почте не привязан ни один аккаунт Нютага. Проверьте адрес: возможно, вы регистрировались с другой почтой.";
+"nyutag_password_reset_new" = "Новый пароль, не короче 8 символов";
+"nyutag_password_reset_submit" = "Сохранить и войти";
+"nyutag_password_reset_subtitle" = "Введите почту, к которой привязан аккаунт Нютага. Пришлём на неё код.";
+"nyutag_password_reset_title" = "Сброс пароля";
 "nyutag_presence_date" = "был(а) %1$@";
 "nyutag_presence_just_now" = "был(а) только что";
 "nyutag_presence_minutes_ago" = "был(а) %1$d мин. назад";

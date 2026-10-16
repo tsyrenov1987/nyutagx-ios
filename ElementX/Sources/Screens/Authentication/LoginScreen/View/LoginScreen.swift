@@ -14,6 +14,8 @@ struct LoginScreen: View {
     @FocusState private var isUsernameFocused: Bool
     /// The focus state of the password text field.
     @FocusState private var isPasswordFocused: Bool
+    /// Нютаг: открыт экран «Забыли пароль?».
+    @State private var isResettingPassword = false
     
     @Bindable var context: LoginScreenViewModel.Context
     
@@ -42,6 +44,13 @@ struct LoginScreen: View {
         .background(Color.compound.bgCanvasDefault.ignoresSafeArea())
         .navigationBarTitleDisplayMode(.inline)
         .alert(item: $context.alertInfo)
+        .sheet(isPresented: $isResettingPassword) {
+            NyutagPasswordResetView(email: context.username.nyutagResetEmail) { email, password in
+                context.username = email
+                context.password = password
+                submit()
+            }
+        }
     }
     
     /// The header containing the title and icon.
@@ -85,7 +94,15 @@ struct LoginScreen: View {
             .submitLabel(.done)
             .onSubmit(submit)
             
-            Spacer().frame(height: 32)
+            // Нютаг: сброс пароля кодом на почту аккаунта.
+            Button(L10n.actionForgotPassword) { isResettingPassword = true }
+                .font(.compound.bodyMDSemibold)
+                .tint(Color(NyutagBrand.blue))
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.top, 12)
+                .accessibilityIdentifier("nyutagLogin-forgotPassword")
+            
+            Spacer().frame(height: 20)
             
             Button(action: submit) {
                 Text(L10n.actionContinue)
@@ -118,6 +135,14 @@ struct LoginScreen: View {
         context.send(viewAction: .next)
         isUsernameFocused = false
         isPasswordFocused = false
+    }
+}
+
+private extension String {
+    /// Почта из поля входа переносится в сброс; ник и телефон — нет.
+    var nyutagResetEmail: String {
+        let value = trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.contains("@") && !value.hasPrefix("@") ? value : ""
     }
 }
 

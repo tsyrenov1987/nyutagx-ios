@@ -45,6 +45,7 @@
 		03CDCA6243F89B194E3FAD17 /* EncryptionAuthenticity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955336CBD5ED73C792D1F580 /* EncryptionAuthenticity.swift */; };
 		03E9750B2F994A79FA1296A1 /* AccountProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A67BCEFE35F8D00CADF108C9 /* AccountProvider.swift */; };
 		03F192C5C011AFA6068C9EAA /* SpaceServiceSDKMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90B1E4D1F0A6FAAE64B54D76 /* SpaceServiceSDKMock.swift */; };
+		0428D3D48347949C52663120 /* NyutagPasswordResetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CBBBDDB7C00B91CC7D99E6B /* NyutagPasswordResetView.swift */; };
 		0437765FF480249486893CC7 /* ScreenTrackerViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 196004E7695FBA292A7944AF /* ScreenTrackerViewModifier.swift */; };
 		044DD8F80231BC30570F7965 /* UserDiscoveryService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65AAD845E53B0C8B5E0812C2 /* UserDiscoveryService.swift */; };
 		04F17DE71A50206336749BAC /* UserPreferenceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA241DEEF7C8A7181C0AEDC9 /* UserPreferenceTests.swift */; };
@@ -2255,6 +2256,7 @@
 		4BD371B60E07A5324B9507EF /* AnalyticsSettingsScreenCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsSettingsScreenCoordinator.swift; sourceTree = "<group>"; };
 		4C816902BB6F450B4225B90C /* SettingsScreenUserStatusRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsScreenUserStatusRow.swift; sourceTree = "<group>"; };
 		4C8D988E82A8DFA13BE46F7C /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pl; path = pl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		4CBBBDDB7C00B91CC7D99E6B /* NyutagPasswordResetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NyutagPasswordResetView.swift; sourceTree = "<group>"; };
 		4CD6AC7546E8D7E5C73CEA48 /* ElementX.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ElementX.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4CDDDDD9FE1A699D23A5E096 /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
 		4CF17EFB2833B4CE5C06E7F8 /* LabsScreenCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabsScreenCoordinator.swift; sourceTree = "<group>"; };
@@ -5068,6 +5070,7 @@
 			isa = PBXGroup;
 			children = (
 				4CDDDDD9FE1A699D23A5E096 /* LoginScreen.swift */,
+				4CBBBDDB7C00B91CC7D99E6B /* NyutagPasswordResetView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -9269,6 +9272,7 @@
 				6058C96DC89FF639CD776266 /* NyutagInvitesService.swift in Sources */,
 				40984F10C2B69CD28E6B0315 /* NyutagL10n.swift in Sources */,
 				277AE4B79A92A8F3DB508772 /* NyutagLanguage.swift in Sources */,
+				0428D3D48347949C52663120 /* NyutagPasswordResetView.swift in Sources */,
 				754C3AD0AF2AF55B58214753 /* NyutagSignUpScreen.swift in Sources */,
 				0D143DEBA576B2C79E01B378 /* NyutagSignUpScreenCoordinator.swift in Sources */,
 				20DC80B231F6BF4E16876AC7 /* NyutagSignUpScreenModels.swift in Sources */,

@@ -89,6 +89,21 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         return userID
     }
     
+    /// «Забыли пароль?»: шлёт шестизначный код на почту, к которой привязан аккаунт.
+    func startPasswordReset(address: String) async throws(NyutagInviteError) -> NyutagVerification {
+        let json = try await request("POST", "/_nyutag/v1/password/start", body: ["address": address])
+        guard let sid = json["sid"] as? String else { throw .init(errcode: "NYUTAG_CLIENT_ERROR") }
+        return NyutagVerification(sid: sid, resendAfter: json["resend_after_s"] as? Int ?? 60)
+    }
+    
+    /// Ставит новый пароль по коду из письма и возвращает Matrix ID аккаунта. Другие устройства остаются в аккаунте.
+    func resetPassword(sid: String, token: String, password: String) async throws(NyutagInviteError) -> String {
+        let json = try await request("POST", "/_nyutag/v1/password/reset", body: ["sid": sid, "token": token, "password": password])
+        guard let userID = json["user_id"] as? String else { throw .init(errcode: "NYUTAG_CLIENT_ERROR") }
+        MXLog.info("Nyutag: password reset for \(userID)")
+        return userID
+    }
+    
     /// Выпускает одноразовый код от имени участника; код живёт 7 дней.
     func createInvite(accessToken: String) async throws(NyutagInviteError) -> NyutagInvite {
         let json = try await request("POST", "/_nyutag/v1/invites", bearer: accessToken)

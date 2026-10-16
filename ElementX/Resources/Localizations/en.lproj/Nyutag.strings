@@ -168,6 +168,11 @@
 "nyutag_not_in_contacts" = "This person is not in your contacts";
 "nyutag_not_in_contacts_check" = "Check contacts";
 "nyutag_notification_dm_new_message" = "New message";
+"nyutag_password_reset_error_unknown" = "No Nyutag account is linked to this email. Check the address: you may have signed up with a different one.";
+"nyutag_password_reset_new" = "New password, at least 8 characters";
+"nyutag_password_reset_submit" = "Save and sign in";
+"nyutag_password_reset_subtitle" = "Enter the email your Nyutag account is linked to. We will send a code there.";
+"nyutag_password_reset_title" = "Reset password";
 "nyutag_presence_date" = "last seen %1$@";
 "nyutag_presence_just_now" = "last seen just now";
 "nyutag_presence_minutes_ago" = "last seen %1$d min ago";

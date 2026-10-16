@@ -709,6 +709,11 @@
 "nyutag_not_in_contacts" = "Энэ хүн таны контактнуудта үгы";
 "nyutag_not_in_contacts_check" = "Контактнуудаа шалгаха";
 "nyutag_notification_dm_new_message" = "Шэнэ бэшэг";
+"nyutag_password_reset_error_unknown" = "Энэ хаягта Нютагай аккаунт холбоотой бэшэ. Хаягаа шалгагты: ондоо почтоор бүртхүүлһэн байжа магад.";
+"nyutag_password_reset_new" = "Шэнэ нюуса үгэ, 8 тэмдэгһээ доошо бэшэ";
+"nyutag_password_reset_submit" = "Хадагалаад орохо";
+"nyutag_password_reset_subtitle" = "Нютагай аккаунтдаа холбоотой e-mail хаягаа оруулагты. Тэндэ код эльгээхэбди.";
+"nyutag_password_reset_title" = "Нюуса үгэ шэнэлхэ";
 "nyutag_presence_date" = "%1$@ байгаа";
 "nyutag_presence_just_now" = "мүнөө һая байгаа";
 "nyutag_presence_minutes_ago" = "%1$d мин. урда байгаа";
