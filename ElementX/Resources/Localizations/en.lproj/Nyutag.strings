@@ -129,6 +129,10 @@
 "nyutag_contacts_empty" = "None of your contacts are on Nyutag yet. Invite them by phone number.";
 "nyutag_contacts_section" = "Contacts on Nyutag";
 "nyutag_contacts_syncing" = "Checking contacts…";
+"nyutag_donate_body" = "Nyutag is made by a tiny studio. We pay for the servers that carry your chats, calls and notifications ourselves, and so far we run at a loss. There are no ads in Nyutag and there never will be. If you find it useful, support it: every bit goes to the servers.";
+"nyutag_donate_thanks" = "Thank you! Your support keeps Nyutag's servers running.";
+"nyutag_donate_title" = "Support Nyutag";
+"nyutag_donate_unavailable" = "Could not reach the store. Please try again later.";
 "nyutag_invite_code_label" = "Invitation code";
 "nyutag_invite_creating" = "Creating an invitation…";
 "nyutag_invite_error_bad_code" = "The code looks like XXXX-XXXX.";

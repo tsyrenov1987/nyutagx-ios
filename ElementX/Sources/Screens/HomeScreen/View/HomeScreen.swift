@@ -45,6 +45,9 @@ struct HomeScreen: View {
             .sheet(item: $context.nyutagAnnouncement) { announcement in
                 NyutagAnnouncementSheet(announcement: announcement, context: context)
             }
+            .sheet(isPresented: $context.isPresentingNyutagDonate) {
+                NyutagDonateSheet()
+            }
     }
     
     // MARK: - Private
@@ -222,6 +225,59 @@ private struct NyutagAnnouncementSheet: View {
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.visible)
         .interactiveDismissDisabled()
+    }
+}
+
+// MARK: - Нютаг: поддержка проекта
+
+/// Просьба о донате: кто мы, на что идут деньги, три суммы из App Store. Показывается из обращения и из настроек.
+struct NyutagDonateSheet: View {
+    @StateObject private var store = NyutagDonationStore()
+    @Environment(\.dismiss) private var dismiss
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(NyutagL10n.donateTitle)
+                        .font(.compound.headingLGBold)
+                        .foregroundColor(.compound.textPrimary)
+                    Text(store.didThank ? NyutagL10n.donateThanks : NyutagL10n.donateBody)
+                        .font(.compound.bodyLG)
+                        .foregroundColor(.compound.textPrimary)
+                    if let errorMessage = store.errorMessage, !store.didThank {
+                        Text(errorMessage)
+                            .font(.compound.bodyMD)
+                            .foregroundColor(.compound.textSecondary)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 32)
+            }
+            VStack(spacing: 12) {
+                if store.isLoading {
+                    ProgressView()
+                        .padding(.vertical, 8)
+                } else if !store.didThank {
+                    ForEach(store.products, id: \.id) { product in
+                        Button("\(product.displayName) · \(product.displayPrice)") {
+                            Task { await store.purchase(product) }
+                        }
+                        .buttonStyle(.compound(.primary))
+                        .disabled(store.isPurchasing)
+                    }
+                }
+                Button(store.didThank ? L10n.actionClose : L10n.actionNotNow) { dismiss() }
+                    .buttonStyle(.compound(.tertiary))
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+        }
+        .background(Color.compound.bgCanvasDefault.ignoresSafeArea())
+        .presentationDetents([.large])
+        .presentationDragIndicator(.visible)
+        .task { await store.load() }
     }
 }
 

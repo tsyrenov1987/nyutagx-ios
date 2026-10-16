@@ -13,6 +13,7 @@ import SwiftUI
 struct SettingsScreen: View {
     @Bindable var context: SettingsScreenViewModel.Context
     @State private var language = NyutagLanguage.current
+    @State private var isPresentingDonate = false
     
     private var shouldHideManageAccountSection: Bool {
         context.viewState.accountProfileURL == nil &&
@@ -57,6 +58,9 @@ struct SettingsScreen: View {
             }
             .presentationDetents([.medium])
             .presentationBackground(.compound.bgCanvasDefault)
+        }
+        .sheet(isPresented: $isPresentingDonate) {
+            NyutagDonateSheet()
         }
     }
     
@@ -107,6 +111,11 @@ struct SettingsScreen: View {
                                     icon: \.userAdd),
                     kind: .button {
                         context.send(viewAction: .nyutagInviteFriend)
+                    })
+            ListRow(label: .default(title: NyutagL10n.donateTitle,
+                                    icon: \.favourite),
+                    kind: .button {
+                        isPresentingDonate = true
                     })
         }
     }

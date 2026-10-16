@@ -7,6 +7,7 @@
 import Contacts
 import Foundation
 import Network
+import StoreKit
 import Synchronization
 
 /// Сервис `/_nyutag/v1/` живёт на ядре рядом с Tuwunel. Ходим к нему тем же туннелем «Кильватер» и с тем же CA, что и SDK.
@@ -689,6 +690,66 @@ nonisolated enum NyutagAnnouncementStore {
             var seen = defaults.stringArray(forKey: seenKey) ?? []
             seen.append(announcement.id)
             defaults.set(seen, forKey: seenKey)
+        }
+    }
+}
+
+// MARK: - Донат
+
+/// Поддержка проекта: три расходуемые покупки из App Store Connect (`chat.nyutag.messenger.donate.*`).
+/// Без подписок и без пользы в приложении — это просьба оплатить серверы.
+@MainActor
+final class NyutagDonationStore: ObservableObject {
+    static let productIDs = ["chat.nyutag.messenger.donate.small",
+                             "chat.nyutag.messenger.donate.medium",
+                             "chat.nyutag.messenger.donate.large"]
+    
+    @Published private(set) var products: [Product] = []
+    @Published private(set) var isLoading = true
+    @Published private(set) var isPurchasing = false
+    @Published private(set) var didThank = false
+    @Published private(set) var errorMessage: String?
+    
+    func load() async {
+        isLoading = true
+        errorMessage = nil
+        do {
+            products = try await Product.products(for: Self.productIDs).sorted { $0.price < $1.price }
+            if products.isEmpty {
+                errorMessage = NyutagL10n.donateUnavailable
+            }
+        } catch {
+            MXLog.error("Nyutag donate: products failed: \(error)")
+            errorMessage = NyutagL10n.donateUnavailable
+        }
+        isLoading = false
+        // Незавершённые транзакции (оплата прошла, приложение закрылось) — закрываем, спасибо уже сказали.
+        for await transaction in Transaction.unfinished {
+            if case .verified(let verified) = transaction {
+                await verified.finish()
+            }
+        }
+    }
+    
+    func purchase(_ product: Product) async {
+        guard !isPurchasing else { return }
+        isPurchasing = true
+        defer { isPurchasing = false }
+        do {
+            switch try await product.purchase() {
+            case .success(let verification):
+                if case .verified(let transaction) = verification {
+                    await transaction.finish()
+                }
+                didThank = true
+            case .userCancelled, .pending:
+                break
+            @unknown default:
+                break
+            }
+        } catch {
+            MXLog.error("Nyutag donate: purchase failed: \(error)")
+            errorMessage = NyutagL10n.donateUnavailable
         }
     }
 }

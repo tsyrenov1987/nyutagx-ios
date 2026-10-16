@@ -168,6 +168,8 @@ struct HomeScreenViewStateBindings {
     
     /// Обращение разработчика, которое сейчас показано окном.
     var nyutagAnnouncement: NyutagAnnouncement?
+    /// Экран «Поддержать Нютаг» (кнопка `donate` в обращении).
+    var isPresentingNyutagDonate = false
 }
 
 enum CallBadgeType {

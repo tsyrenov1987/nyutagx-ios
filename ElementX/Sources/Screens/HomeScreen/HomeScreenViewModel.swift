@@ -498,6 +498,12 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
         if let url = action?.url {
             UIApplication.shared.open(url)
         }
+        if action?.kind == .donate {
+            Task { [weak self] in
+                try? await Task.sleep(for: .milliseconds(600))
+                self?.state.bindings.isPresentingNyutagDonate = true
+            }
+        }
     }
     
     private func loadNyutagAnnouncement() async {
