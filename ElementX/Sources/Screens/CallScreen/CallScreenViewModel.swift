@@ -108,8 +108,9 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
                 switch action {
                 case .callEnded:
                     actionsSubject.send(.dismiss)
-                case .mediaStateChanged(let audioEnabled, _):
+                case .mediaStateChanged(let audioEnabled, let videoEnabled):
                     isAudioEnabled = audioEnabled
+                    state.bindings.setVideoActiveHandler?(videoEnabled)
                     miniWindow.isMuted = !audioEnabled
                     elementCallService.setAudioEnabled(audioEnabled, roomID: configuration.callRoomID)
                 }

@@ -86,6 +86,8 @@ struct CallView: UIViewRepresentable {
         
         private var webView: WKWebView!
         private var pictureInPictureController: AVPictureInPictureController?
+        /// Нютаг: источник PiP хранится отдельно — подключается только пока включено видео.
+        private var pictureInPictureContentSource: AVPictureInPictureController.ContentSource?
         private let pictureInPictureViewController: AVPictureInPictureVideoCallViewController
         private var routePickerView: AVRoutePickerView!
         
@@ -104,6 +106,7 @@ struct CallView: UIViewRepresentable {
             DispatchQueue.main.async { // Avoid `Publishing changes from within view update` warnings
                 viewModelContext.javaScriptEvaluator = self.evaluateJavaScript
                 viewModelContext.requestPictureInPictureHandler = self.requestPictureInPicture
+                viewModelContext.setVideoActiveHandler = self.setVideoActive
             }
             
             let configuration = WKWebViewConfiguration()
@@ -157,9 +160,14 @@ struct CallView: UIViewRepresentable {
             webViewWrapper.addMatchedSubview(webView)
             
             if AVPictureInPictureController.isPictureInPictureSupported() {
-                let pictureInPictureController = AVPictureInPictureController(contentSource: .init(activeVideoCallSourceView: webViewWrapper,
-                                                                                                   contentViewController: pictureInPictureViewController))
+                let contentSource = AVPictureInPictureController.ContentSource(activeVideoCallSourceView: webViewWrapper,
+                                                                               contentViewController: pictureInPictureViewController)
+                let pictureInPictureController = AVPictureInPictureController(contentSource: contentSource)
                 pictureInPictureController.delegate = self
+                // Нютаг: как в Telegram — голосовой звонок без окна PiP (его ведёт CallKit в Dynamic Island),
+                // окно появляется только при включённом видео, см. setVideoActive.
+                pictureInPictureController.contentSource = nil
+                pictureInPictureContentSource = contentSource
                 self.pictureInPictureController = pictureInPictureController
                 viewModelContext.send(viewAction: .pictureInPictureIsAvailable(pictureInPictureController))
             }
@@ -348,6 +356,21 @@ struct CallView: UIViewRepresentable {
         """
         
         // MARK: - Picture in Picture
+        
+        /// Нютаг: подключает системное PiP, пока в звонке включено видео, и отключает его для голосового звонка.
+        func setVideoActive(_ isActive: Bool) {
+            guard let pictureInPictureController else { return }
+            if isActive {
+                if pictureInPictureController.contentSource == nil {
+                    pictureInPictureController.contentSource = pictureInPictureContentSource
+                }
+            } else {
+                if pictureInPictureController.isPictureInPictureActive {
+                    pictureInPictureController.stopPictureInPicture()
+                }
+                pictureInPictureController.contentSource = nil
+            }
+        }
         
         func requestPictureInPicture() async -> Result<Void, CallScreenError> {
             guard let pictureInPictureController,

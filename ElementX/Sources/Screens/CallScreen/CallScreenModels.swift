@@ -28,6 +28,8 @@ struct CallScreenViewState: BindableState {
 struct Bindings {
     var javaScriptEvaluator: ((String) async throws -> Any)?
     var requestPictureInPictureHandler: (() async -> Result<Void, CallScreenError>)?
+    /// Нютаг: включать системное PiP только при активном видео (как в Telegram).
+    var setVideoActiveHandler: ((Bool) -> Void)?
     
     var alertInfo: AlertInfo<UUID>?
 }
