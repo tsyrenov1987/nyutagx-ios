@@ -86,9 +86,9 @@ struct CallView: UIViewRepresentable {
         
         private var webView: WKWebView!
         private var pictureInPictureController: AVPictureInPictureController?
-        /// Нютаг: источник PiP хранится отдельно — подключается только пока включено видео.
-        private var pictureInPictureContentSource: AVPictureInPictureController.ContentSource?
-        private let pictureInPictureViewController: AVPictureInPictureVideoCallViewController
+        /// Нютаг: контроллер окна PiP пересоздаётся при каждом включении видео — повторное подключение
+        /// того же контроллера после `contentSource = nil` роняет AVKit (бесконечная рекурсия по иерархии).
+        private var pictureInPictureViewController: AVPictureInPictureVideoCallViewController
         private var routePickerView: AVRoutePickerView!
         
         /// The view to be shown in the app. This will contain the web view when picture in picture isn't running.
@@ -167,7 +167,6 @@ struct CallView: UIViewRepresentable {
                 // Нютаг: как в Telegram — голосовой звонок без окна PiP (его ведёт CallKit в Dynamic Island),
                 // окно появляется только при включённом видео, см. setVideoActive.
                 pictureInPictureController.contentSource = nil
-                pictureInPictureContentSource = contentSource
                 self.pictureInPictureController = pictureInPictureController
                 viewModelContext.send(viewAction: .pictureInPictureIsAvailable(pictureInPictureController))
             }
@@ -362,7 +361,11 @@ struct CallView: UIViewRepresentable {
             guard let pictureInPictureController else { return }
             if isActive {
                 if pictureInPictureController.contentSource == nil {
-                    pictureInPictureController.contentSource = pictureInPictureContentSource
+                    let viewController = AVPictureInPictureVideoCallViewController()
+                    viewController.preferredContentSize = PiPSize.portrait.size
+                    pictureInPictureViewController = viewController
+                    pictureInPictureController.contentSource = .init(activeVideoCallSourceView: webViewWrapper,
+                                                                     contentViewController: viewController)
                 }
             } else {
                 if pictureInPictureController.isPictureInPictureActive {
