@@ -46,6 +46,8 @@ struct UserDetailsEditScreenViewState: BindableState {
 struct UserDetailsEditScreenViewStateBindings {
     var name = ""
     var showMediaSheet = false
+    /// Нютаг: просмотр своего аватара во весь экран.
+    var mediaPreviewItem: MediaPreviewItem?
     
     var alertInfo: AlertInfo<UserDetailsEditScreenAlertType>?
 }
@@ -61,6 +63,7 @@ enum UserDetailsEditScreenViewAction {
     case cancel
     case save
     case presentMediaSource
+    case displayAvatar
     case displayCameraPicker
     case displayMediaPicker
     case displayFilePicker

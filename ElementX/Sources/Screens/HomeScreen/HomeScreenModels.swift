@@ -224,7 +224,7 @@ struct HomeScreenRoom: Identifiable, Equatable {
     
     let lastMessage: AttributedString?
     
-    enum LastMessageState { case sending, failed }
+    enum LastMessageState { case sending, failed, sent }
     let lastMessageState: LastMessageState?
     
     let avatar: RoomAvatar
@@ -326,6 +326,7 @@ private extension RoomSummary {
             switch lastMessageState {
             case .sending: .sending
             case .failed: .failed
+            case .sent: .sent
             case .none: .none
             }
         }

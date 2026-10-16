@@ -47,6 +47,8 @@ struct CallNotificationRoomTimelineView: View {
                 .foregroundColor(.compound.textSecondary)
         }
         .padding(12)
+        // Нютаг: заливка как у чужого пузыря, иначе на обоях рамка «висит в воздухе».
+        .background(NyutagWallpaperStyle.current.bubble(isOutgoing: false).map(Color.init) ?? .clear, in: RoundedRectangle(cornerRadius: 8))
         .overlay(RoundedRectangle(cornerRadius: 8)
             .stroke(.compound.borderInteractiveSecondary, lineWidth: 1))
         .padding(16)

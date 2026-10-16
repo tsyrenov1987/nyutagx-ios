@@ -56,24 +56,43 @@ struct UserDetailsEditScreen: View {
         }
     }
     
+    /// Нютаг: тап по картинке открывает аватар во весь экран, карандаш — выбор фото.
+    private var canPreviewAvatar: Bool {
+        context.viewState.localMedia == nil && context.viewState.selectedAvatarURL != nil
+    }
+    
     private var avatar: some View {
-        Button {
-            context.send(viewAction: .presentMediaSource)
-        } label: {
-            OverridableAvatarImage(overrideURL: context.viewState.localMedia?.thumbnailURL,
-                                   url: context.viewState.selectedAvatarURL,
-                                   name: context.viewState.currentUserProfile.displayName,
-                                   contentID: context.viewState.currentUserProfile.id,
-                                   shape: .circle,
-                                   avatarSize: .user(on: .editUserDetails),
-                                   mediaProvider: context.mediaProvider)
-                .confirmationDialog("", isPresented: $context.showMediaSheet) {
-                    mediaActionSheet
+        ZStack(alignment: .bottomTrailing) {
+            Button {
+                context.send(viewAction: canPreviewAvatar ? .displayAvatar : .presentMediaSource)
+            } label: {
+                OverridableAvatarImage(overrideURL: context.viewState.localMedia?.thumbnailURL,
+                                       url: context.viewState.selectedAvatarURL,
+                                       name: context.viewState.currentUserProfile.displayName,
+                                       contentID: context.viewState.currentUserProfile.id,
+                                       shape: .circle,
+                                       avatarSize: .user(on: .editUserDetails),
+                                       mediaProvider: context.mediaProvider)
+            }
+            .buttonStyle(.borderless)
+            .disabled(!context.viewState.canEditAvatar && !canPreviewAvatar)
+            .accessibilityLabel(canPreviewAvatar ? L10n.a11yAvatar : L10n.a11yEditAvatar)
+            
+            if context.viewState.canEditAvatar {
+                Button {
+                    context.send(viewAction: .presentMediaSource)
+                } label: {
+                    EditAvatarBadge()
                 }
+                .buttonStyle(.borderless)
+                .scaledOffset(x: 8, y: 0, relativeTo: .title)
+                .accessibilityLabel(L10n.a11yEditAvatar)
+            }
         }
-        .buttonStyle(EditAvatarButtonStyle())
-        .disabled(!context.viewState.canEditAvatar)
-        .accessibilityLabel(L10n.a11yEditAvatar)
+        .confirmationDialog("", isPresented: $context.showMediaSheet) {
+            mediaActionSheet
+        }
+        .interactiveQuickLook(item: $context.mediaPreviewItem, allowEditing: false)
         .frame(maxWidth: .infinity, alignment: .center)
         .listRowBackground(Color.clear)
     }

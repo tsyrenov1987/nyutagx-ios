@@ -23,7 +23,8 @@ nonisolated struct RoomSummary {
         }
     }
     
-    enum LastMessageState { case sending, failed }
+    /// Нютаг: `sent` — последнее сообщение моё и уже на сервере (галочка в списке чатов).
+    enum LastMessageState { case sending, failed, sent }
     
     let room: Room
     

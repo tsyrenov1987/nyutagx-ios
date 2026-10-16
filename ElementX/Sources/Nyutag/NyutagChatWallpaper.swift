@@ -46,6 +46,22 @@ enum NyutagWallpaperStyle: String, CaseIterable, Identifiable {
         }
     }
     
+    /// Выбранные обои (то же хранилище, что у @AppStorage в настройках).
+    static var current: NyutagWallpaperStyle {
+        UserDefaults.standard.string(forKey: storageKey).flatMap(NyutagWallpaperStyle.init(rawValue:)) ?? .sky
+    }
+
+    /// Пузырь сообщения поверх обоев: цвета темы сливаются с фоном, поэтому свои / чужие берём контрастнее. nil — без обоев.
+    func bubble(isOutgoing: Bool) -> UIColor? {
+        switch self {
+        case .sky: isOutgoing ? Self.color(light: 0xCFE3F8, dark: 0x224B70) : Self.color(light: 0xFFFFFF, dark: 0x222C36)
+        case .steppe: isOutgoing ? Self.color(light: 0xD3EBCB, dark: 0x2A4C2E) : Self.color(light: 0xFFFFFF, dark: 0x222C24)
+        case .sand: isOutgoing ? Self.color(light: 0xF0DEBB, dark: 0x5A4320) : Self.color(light: 0xFFFFFF, dark: 0x2E2620)
+        case .dusk: isOutgoing ? Self.color(light: 0xDDD3F1, dark: 0x3F2F66) : Self.color(light: 0xFFFFFF, dark: 0x2A2333)
+        case .plain: nil
+        }
+    }
+    
     private static func color(light: UInt32, dark: UInt32, alpha: CGFloat = 1) -> UIColor {
         UIColor { $0.userInterfaceStyle == .dark ? UIColor(rgb: dark, alpha: alpha) : UIColor(rgb: light, alpha: alpha) }
     }

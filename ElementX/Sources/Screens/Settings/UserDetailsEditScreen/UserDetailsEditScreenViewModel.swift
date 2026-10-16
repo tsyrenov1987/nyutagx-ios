@@ -62,6 +62,12 @@ class UserDetailsEditScreenViewModel: UserDetailsEditScreenViewModelType, UserDe
             Task { await saveUserDetails() }
         case .presentMediaSource:
             state.bindings.showMediaSheet = true
+        case .displayAvatar:
+            // Нютаг: тап по картинке показывает аватар во весь экран (пока он с сервера, а не только что выбран).
+            guard state.localMedia == nil, let url = state.selectedAvatarURL, let mediaProvider = context.mediaProvider else { return }
+            Task {
+                state.bindings.mediaPreviewItem = await MediaPreviewItem.load(from: url, title: state.currentUserProfile.displayName, using: mediaProvider)
+            }
         case .displayCameraPicker:
             actionsSubject.send(.displayCameraPicker)
         case .displayMediaPicker:

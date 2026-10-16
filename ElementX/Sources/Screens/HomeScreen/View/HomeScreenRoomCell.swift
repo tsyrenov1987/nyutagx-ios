@@ -127,6 +127,12 @@ struct HomeScreenRoomCell: View {
                             .foregroundStyle(.compound.iconCriticalPrimary)
                             .offset(y: -1)
                             .accessibilityHidden(true) // The last message contains the error.
+                    case .sent:
+                        // Нютаг: моё сообщение доставлено на сервер — галочка, как в привычных мессенджерах.
+                        CompoundIcon(\.check, size: .small, relativeTo: .compound.bodyMD)
+                            .foregroundStyle(.compound.iconTertiary)
+                            .offset(y: -1)
+                            .accessibilityLabel(L10n.commonSent)
                     case .none:
                         EmptyView()
                     }

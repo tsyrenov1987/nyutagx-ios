@@ -327,12 +327,13 @@ class RoomSummaryProvider: RoomSummaryProviderProtocol {
                 case .cannotBeSent:
                     lastMessageState = .failed
                 case .hasBeenSent:
-                    lastMessageState = nil
+                    lastMessageState = .sent
                 }
             case .remote(let timestamp, let senderID, let isOwn, let profile, let content):
                 let sender = TimelineItemSender(senderID: senderID, senderProfile: profile)
                 attributedLastMessage = eventStringBuilder.buildAttributedString(for: content, sender: sender, isOutgoing: isOwn)
                 lastMessageDate = Date(timeIntervalSince1970: TimeInterval(timestamp / 1000))
+                lastMessageState = isOwn ? .sent : nil
             case .remoteInvite(let timestamp, let senderID, let profile):
                 lastMessageDate = Date(timeIntervalSince1970: TimeInterval(timestamp / 1000))
                 

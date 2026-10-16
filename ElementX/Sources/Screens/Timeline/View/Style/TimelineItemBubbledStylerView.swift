@@ -334,7 +334,9 @@ struct TimelineItemBubbledStylerView<Content: View>: View {
 
 private extension EventBasedTimelineItemProtocol {
     var bubbleBackgroundColor: Color? {
-        let defaultColor: Color = isOutgoing ? .compound._bgBubbleOutgoing : .compound._bgBubbleIncoming
+        // Нютаг: на обоях берём контрастные цвета пузырей выбранных обоев.
+        let defaultColor: Color = NyutagWallpaperStyle.current.bubble(isOutgoing: isOutgoing).map(Color.init) ??
+            (isOutgoing ? .compound._bgBubbleOutgoing : .compound._bgBubbleIncoming)
         
         switch self {
         case is ImageRoomTimelineItem, is VideoRoomTimelineItem:
