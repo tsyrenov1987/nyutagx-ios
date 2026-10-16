@@ -28,12 +28,35 @@ nonisolated enum NyutagTunnel {
     /// Путь до входа (`kilvater://<ключ>@host:port?…`) с ключом Нютага, не ключом флота Farvater.
     /// В репозитории его нет: `ElementX/Resources/Nyutag/nyutag-catalogue.txt` лежит в `.gitignore`,
     /// рядом — `nyutag-catalogue.txt.example`. Без файла туннель не поднимется и приложение не подключится.
-    private static let catalogue: String? = {
+    private static let bundledCatalogue: String? = {
         guard let url = Bundle.main.url(forResource: "nyutag-catalogue", withExtension: "txt"),
               let text = try? String(contentsOf: url, encoding: .utf8) else { return nil }
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         return trimmed.isEmpty ? nil : trimmed
     }()
+
+    /// Последний состав входов с ядра (`/_nyutag/v1/catalogue`) — меняется без выпуска сборки; сборочный каталог остаётся запасным.
+    private static let catalogueDefaultsKey = "nyutagCatalogue"
+
+    private static var catalogue: String? {
+        let saved = UserDefaults.standard.data(forKey: catalogueDefaultsKey).flatMap(NyutagCatalogue.init(data:))
+        return NyutagCatalogue.compose(bundled: bundledCatalogue, fetched: saved)
+    }
+
+    /// Раз за процесс, уже через туннель, берёт у ядра актуальный состав входов и сохраняет его. Работающий туннель
+    /// не перезапускается (живые соединения не рвём) — новый состав применяется при следующем запуске.
+    private static func refreshCatalogue() {
+        Task.detached(priority: .utility) {
+            do {
+                let data = try await NyutagInvitesService.shared.catalogue()
+                guard let fetched = NyutagCatalogue(data: data) else { return }
+                UserDefaults.standard.set(fetched.data, forKey: catalogueDefaultsKey)
+                MXLog.info("Nyutag tunnel: catalogue v\(fetched.version) saved, \(fetched.paths.count) paths")
+            } catch {
+                MXLog.warning("Nyutag tunnel: catalogue refresh failed")
+            }
+        }
+    }
 
     private static let state = Mutex(State())
 
@@ -41,6 +64,7 @@ nonisolated enum NyutagTunnel {
         var port = 0
         var network = "cell"
         var monitor: NWPathMonitor?
+        var catalogueRefreshed = false
     }
 
     /// Адрес и учётка SOCKS на loopback.
@@ -71,6 +95,10 @@ nonisolated enum NyutagTunnel {
             guard let port = start(network: state.network) else { return nil }
             state.port = port
             MXLog.info("Nyutag tunnel listening on 127.0.0.1:\(port)")
+            if !state.catalogueRefreshed {
+                state.catalogueRefreshed = true
+                refreshCatalogue()
+            }
             return port
         }
     }
@@ -125,5 +153,48 @@ nonisolated enum NyutagTunnel {
         values.isExcludedFromBackup = true
         try? directory.setResourceValues(values)
         return directory.appending(path: "nyutag-core-memory.json")
+    }
+}
+
+/// Состав входов с ядра: `{"version", "paths": ["kilvater://…"], "retired": ["host:port"]}`.
+nonisolated struct NyutagCatalogue: Equatable {
+    let version: Int
+    let paths: [String]
+    let retired: Set<String>
+
+    init(version: Int, paths: [String], retired: Set<String>) {
+        self.version = version
+        self.paths = paths
+        self.retired = retired
+    }
+
+    init?(data: Data) {
+        guard let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else { return nil }
+        let clean: (Any?) -> [String] = { ($0 as? [Any] ?? []).compactMap { ($0 as? String)?.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty } }
+        let paths = clean(json["paths"]).filter { $0.hasPrefix("kilvater://") }
+        guard !paths.isEmpty else { return nil }
+        self.init(version: json["version"] as? Int ?? 0, paths: paths, retired: Set(clean(json["retired"])))
+    }
+
+    var data: Data {
+        // swiftlint:disable:next force_try
+        try! JSONSerialization.data(withJSONObject: ["version": version, "paths": paths, "retired": retired.sorted()])
+    }
+
+    /// Текст для `MobileStart`: сначала входы с сервера, потом из сборки — без повторов и выведенных.
+    static func compose(bundled: String?, fetched: NyutagCatalogue?) -> String? {
+        let own = (bundled ?? "").split(whereSeparator: \.isNewline)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { $0.hasPrefix("kilvater://") }
+        guard let fetched else { return own.isEmpty ? nil : own.joined(separator: "\n") }
+        let known = Set(fetched.paths.map(hostPort))
+        let spare = own.filter { !known.contains(hostPort($0)) && !fetched.retired.contains(hostPort($0)) }
+        return (fetched.paths + spare).joined(separator: "\n")
+    }
+
+    /// `kilvater://ключ@host:port?…#имя` → `host:port`.
+    static func hostPort(_ line: String) -> String {
+        let afterAt = line.split(separator: "@", maxSplits: 1).last.map(String.init) ?? line
+        return String(afterAt.prefix { $0 != "?" && $0 != "#" && $0 != "/" })
     }
 }

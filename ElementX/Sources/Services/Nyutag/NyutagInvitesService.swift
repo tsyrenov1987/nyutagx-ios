@@ -248,6 +248,13 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         return array
     }
     
+    /// Актуальный состав входов туннеля (`/_nyutag/v1/catalogue`) — сырой JSON для `NyutagCatalogue`.
+    func catalogue() async throws(NyutagInviteError) -> Data {
+        let json = try await request("GET", "/_nyutag/v1/catalogue")
+        guard let data = try? JSONSerialization.data(withJSONObject: json) else { throw .init(errcode: "NYUTAG_CLIENT_ERROR") }
+        return data
+    }
+
     private func request(_ method: String, _ path: String, body: [String: Any]? = nil, bearer: String? = nil) async throws(NyutagInviteError) -> [String: Any] {
         guard let endpoint = NyutagTunnel.endpoint,
               let url = URL(string: NyutagTunnel.homeserverURL + path) else {
