@@ -39,6 +39,8 @@ enum HomeScreenViewAction {
     case startChat
     /// Нютаг: выпустить код приглашения и поделиться им.
     case nyutagInviteFriend
+    case nyutagAnnouncementAction(NyutagAnnouncement.Action)
+    case nyutagAnnouncementDismiss
     case setupRecovery
     case confirmRecoveryKey
     case resetEncryption
@@ -163,6 +165,9 @@ struct HomeScreenViewStateBindings {
     var leaveRoomAlertItem: LeaveRoomAlertItem?
     
     var spaceFiltersViewModel: ChatsSpaceFiltersScreenViewModel?
+    
+    /// Обращение разработчика, которое сейчас показано окном.
+    var nyutagAnnouncement: NyutagAnnouncement?
 }
 
 enum CallBadgeType {

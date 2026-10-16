@@ -13,6 +13,15 @@ import Synchronization
 nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Sendable {
     static let shared = NyutagInvitesService()
     
+    /// Обращения разработчика ко всем пользователям (`/_nyutag/v1/announce`): текст на языке приложения, кнопки — ссылка или донат.
+    func announcements() async throws(NyutagInviteError) -> [NyutagAnnouncement] {
+        let json = try await request("GET", "/_nyutag/v1/announce")
+        let language = NyutagLanguage.current == .system
+            ? String((Locale.preferredLanguages.first ?? "ru").prefix(2))
+            : NyutagLanguage.current.rawValue
+        return (json["announcements"] as? [[String: Any]] ?? []).compactMap { NyutagAnnouncement(json: $0, language: language) }
+    }
+    
     func signUpConfiguration() async throws(NyutagInviteError) -> NyutagSignUpConfiguration {
         let json = try await request("GET", "/_nyutag/v1/config")
         return NyutagSignUpConfiguration(requiresInvite: json["require_invite"] as? Bool ?? true,
@@ -601,5 +610,85 @@ nonisolated struct NyutagPresence: Equatable {
             return NyutagL10n.presenceYesterdayAt(time)
         }
         return NyutagL10n.presenceDate(lastActiveDate.formatted(Date.FormatStyle(date: .numeric, time: .omitted, locale: locale, calendar: calendar)))
+    }
+}
+
+// MARK: - Обращения разработчика
+
+/// Одно обращение из `announce.json` на ядре. Тексты приходят уже на нужном языке (ru/bxr/en, запасной — ru, затем en).
+nonisolated struct NyutagAnnouncement: Identifiable, Equatable, Sendable {
+    struct Action: Identifiable, Equatable, Sendable {
+        enum Kind: String { case url, donate }
+        let id: String
+        let kind: Kind
+        let label: String
+        let url: URL?
+    }
+    
+    let id: String
+    let title: String
+    let body: String
+    let actions: [Action]
+    let dismissLabel: String?
+    /// Через сколько дней показать снова после закрытия без действия; 0 — больше не показывать.
+    let repeatDays: Int
+    
+    init?(json: [String: Any], language: String) {
+        guard let id = json["id"] as? String, !id.isEmpty,
+              let title = Self.localized(json["title"], language),
+              let body = Self.localized(json["body"], language) else { return nil }
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        let now = Date()
+        if let from = (json["from"] as? String).flatMap(formatter.date(from:)), now < from { return nil }
+        if let until = (json["until"] as? String).flatMap(formatter.date(from:)), now > until { return nil }
+        self.id = id
+        self.title = title
+        self.body = body
+        actions = (json["actions"] as? [[String: Any]] ?? []).enumerated().compactMap { index, item in
+            guard let kind = (item["type"] as? String).flatMap(Action.Kind.init(rawValue:)),
+                  let label = Self.localized(item["label"], language) else { return nil }
+            return Action(id: "\(id)-\(index)", kind: kind, label: label, url: (item["url"] as? String).flatMap(URL.init(string:)))
+        }
+        dismissLabel = Self.localized(json["dismiss"], language)
+        repeatDays = json["repeat_days"] as? Int ?? 0
+    }
+    
+    private static func localized(_ value: Any?, _ language: String) -> String? {
+        if let text = value as? String { return text.isEmpty ? nil : text }
+        guard let table = value as? [String: Any] else { return nil }
+        for key in [language, "ru", "en"] {
+            if let text = table[key] as? String, !text.isEmpty { return text }
+        }
+        return table.values.compactMap { $0 as? String }.first { !$0.isEmpty }
+    }
+}
+
+/// Что уже показано: закрытое по кнопке действия или «закрыть» не показываем больше, «позже» — через `repeatDays`.
+nonisolated enum NyutagAnnouncementStore {
+    private static let seenKey = "nyutag.announcements.seen"
+    private static let laterKey = "nyutag.announcements.later"
+    
+    static func shouldShow(_ announcement: NyutagAnnouncement) -> Bool {
+        let defaults = UserDefaults.standard
+        if (defaults.stringArray(forKey: seenKey) ?? []).contains(announcement.id) { return false }
+        if let shownAt = (defaults.dictionary(forKey: laterKey) as? [String: Double])?[announcement.id] {
+            guard announcement.repeatDays > 0 else { return false }
+            return Date().timeIntervalSince1970 - shownAt >= Double(announcement.repeatDays) * 86_400
+        }
+        return true
+    }
+    
+    static func dismiss(_ announcement: NyutagAnnouncement, later: Bool) {
+        let defaults = UserDefaults.standard
+        if later, announcement.repeatDays > 0 {
+            var table = defaults.dictionary(forKey: laterKey) as? [String: Double] ?? [:]
+            table[announcement.id] = Date().timeIntervalSince1970
+            defaults.set(table, forKey: laterKey)
+        } else {
+            var seen = defaults.stringArray(forKey: seenKey) ?? []
+            seen.append(announcement.id)
+            defaults.set(seen, forKey: seenKey)
+        }
     }
 }

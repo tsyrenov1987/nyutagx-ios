@@ -42,6 +42,9 @@ struct HomeScreen: View {
                     .navigationTransition(.zoom(sourceID: NavigationTransitionSourceID.spaceFilters,
                                                 in: navigationTransitionNamespace))
             }
+            .sheet(item: $context.nyutagAnnouncement) { announcement in
+                NyutagAnnouncementSheet(announcement: announcement, context: context)
+            }
     }
     
     // MARK: - Private
@@ -179,6 +182,46 @@ struct HomeScreen: View {
             .accessibilityAddTraits(selected ? .isSelected : [])
             .accessibilityIdentifier(A11yIdentifiers.homeScreen.spaceFilters)
         }
+    }
+}
+
+// MARK: - Нютаг: обращение разработчика
+
+/// Окно с обращением ко всем пользователям: заголовок, текст и кнопки приходят с ядра (`announce.json`).
+private struct NyutagAnnouncementSheet: View {
+    let announcement: NyutagAnnouncement
+    @ObservedObject var context: HomeScreenViewModel.Context
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(announcement.title)
+                        .font(.compound.headingLGBold)
+                        .foregroundColor(.compound.textPrimary)
+                    Text(announcement.body)
+                        .font(.compound.bodyLG)
+                        .foregroundColor(.compound.textPrimary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 32)
+            }
+            VStack(spacing: 12) {
+                ForEach(announcement.actions) { action in
+                    Button(action.label) { context.send(viewAction: .nyutagAnnouncementAction(action)) }
+                        .buttonStyle(.compound(.primary))
+                }
+                Button(announcement.dismissLabel ?? L10n.actionNotNow) { context.send(viewAction: .nyutagAnnouncementDismiss) }
+                    .buttonStyle(.compound(.tertiary))
+            }
+            .padding(.horizontal, 24)
+            .padding(.vertical, 16)
+        }
+        .background(Color.compound.bgCanvasDefault.ignoresSafeArea())
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+        .interactiveDismissDisabled()
     }
 }
 

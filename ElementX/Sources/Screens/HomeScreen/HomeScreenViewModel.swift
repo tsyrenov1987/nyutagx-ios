@@ -61,6 +61,12 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             state.isRoomListSearchEnabled = false
         }
         
+        // Нютаг: обращение разработчика — после того, как список успеет появиться.
+        Task { [weak self] in
+            try? await Task.sleep(for: .seconds(4))
+            await self?.loadNyutagAnnouncement()
+        }
+        
         userSession.clientProxy.userProfilePublisher
             .receive(on: DispatchQueue.main)
             .weakAssign(to: \.state.userProfile, on: self)
@@ -234,6 +240,10 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             actionsSubject.send(.presentStartChatScreen)
         case .nyutagInviteFriend:
             Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
+        case .nyutagAnnouncementDismiss:
+            closeNyutagAnnouncement(action: nil)
+        case .nyutagAnnouncementAction(let action):
+            closeNyutagAnnouncement(action: action)
         case .spaceFilters:
             if spaceFilterSubject.value != nil {
                 spaceFilterSubject.send(nil)
@@ -478,6 +488,23 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
     }
     
     private static let leaveRoomLoadingID = "LeaveRoomLoading"
+    
+    /// Закрыть окно обращения: без действия — «позже», с действием — больше не показывать и выполнить кнопку.
+    private func closeNyutagAnnouncement(action: NyutagAnnouncement.Action?) {
+        if let announcement = state.bindings.nyutagAnnouncement {
+            NyutagAnnouncementStore.dismiss(announcement, later: action == nil)
+        }
+        state.bindings.nyutagAnnouncement = nil
+        if let url = action?.url {
+            UIApplication.shared.open(url)
+        }
+    }
+    
+    private func loadNyutagAnnouncement() async {
+        guard let announcements = try? await NyutagInvitesService.shared.announcements(),
+              let next = announcements.first(where: { NyutagAnnouncementStore.shouldShow($0) }) else { return }
+        state.bindings.nyutagAnnouncement = next
+    }
     
     private func startLeaveRoomProcess(roomID: String) {
         Task {
