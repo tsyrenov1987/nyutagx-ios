@@ -72,10 +72,12 @@
 "nyutag_by_phone_no_sms_app" = "No app for SMS";
 "nyutag_by_phone_not_found_subtitle" = "Invite them: send a link by SMS or any messenger, or show the QR code. The invitation works once and for 7 days.";
 "nyutag_by_phone_not_found_title" = "Not in Nyutag yet";
+"nyutag_by_phone_other_contacts" = "Other contacts";
 "nyutag_by_phone_own_label" = "Your phone number";
 "nyutag_by_phone_own_subtitle" = "Add it so friends can find you. Nobody will see the number itself.";
 "nyutag_by_phone_own_title" = "Your number is not set";
 "nyutag_by_phone_pick_contact" = "Choose from contacts";
+"nyutag_by_phone_pick_failed" = "Could not read the number from this contact, type it in";
 "nyutag_by_phone_qr_hint" = "Point the camera at the code: the link opens sign-up";
 "nyutag_by_phone_search" = "Find";
 "nyutag_by_phone_share" = "Send";
@@ -85,6 +87,8 @@
 "nyutag_by_phone_write" = "Write";
 "nyutag_call_end" = "End call";
 "nyutag_call_return" = "Back to call";
+"nyutag_call_speaker_off" = "Speaker off";
+"nyutag_call_speaker_on" = "Speaker on";
 "nyutag_communities_all" = "All communities";
 "nyutag_communities_empty" = "No communities yet. Create the first one!";
 "nyutag_communities_mine" = "My communities";
@@ -129,6 +133,9 @@
 "nyutag_contacts_empty" = "None of your contacts are on Nyutag yet. Invite them by phone number.";
 "nyutag_contacts_section" = "Contacts on Nyutag";
 "nyutag_contacts_syncing" = "Checking contacts…";
+"nyutag_dm_delete_chat" = "Delete chat";
+"nyutag_dm_delete_chat_subtitle" = "The chat will disappear from your list. If you write to each other again, a new chat will appear.";
+"nyutag_dm_details_title" = "Info";
 "nyutag_donate_body" = "Nyutag is made by a tiny studio. We pay for the servers that carry your chats, calls and notifications ourselves, and so far we run at a loss. There are no ads in Nyutag and there never will be. If you find it useful, support it: every bit goes to the servers.";
 "nyutag_donate_thanks" = "Thank you! Your support keeps Nyutag's servers running.";
 "nyutag_donate_title" = "Support Nyutag";
@@ -168,6 +175,10 @@
 "nyutag_not_in_contacts" = "This person is not in your contacts";
 "nyutag_not_in_contacts_check" = "Check contacts";
 "nyutag_notification_dm_new_message" = "New message";
+"nyutag_notification_hint_check" = "Check";
+"nyutag_notification_hint_content" = "Phones of this brand save battery by putting Nyutag to sleep in the background, so messages can arrive late. The notification check shows what to switch on.";
+"nyutag_notification_hint_later" = "Later";
+"nyutag_notification_hint_title" = "Notifications on this phone";
 "nyutag_password_reset_error_unknown" = "No Nyutag account is linked to this email. Check the address: you may have signed up with a different one.";
 "nyutag_password_reset_new" = "New password, at least 8 characters";
 "nyutag_password_reset_submit" = "Save and sign in";

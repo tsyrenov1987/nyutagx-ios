@@ -22,10 +22,8 @@ struct RoomDetailsScreen: View {
             
             aboutSection
             
-            // The invitation flow is different for DMs
+            // Нютаг: в личном чате нет приглашений, темы и раздела «Безопасность» — как в Telegram.
             if context.viewState.dmRecipientInfo != nil {
-                inviteToNewRoomSection
-                
                 profileSection
             } else {
                 peopleSection
@@ -60,7 +58,7 @@ struct RoomDetailsScreen: View {
                 }
             }
         }
-        .navigationTitle(L10n.screenRoomDetailsTitle)
+        .navigationTitle(context.viewState.isDirect ? NyutagL10n.dmDetailsTitle : L10n.screenRoomDetailsTitle)
         .navigationBarTitleDisplayMode(.inline)
         .track(screen: .RoomDetails)
         .interactiveQuickLook(item: $context.mediaPreviewItem, allowEditing: false)
@@ -177,15 +175,6 @@ struct RoomDetailsScreen: View {
         }
     }
     
-    private var inviteToNewRoomSection: some View {
-        Section {
-            ListRow(label: .default(title: L10n.actionInvite, icon: \.userAdd),
-                    kind: .navigationLink {
-                        context.send(viewAction: .processTapInvite)
-                    })
-        }
-    }
-    
     private var profileSection: some View {
         Section {
             if context.viewState.dmRecipientInfo != nil {
@@ -219,12 +208,15 @@ struct RoomDetailsScreen: View {
                     .disabled(context.viewState.notificationSettingsState.isLoading)
                     .accessibilityIdentifier(A11yIdentifiers.roomDetailsScreen.notifications)
             
-            ListRow(label: .default(title: L10n.commonFavourite, icon: \.favourite),
-                    kind: .toggle($context.isFavourite))
-                .accessibilityIdentifier(A11yIdentifiers.roomDetailsScreen.favourite)
-                .onChange(of: context.isFavourite) { _, newValue in
-                    context.send(viewAction: .toggleFavourite(isFavourite: newValue))
-                }
+            // Нютаг: у личного чата пометка — в меню списка чатов, как в Telegram.
+            if !context.viewState.isDirect {
+                ListRow(label: .default(title: L10n.commonFavourite, icon: \.favourite),
+                        kind: .toggle($context.isFavourite))
+                    .accessibilityIdentifier(A11yIdentifiers.roomDetailsScreen.favourite)
+                    .onChange(of: context.isFavourite) { _, newValue in
+                        context.send(viewAction: .toggleFavourite(isFavourite: newValue))
+                    }
+            }
             
             if context.viewState.canSeeSecurityAndPrivacy {
                 ListRow(label: .default(title: L10n.screenRoomDetailsSecurityAndPrivacyTitle, icon: \.lock),
@@ -287,7 +279,7 @@ struct RoomDetailsScreen: View {
     
     @ViewBuilder
     private var securitySection: some View {
-        if context.viewState.isEncrypted {
+        if context.viewState.isEncrypted, !context.viewState.isDirect {
             Section {
                 ListRow(label: .default(title: L10n.screenRoomDetailsEncryptionEnabledTitle,
                                         description: L10n.screenRoomDetailsEncryptionEnabledSubtitle,
@@ -327,8 +319,9 @@ struct RoomDetailsScreen: View {
     
     private var leaveRoomSection: some View {
         Section {
-            ListRow(label: .action(title: L10n.screenRoomDetailsLeaveRoomTitle,
-                                   icon: \.leave,
+            // Нютаг: личный чат не «покидают», а удаляют — как в Telegram.
+            ListRow(label: .action(title: context.viewState.isDirect ? NyutagL10n.dmDeleteChat : L10n.screenRoomDetailsLeaveRoomTitle,
+                                   icon: context.viewState.isDirect ? \.delete : \.leave,
                                    role: .destructive),
                     kind: .button { context.send(viewAction: .processTapLeave) })
         }

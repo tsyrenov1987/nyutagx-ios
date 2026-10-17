@@ -613,10 +613,12 @@
 "nyutag_by_phone_no_sms_app" = "SMS эльгээхэ программа үгы";
 "nyutag_by_phone_not_found_subtitle" = "Уригты: SMS-ээр али ямар бэ мессенджерээр холбоос эльгээгты, али QR-код харуулагты. Урилга нэгэ удаа хэрэглэгдэхэ, 7 хоног хүсэнтэй.";
 "nyutag_by_phone_not_found_title" = "Энэ дугаар Нютагта үшөө үгы";
+"nyutag_by_phone_other_contacts" = "Бусад контактнууд";
 "nyutag_by_phone_own_label" = "Таны утаһанай дугаар";
 "nyutag_by_phone_own_subtitle" = "Нүхэдтнай таниие олохын тула оруулагты. Дугаарыетнай хэншье харахагүй.";
 "nyutag_by_phone_own_title" = "Таны дугаар оруулагдаагүй";
 "nyutag_by_phone_pick_contact" = "Контактнуудһаа шэлэхэ";
+"nyutag_by_phone_pick_failed" = "Контактһаа дугаар уншагдабагүй, өөрөө оруулагты";
 "nyutag_by_phone_qr_hint" = "Кодые камераар харуулагты: холбоос бүридхэл нээхэ";
 "nyutag_by_phone_search" = "Бэдэрхэ";
 "nyutag_by_phone_share" = "Эльгээхэ";
@@ -626,6 +628,8 @@
 "nyutag_by_phone_write" = "Бэшэхэ";
 "nyutag_call_end" = "Дуудалга дүүргэхэ";
 "nyutag_call_return" = "Дуудалга руу бусаха";
+"nyutag_call_speaker_off" = "Шанга дуун унтарааха";
+"nyutag_call_speaker_on" = "Шанга дуун";
 "nyutag_communities_all" = "Бүхы оршонууд";
 "nyutag_communities_empty" = "Оршон үшөө үгы. Түрүүшынхиеэ байгуулагты!";
 "nyutag_communities_mine" = "Минии оршонууд";
@@ -670,6 +674,9 @@
 "nyutag_contacts_empty" = "Танай контактнуудһаа Нютаг соо үшөө хэншье үгы. Утаһанай дугаараар уригты.";
 "nyutag_contacts_section" = "Нютаг соо байһан контактнууд";
 "nyutag_contacts_syncing" = "Контактнуудые шалгажа байнабди…";
+"nyutag_dm_delete_chat" = "Чат усадхаха";
+"nyutag_dm_delete_chat_subtitle" = "Чат танай жагсаалтаһаа үгы болохо. Дахин бэшэлсэбэл, шэнэ чат бии болохо.";
+"nyutag_dm_details_title" = "Мэдээсэл";
 "nyutag_donate_body" = "Нютагые бага студи хэнэ. Бэшэлгэ, дуудалга, мэдүүлгэ ябуулдаг серверүүдэй түлөө бидэ өөһэдөө түлэнэбди, мүнөө алдагдалтайгаар хүдэлнэбди. Нютагта реклама үгы, байхашьегүй. Хэрэгтэй гэжэ һанабал, туһалыт: ямаршье мүнгэн серверүүдтэ ошохо.";
 "nyutag_donate_thanks" = "Һайн даа! Таны туһаламжа Нютагай серверүүдые хүдэлгэнэ.";
 "nyutag_donate_title" = "Нютагта туһалха";
@@ -709,6 +716,10 @@
 "nyutag_not_in_contacts" = "Энэ хүн таны контактнуудта үгы";
 "nyutag_not_in_contacts_check" = "Контактнуудаа шалгаха";
 "nyutag_notification_dm_new_message" = "Шэнэ бэшэг";
+"nyutag_notification_hint_check" = "Шалгаха";
+"nyutag_notification_hint_content" = "Энэ маркын утаһанууд батарей хэмнэжэ, Нютагые арада унтуулна, тиимэһээ бэшэгүүд хожомдожо ерэжэ магад. Мэдээсэлэй шалгалта юу залахыень харуулха.";
+"nyutag_notification_hint_later" = "Һүүлдэ";
+"nyutag_notification_hint_title" = "Энэ утаһан дээрэ мэдээсэлнүүд";
 "nyutag_password_reset_error_unknown" = "Энэ хаягта Нютагай аккаунт холбоотой бэшэ. Хаягаа шалгагты: ондоо почтоор бүртхүүлһэн байжа магад.";
 "nyutag_password_reset_new" = "Шэнэ нюуса үгэ, 8 тэмдэгһээ доошо бэшэ";
 "nyutag_password_reset_submit" = "Хадагалаад орохо";

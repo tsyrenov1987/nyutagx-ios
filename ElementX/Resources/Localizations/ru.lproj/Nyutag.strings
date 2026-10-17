@@ -75,10 +75,12 @@
 "nyutag_by_phone_no_sms_app" = "Нет приложения для SMS";
 "nyutag_by_phone_not_found_subtitle" = "Пригласите: отправьте ссылку по SMS или в любой мессенджер либо покажите QR-код. Приглашение сработает один раз и действует 7 дней.";
 "nyutag_by_phone_not_found_title" = "Этого номера пока нет в Нютаге";
+"nyutag_by_phone_other_contacts" = "Остальные контакты";
 "nyutag_by_phone_own_label" = "Ваш номер телефона";
 "nyutag_by_phone_own_subtitle" = "Укажите его, чтобы друзья нашли вас. Сам номер никто не увидит.";
 "nyutag_by_phone_own_title" = "Ваш номер не указан";
 "nyutag_by_phone_pick_contact" = "Выбрать из контактов";
+"nyutag_by_phone_pick_failed" = "Не удалось прочитать номер из контакта, введите его вручную";
 "nyutag_by_phone_qr_hint" = "Наведите камеру на код: ссылка откроет регистрацию";
 "nyutag_by_phone_search" = "Найти";
 "nyutag_by_phone_share" = "Отправить";
@@ -88,6 +90,8 @@
 "nyutag_by_phone_write" = "Написать";
 "nyutag_call_end" = "Завершить звонок";
 "nyutag_call_return" = "Вернуться к звонку";
+"nyutag_call_speaker_off" = "Выключить громкую связь";
+"nyutag_call_speaker_on" = "Громкая связь";
 "nyutag_communities_all" = "Все сообщества";
 "nyutag_communities_empty" = "Сообществ пока нет. Создайте первое!";
 "nyutag_communities_mine" = "Мои сообщества";
@@ -132,6 +136,9 @@
 "nyutag_contacts_empty" = "Из ваших контактов в Нютаге пока никого нет. Пригласите их по номеру телефона.";
 "nyutag_contacts_section" = "Контакты в Нютаге";
 "nyutag_contacts_syncing" = "Сверяем контакты…";
+"nyutag_dm_delete_chat" = "Удалить чат";
+"nyutag_dm_delete_chat_subtitle" = "Чат исчезнет из вашего списка. Если вы снова напишете друг другу, появится новый чат.";
+"nyutag_dm_details_title" = "Информация";
 "nyutag_donate_body" = "Нютаг делает маленькая студия. Серверы, через которые идут переписка, звонки и уведомления, мы оплачиваем сами и пока работаем в минус. Рекламы в Нютаге нет и не будет. Если он вам нужен, поддержите его: любая сумма идёт на серверы.";
 "nyutag_donate_thanks" = "Спасибо! Ваша поддержка держит серверы Нютага.";
 "nyutag_donate_title" = "Поддержать Нютаг";
@@ -171,6 +178,10 @@
 "nyutag_not_in_contacts" = "Этого человека нет в ваших контактах";
 "nyutag_not_in_contacts_check" = "Сверить с контактами";
 "nyutag_notification_dm_new_message" = "Новое сообщение";
+"nyutag_notification_hint_check" = "Проверить";
+"nyutag_notification_hint_content" = "Телефоны этой марки берегут батарею и усыпляют Нютаг в фоне, поэтому сообщения могут приходить с опозданием. Проверка уведомлений покажет, что включить.";
+"nyutag_notification_hint_later" = "Позже";
+"nyutag_notification_hint_title" = "Уведомления на этом телефоне";
 "nyutag_password_reset_error_unknown" = "К этой почте не привязан ни один аккаунт Нютага. Проверьте адрес: возможно, вы регистрировались с другой почтой.";
 "nyutag_password_reset_new" = "Новый пароль, не короче 8 символов";
 "nyutag_password_reset_submit" = "Сохранить и войти";

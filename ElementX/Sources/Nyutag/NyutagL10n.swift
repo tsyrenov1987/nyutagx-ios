@@ -195,6 +195,11 @@ nonisolated enum NyutagL10n {
     static func presenceYesterdayAt(_ time: String) -> String { tr("nyutag_presence_yesterday_at", time) }
     static func presenceDate(_ date: String) -> String { tr("nyutag_presence_date", date) }
     
+    /// Сведения о личном чате — как в Telegram.
+    static var dmDetailsTitle: String { tr("nyutag_dm_details_title") }
+    static var dmDeleteChat: String { tr("nyutag_dm_delete_chat") }
+    static var dmDeleteChatSubtitle: String { tr("nyutag_dm_delete_chat_subtitle") }
+    
     private static func tr(_ key: String, _ args: CVarArg...) -> String {
         let languages = (Bundle.overrideLocalizations ?? Bundle.app.preferredLocalizations) + ["en"]
         for language in languages {

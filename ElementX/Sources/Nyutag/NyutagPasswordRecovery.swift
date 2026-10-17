@@ -21,6 +21,9 @@ enum NyutagPasswordRecovery {
     /// Сколько ждём подтверждения устройства после открытия хранилища, чтобы экран «Подтвердите личность» не мигал.
     private static let verifiedTimeout: Duration = .seconds(10)
 
+    /// Ожидание, пока человек откроет хранилище старым ключом восстановления, чтобы перезапереть его паролем.
+    private static var pendingRelock: Task<Void, Never>?
+
     /// Сразу после входа паролем, пока сессия создана, а её экранов ещё нет. Пароль в лог не попадает.
     /// Хранилища нет — заводим его под паролем. Есть, но секретов на устройстве нет — открываем паролем.
     /// Пароль не подходит (сменён через «Забыли пароль?» или хранилище заперто старым ключом восстановления) — остаётся
@@ -42,6 +45,7 @@ enum NyutagPasswordRecovery {
                 await waitUntilVerified(clientProxy)
             case .failure(let error):
                 MXLog.warning("Nyutag recovery: the account password does not open the key store (\(error))")
+                relockWhenOpened(backup, password: password)
             }
         case .disabled:
             // Без подтверждённого устройства SDK завёл бы новую личность вместо той, что уже есть у аккаунта.
@@ -57,6 +61,9 @@ enum NyutagPasswordRecovery {
 
     /// После сброса личности паролем хранилище пустое, а устройство подтверждено — заводим хранилище тем же паролем.
     static func afterIdentityReset(secureBackupController backup: SecureBackupControllerProtocol, password: String) async {
+        // Хранилище заводим сами — перезапирать после открытия ключом уже нечего.
+        pendingRelock?.cancel()
+        pendingRelock = nil
         guard await settledState(of: backup) == .disabled else {
             MXLog.warning("Nyutag recovery: key store not empty after the identity reset, leaving it")
             return
@@ -69,6 +76,22 @@ enum NyutagPasswordRecovery {
     private static func settledState(of backup: SecureBackupControllerProtocol) async -> SecureBackupRecoveryState? {
         await first(of: backup.recoveryState, timeout: settleTimeout) { state in
             state == .enabled || state == .disabled || state == .incomplete
+        }
+    }
+
+    /// Пароль не подошёл: хранилище заперто старым ключом восстановления (аккаунт завели до перевода на пароль).
+    /// Как только человек откроет его ключом, перезапираем паролем: в состоянии `.enabled` SDK при `enableRecovery`
+    /// лишь ротирует ключ хранилища. Так старые аккаунты переезжают на пароль сами, по одному разу, без отдельного экрана.
+    /// Ждём до конца сессии; новый вход или сброс личности отменяют ожидание.
+    private static func relockWhenOpened(_ backup: SecureBackupControllerProtocol, password: String) {
+        pendingRelock?.cancel()
+        pendingRelock = Task {
+            for await state in backup.recoveryState.values {
+                guard case .enabled = state else { continue }
+                MXLog.info("Nyutag recovery: key store opened with a recovery key, re-locking it under the account password")
+                await enable(backup, password: password)
+                return
+            }
         }
     }
 

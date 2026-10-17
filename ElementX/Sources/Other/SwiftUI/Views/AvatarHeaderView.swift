@@ -58,13 +58,16 @@ struct AvatarHeaderView<Footer: View>: View {
         self.onAvatarTap = onAvatarTap
         self.footer = footer
         
+        // Нютаг: у личного чата бейджей нет — как в Telegram.
         var badges = [Badge]()
-        badges.append(.encrypted(room.isEncrypted))
-        if room.isPublic {
-            badges.append(.public)
-        }
-        if let state = room.historySharingState {
-            badges.append(.historySharingState(state))
+        if !room.isDirect {
+            badges.append(.encrypted(room.isEncrypted))
+            if room.isPublic {
+                badges.append(.public)
+            }
+            if let state = room.historySharingState {
+                badges.append(.historySharingState(state))
+            }
         }
         self.badges = badges
     }

@@ -85,7 +85,7 @@ struct RoomDetailsScreenViewState: BindableState {
     }
     
     var hasTopicSection: Bool {
-        topic != nil || canEditRoomTopic
+        !isDirect && (topic != nil || canEditRoomTopic) // Нютаг: у личного чата темы нет — как в Telegram
     }
     
     var bindings: RoomDetailsScreenViewStateBindings
@@ -105,9 +105,8 @@ struct RoomDetailsScreenViewState: BindableState {
         if dmRecipientInfo == nil, canInviteUsers {
             shortcuts.append(.invite)
         }
-        if let permalink = dmRecipientInfo?.member.permalink {
-            shortcuts.append(.share(link: permalink))
-        } else if let permalink {
+        // Нютаг: ссылку личного чата не раздаём — как на Android и в Telegram.
+        if dmRecipientInfo == nil, let permalink {
             shortcuts.append(.share(link: permalink))
         }
         return shortcuts
@@ -194,17 +193,22 @@ struct LeaveRoomAlertItem: AlertProtocol {
     let roomID: String
     let isDM: Bool
     let state: RoomState
-    let confirmationTitle = L10n.actionLeave
     let cancelTitle = L10n.actionCancel
     
+    // Нютаг: личный чат не «покидают», а удаляют — как в Telegram.
+    var confirmationTitle: String {
+        isDM ? L10n.actionDelete : L10n.actionLeave
+    }
+    
     var title: String {
-        isDM ? L10n.actionLeaveConversation : L10n.actionLeaveRoom
+        isDM ? NyutagL10n.dmDeleteChat : L10n.actionLeaveRoom
     }
     
     var subtitle: String {
+        if isDM { return NyutagL10n.dmDeleteChatSubtitle }
         switch state {
         case .empty: return L10n.leaveRoomAlertEmptySubtitle
-        case .private: return isDM ? L10n.leaveConversationAlertSubtitle : L10n.leaveRoomAlertPrivateSubtitle
+        case .private: return L10n.leaveRoomAlertPrivateSubtitle
         case .public: return L10n.leaveRoomAlertSubtitle
         }
     }
