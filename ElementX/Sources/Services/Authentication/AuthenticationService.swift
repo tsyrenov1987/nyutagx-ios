@@ -163,8 +163,13 @@ class AuthenticationService: AuthenticationServiceProtocol {
             }
             
             await verifyClientIfPossible(client: client)
-            
-            return await userSession(for: client)
+
+            let result = await userSession(for: client)
+            // Нютаг: ключи шифрования под паролем аккаунта — пока экранов сессии ещё нет, чтобы не мигало «Подтвердите личность».
+            if case .success(let userSession) = result {
+                await NyutagPasswordRecovery.afterLogin(clientProxy: userSession.clientProxy, password: password)
+            }
+            return result
         } catch let ClientError.MatrixApi(errorKind, _, _, _) {
             MXLog.error("Failed logging in with error kind: \(errorKind)")
             switch errorKind {

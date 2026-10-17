@@ -114,6 +114,8 @@ class EncryptionResetScreenViewModel: EncryptionResetScreenViewModelType, Encryp
         
         do {
             try await identityResetHandle.reset(auth: .password(passwordDetails: .init(identifier: clientProxy.userID, password: password)))
+            // Нютаг: после сброса личности хранилище ключей заводим под тем же паролем аккаунта.
+            await NyutagPasswordRecovery.afterIdentityReset(secureBackupController: clientProxy.secureBackupController, password: password)
             actionsSubject.send(.resetFinished)
         } catch {
             MXLog.error("Failed resetting encryption with error \(error)")

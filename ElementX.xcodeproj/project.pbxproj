@@ -1148,6 +1148,7 @@
 		B1387648C6F71F1B98244803 /* SecureBackupRecoveryKeyScreenCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596AA8843AC1A234F3387767 /* SecureBackupRecoveryKeyScreenCoordinator.swift */; };
 		B14BC354E56616B6B7D9A3D7 /* NotificationServiceExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27A1AD6389A4659AF0CEAE62 /* NotificationServiceExtension.swift */; };
 		B188D0907A4D38AAAF6FEFA8 /* AppLockSetupFlowCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DBB08A95EFA668F2CF27211 /* AppLockSetupFlowCoordinator.swift */; };
+		B19A49C37613F76C94518DB7 /* nyutag-catalogue.txt in Resources */ = {isa = PBXBuildFile; fileRef = E26C58E7E16EBA411E0D6640 /* nyutag-catalogue.txt */; };
 		B1ABFEB75E0202370BD7353A /* RoomListServiceSDKMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3454C79D9E2444BBDBF9F5A /* RoomListServiceSDKMock.swift */; };
 		B1B255CE0E4306DD6E09D936 /* EncryptionResetPasswordScreenModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54A5E6F398C269AD52C9AE21 /* EncryptionResetPasswordScreenModels.swift */; };
 		B22D857D1E8FCA6DD74A58E3 /* UserSessionScreenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F899D02CF26EA7675EEBE74C /* UserSessionScreenTests.swift */; };
@@ -1164,6 +1165,7 @@
 		B4A0C69370E6008A971463E7 /* BugReportScreenViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C89820BB2B88D4EA28131C /* BugReportScreenViewModelProtocol.swift */; };
 		B4AAB3257A83B73F53FB2689 /* StateStoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F3DFE5B444F131648066F05 /* StateStoreViewModel.swift */; };
 		B4F2C3B27224C696496E3E52 /* NyutagFindByPhone.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C0AAA3FA6BAF7F6F4657DD /* NyutagFindByPhone.swift */; };
+		B5309B1CAE4EFF381EFA813B /* NyutagPasswordRecovery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A4F27AF76DCB108CAE613C /* NyutagPasswordRecovery.swift */; };
 		B5321A1F5B26A0F3EC54909E /* CollapsibleFlowLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC5F5209279A752D98AAC4B2 /* CollapsibleFlowLayoutTests.swift */; };
 		B5479997ECC516C121E6625E /* LocationMarkerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFECCE59967018204876D0A5 /* LocationMarkerView.swift */; };
 		B5899F18AD6C56CE08FE532B /* RoomSummaryProviderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC83F47D2173B7538AA72E0E /* RoomSummaryProviderMock.swift */; };
@@ -1573,6 +1575,7 @@
 		F4C005F006FC3657B9F0A31D /* BugReportHook.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25586C0ADB814FEE9897DCAA /* BugReportHook.swift */; };
 		F519DE17A3A0F760307B2E6D /* InviteUsersScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D155E09BF961BBA8F85263 /* InviteUsersScreenViewModel.swift */; };
 		F54E2D6CAD96E1AC15BC526F /* MessageForwardingScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8E60332509665C00179ACF6 /* MessageForwardingScreenViewModel.swift */; };
+		F5873BBBA3F7A407E6C4FA2C /* StoreShotsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC377FE79E33E778A98CFAE9 /* StoreShotsTests.swift */; };
 		F58BF3BD3233A03F013816E4 /* ClassicAppAccountManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98F4DFFFC62187D9A4D2030D /* ClassicAppAccountManager.swift */; };
 		F5D2270B5021D521C0D22E11 /* FlowCoordinatorProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9FCA1CFD07B8CF9BD21266 /* FlowCoordinatorProtocol.swift */; };
 		F656F92A63D3DC1978D79427 /* Macros in Frameworks */ = {isa = PBXBuildFile; productRef = 401E93551F7792B0179907CF /* Macros */; };
@@ -1882,6 +1885,7 @@
 		105429F29096729EDD3152CF /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/SAS.strings; sourceTree = "<group>"; };
 		1059E2AE7878CF7820592637 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		105B2A8426404EF66F00CFDB /* RoomTimelineItemFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomTimelineItemFactory.swift; sourceTree = "<group>"; };
+		10A4F27AF76DCB108CAE613C /* NyutagPasswordRecovery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NyutagPasswordRecovery.swift; sourceTree = "<group>"; };
 		10CC626F97AD70FF0420C115 /* RoomSummaryProviderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomSummaryProviderProtocol.swift; sourceTree = "<group>"; };
 		10D751743B20B314D84D79FE /* TrackedUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackedUserDefaults.swift; sourceTree = "<group>"; };
 		10F130DF775CE6BC51A4E392 /* AppLockSetupBiometricsScreenModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockSetupBiometricsScreenModels.swift; sourceTree = "<group>"; };
@@ -3115,6 +3119,7 @@
 		DBEDCEC9D908C19C63D24395 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DC0AEA686E425F86F6BA0404 /* UNNotification+Creator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNNotification+Creator.swift"; sourceTree = "<group>"; };
 		DC10CCC8D68B863E20660DBC /* MessageForwardingScreenViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageForwardingScreenViewModelProtocol.swift; sourceTree = "<group>"; };
+		DC377FE79E33E778A98CFAE9 /* StoreShotsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreShotsTests.swift; sourceTree = "<group>"; };
 		DC528B3764E3CF7FCFEF40E7 /* PollInteractionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollInteractionHandler.swift; sourceTree = "<group>"; };
 		DCAC01A97A43BE07B9E94E43 /* ShareExtensionModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareExtensionModels.swift; sourceTree = "<group>"; };
 		DCDAB580109C09A6AA97AF7E /* PollFormScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PollFormScreenTests.swift; sourceTree = "<group>"; };
@@ -3144,6 +3149,7 @@
 		E1ED17433ADC77287F8904F9 /* CallNotificationRoomTimelineItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallNotificationRoomTimelineItem.swift; sourceTree = "<group>"; };
 		E20403084A320D588ACED200 /* ReportRoomScreenViewModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportRoomScreenViewModelProtocol.swift; sourceTree = "<group>"; };
 		E2520C4F33AA0C061D209C28 /* RoomMembersListScreenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomMembersListScreenTests.swift; sourceTree = "<group>"; };
+		E26C58E7E16EBA411E0D6640 /* nyutag-catalogue.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = "nyutag-catalogue.txt"; sourceTree = "<group>"; };
 		E2776E63E02719B20758EB78 /* EditRoomAddressListRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditRoomAddressListRow.swift; sourceTree = "<group>"; };
 		E2B1CC9AA154F4D5435BF60A /* Comparable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comparable.swift; sourceTree = "<group>"; };
 		E2F96CCBEAAA7F2185BFA354 /* ClientProxyMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClientProxyMock.swift; sourceTree = "<group>"; };
@@ -6069,6 +6075,7 @@
 				6640DB5B9171D163E6742639 /* ServerSelectionTests.swift */,
 				D8AA084E10B80D64449C02A9 /* SessionVerificationTests.swift */,
 				0367E0AF1163F42292D788BD /* StartChatTests.swift */,
+				DC377FE79E33E778A98CFAE9 /* StoreShotsTests.swift */,
 				F899D02CF26EA7675EEBE74C /* UserSessionScreenTests.swift */,
 			);
 			path = Sources;
@@ -6615,6 +6622,7 @@
 		BC4D78F98C34E20BE3E99D09 /* Nyutag */ = {
 			isa = PBXGroup;
 			children = (
+				E26C58E7E16EBA411E0D6640 /* nyutag-catalogue.txt */,
 				A76FB94D1C39FFEC3C27E8D0 /* nyutag-catalogue.txt.example */,
 			);
 			path = Nyutag;
@@ -6911,6 +6919,7 @@
 				6336D7CC1D33D3CC0CD6C435 /* NyutagInviteFriend.swift */,
 				C5D6639169D34173DFE95C5B /* NyutagL10n.swift */,
 				30ED2C55A6B766605ED3B12A /* NyutagLanguage.swift */,
+				10A4F27AF76DCB108CAE613C /* NyutagPasswordRecovery.swift */,
 			);
 			path = Nyutag;
 			sourceTree = "<group>";
@@ -8096,6 +8105,7 @@
 				EC5B6D717560B9E275A0EA2F /* landscape_test_image.jpg in Resources */,
 				BED5DF7A243101A6D30D8B38 /* landscape_test_video.mov in Resources */,
 				E67418DACEDBC29E988E6ACD /* message.caf in Resources */,
+				B19A49C37613F76C94518DB7 /* nyutag-catalogue.txt in Resources */,
 				FE4D620E0470085B7B920F9A /* nyutag-catalogue.txt.example in Resources */,
 				D978D344E82F4E10F3961519 /* portrait_test_image.jpg in Resources */,
 				8CFDC1309E8E5192EC2B04FE /* portrait_test_video.mp4 in Resources */,
@@ -9272,6 +9282,7 @@
 				6058C96DC89FF639CD776266 /* NyutagInvitesService.swift in Sources */,
 				40984F10C2B69CD28E6B0315 /* NyutagL10n.swift in Sources */,
 				277AE4B79A92A8F3DB508772 /* NyutagLanguage.swift in Sources */,
+				B5309B1CAE4EFF381EFA813B /* NyutagPasswordRecovery.swift in Sources */,
 				0428D3D48347949C52663120 /* NyutagPasswordResetView.swift in Sources */,
 				754C3AD0AF2AF55B58214753 /* NyutagSignUpScreen.swift in Sources */,
 				0D143DEBA576B2C79E01B378 /* NyutagSignUpScreenCoordinator.swift in Sources */,
@@ -9861,6 +9872,7 @@
 				E9985DCD1B0D026D7E8BF809 /* ServerSelectionTests.swift in Sources */,
 				D5C2DA52162A978743A183F2 /* SessionVerificationTests.swift in Sources */,
 				221A7F92116722322AE150AE /* StartChatTests.swift in Sources */,
+				F5873BBBA3F7A407E6C4FA2C /* StoreShotsTests.swift in Sources */,
 				54AE8860D668AFD96E7E177B /* UITestsScreenIdentifier.swift in Sources */,
 				84EFCB95F9DA2979C8042B26 /* UITestsSignalling.swift in Sources */,
 				B22D857D1E8FCA6DD74A58E3 /* UserSessionScreenTests.swift in Sources */,
@@ -10525,7 +10537,7 @@
 				CLASSIC_APP_KEYCHAIN_ACCESS_GROUP_IDENTIFIER = "$(DEVELOPMENT_TEAM).im.vector.app.keychain.shared";
 				CLASSIC_APP_KEYCHAIN_SERVICE_IDENTIFIER = "im.vector.app.encryption-manager-service";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 643UT34CF8;
 				ENABLE_BITCODE = NO;
@@ -10543,7 +10555,7 @@
 				IS_NIGHTLY_BUILD = NO;
 				KEYCHAIN_ACCESS_GROUP_IDENTIFIER = "$(DEVELOPMENT_TEAM).$(BASE_BUNDLE_IDENTIFIER)";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 26.09.2;
+				MARKETING_VERSION = 26.09.8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCTION_APP_NAME = "Нютаг";
@@ -10601,7 +10613,7 @@
 				CLASSIC_APP_KEYCHAIN_ACCESS_GROUP_IDENTIFIER = "$(DEVELOPMENT_TEAM).im.vector.app.keychain.shared";
 				CLASSIC_APP_KEYCHAIN_SERVICE_IDENTIFIER = "im.vector.app.encryption-manager-service";
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 643UT34CF8;
 				ENABLE_BITCODE = NO;
@@ -10625,7 +10637,7 @@
 				IS_NIGHTLY_BUILD = NO;
 				KEYCHAIN_ACCESS_GROUP_IDENTIFIER = "$(DEVELOPMENT_TEAM).$(BASE_BUNDLE_IDENTIFIER)";
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
-				MARKETING_VERSION = 26.09.2;
+				MARKETING_VERSION = 26.09.8;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
