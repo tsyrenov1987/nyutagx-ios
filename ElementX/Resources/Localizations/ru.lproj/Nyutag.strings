@@ -89,6 +89,7 @@
 "nyutag_by_phone_title" = "По номеру телефона";
 "nyutag_by_phone_write" = "Написать";
 "nyutag_call_end" = "Завершить звонок";
+"nyutag_call_permissions_banner_message" = "Чтобы входящий звонок показывался поверх других приложений и на заблокированном экране, разрешите это в настройках.";
 "nyutag_call_return" = "Вернуться к звонку";
 "nyutag_call_speaker_off" = "Выключить громкую связь";
 "nyutag_call_speaker_on" = "Громкая связь";

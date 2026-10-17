@@ -627,6 +627,7 @@
 "nyutag_by_phone_title" = "Утаһанай дугаараар";
 "nyutag_by_phone_write" = "Бэшэхэ";
 "nyutag_call_end" = "Дуудалга дүүргэхэ";
+"nyutag_call_permissions_banner_message" = "Орожо байһан дуудалга ондоо программануудай дээрэ болон түгжээтэй дэлгэсэ дээрэ харуулхын тула, тохиргоонууд соо зүбшөөгты.";
 "nyutag_call_return" = "Дуудалга руу бусаха";
 "nyutag_call_speaker_off" = "Шанга дуун унтарааха";
 "nyutag_call_speaker_on" = "Шанга дуун";

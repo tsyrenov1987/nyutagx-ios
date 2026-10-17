@@ -86,6 +86,7 @@
 "nyutag_by_phone_title" = "Find by phone number";
 "nyutag_by_phone_write" = "Write";
 "nyutag_call_end" = "End call";
+"nyutag_call_permissions_banner_message" = "To show incoming calls on top of other apps and on the lock screen, allow it in the settings.";
 "nyutag_call_return" = "Back to call";
 "nyutag_call_speaker_off" = "Speaker off";
 "nyutag_call_speaker_on" = "Speaker on";
