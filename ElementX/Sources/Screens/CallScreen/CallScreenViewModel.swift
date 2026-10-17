@@ -33,6 +33,12 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
     @CancellableTask
     private var timeoutTask: Task<Void, Never>?
     
+    /// Нютаг: последний список выходов звука, принятый Element Call. Повторно его не шлём: Element Call на каждый список
+    /// заново выбирает выход, это снова меняет маршрут звука, и выходила петля в десятки переключений в секунду —
+    /// звук и громкость скакали, а журнал за звонок разрастался до десятков тысяч строк.
+    private var lastOutputsJavaScript: String?
+    private var isEarpieceSelected: Bool?
+    
     /// Designated initialiser
     /// - Parameters:
     ///   - elementCallService: service responsible for setting up CallKit
@@ -234,6 +240,8 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
     
     private func handleOutputDeviceSelected(deviceID: String) {
         let isEarpiece = deviceID == Self.earpieceID
+        guard isEarpiece != isEarpieceSelected else { return }
+        isEarpieceSelected = isEarpiece
         MXLog.info("Is earpiece: \(isEarpiece)")
         UIDevice.current.isProximityMonitoringEnabled = isEarpiece
     }
@@ -308,10 +316,14 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
         }
         
         let javaScript = "window.controls.setAvailableOutputDevices([\(deviceList)])"
+        guard javaScript != lastOutputsJavaScript, let javaScriptEvaluator = state.bindings.javaScriptEvaluator else { return }
+        // Запоминаем до await: уведомления о смене маршрута приходят пачками, и без этого в Element Call ушло бы несколько копий.
+        lastOutputsJavaScript = javaScript
         do {
-            let result = try await state.bindings.javaScriptEvaluator?(javaScript)
+            let result = try await javaScriptEvaluator(javaScript)
             MXLog.debug("Evaluated  with result: \(String(describing: result))")
         } catch {
+            lastOutputsJavaScript = nil
             MXLog.error("Received javascript evaluation error: \(error)")
         }
     }

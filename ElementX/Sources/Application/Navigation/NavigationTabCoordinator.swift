@@ -217,6 +217,7 @@ import SwiftUI
                 logPresentationChange("Set overlay", overlayModule)
                 overlayModule.coordinator?.start()
             }
+            updateMinimizedOverlayWindow()
         }
     }
     
@@ -226,12 +227,28 @@ import SwiftUI
     }
     
     enum OverlayPresentationMode { case fullScreen, minimized }
-    fileprivate var overlayPresentationMode: OverlayPresentationMode = .minimized
-    /// Нютаг: вид, который показывается поверх вкладок, пока overlay свёрнут (мини-окно звонка).
-    fileprivate var minimizedOverlayView: AnyView?
+    fileprivate var overlayPresentationMode: OverlayPresentationMode = .minimized {
+        didSet { updateMinimizedOverlayWindow() }
+    }
+    /// Нютаг: вид, который показывается поверх всего приложения, пока overlay свёрнут (мини-окно звонка).
+    private var minimizedOverlayView: AnyView?
+    @ObservationIgnored private let minimizedOverlayWindow = NyutagFloatingWindowHost()
     
     func setMinimizedOverlayView(_ view: AnyView?) {
         minimizedOverlayView = view
+        minimizedOverlayWindow.hide()
+        updateMinimizedOverlayWindow()
+    }
+    
+    /// Мини-окно живёт в отдельном UIWindow, чтобы его не закрывали листы и полноэкранные экраны.
+    private func updateMinimizedOverlayWindow() {
+        guard overlayPresentationMode == .minimized, overlayModule?.coordinator != nil, let minimizedOverlayView else {
+            minimizedOverlayWindow.hide()
+            return
+        }
+        if !minimizedOverlayWindow.isShown {
+            minimizedOverlayWindow.show(minimizedOverlayView)
+        }
     }
     
     /// Present an overlay on top of the tab view
@@ -384,12 +401,6 @@ private struct NavigationTabCoordinatorView<Tag: Hashable>: View {
                         coordinator.toPresentable()
                             .opacity(navigationTabCoordinator.overlayPresentationMode == .minimized ? 0 : 1)
                             .allowsHitTesting(navigationTabCoordinator.overlayPresentationMode == .fullScreen)
-                            .transition(.opacity)
-                    }
-                    if navigationTabCoordinator.overlayPresentationMode == .minimized,
-                       navigationTabCoordinator.overlayModule?.coordinator != nil,
-                       let minimizedOverlayView = navigationTabCoordinator.minimizedOverlayView {
-                        minimizedOverlayView
                             .transition(.opacity)
                     }
                 }

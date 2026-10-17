@@ -1,6 +1,7 @@
 //
 // Нютаг — свёрнутый звонок: плавающее мини-окно поверх приложения вместо системного PiP.
 // Перетаскивается пальцем, липнет к краю; тап — вернуться в звонок; кнопки — микрофон и завершить.
+// Живёт в своём UIWindow, поэтому видно и поверх листов («Настройки» и т. п.).
 //
 // SPDX-License-Identifier: AGPL-3.0-only
 //
@@ -27,29 +28,7 @@ final class NyutagCallMiniWindowModel: ObservableObject {
 struct NyutagCallMiniWindow: View {
     @ObservedObject var model: NyutagCallMiniWindowModel
 
-    /// Положение окна относительно правого верхнего угла; хранится между звонками.
-    @AppStorage("nyutag.callMiniWindow.offset.x") private var storedX = 0.0
-    @AppStorage("nyutag.callMiniWindow.offset.y") private var storedY = 0.0
-    @State private var dragTranslation: CGSize = .zero
-
-    private let margin = 12.0
-
     var body: some View {
-        GeometryReader { geometry in
-            window
-                .fixedSize()
-                .background(SizeReader { windowSize = $0 })
-                .position(position(in: geometry.size))
-                .gesture(drag(in: geometry.size))
-                .animation(.spring(duration: 0.3), value: storedX)
-                .animation(.spring(duration: 0.3), value: storedY)
-        }
-        .ignoresSafeArea(.keyboard)
-    }
-
-    @State private var windowSize = CGSize(width: 200, height: 64)
-
-    private var window: some View {
         HStack(spacing: 10) {
             Button(action: model.onRestore) {
                 HStack(spacing: 8) {
@@ -61,7 +40,6 @@ struct NyutagCallMiniWindow: View {
                             .font(.compound.bodyMDSemibold)
                             .foregroundStyle(.white)
                             .lineLimit(1)
-                            .frame(maxWidth: 120, alignment: .leading)
                         SwiftUI.TimelineView(.periodic(from: model.startedAt, by: 1)) { context in
                             Text(Self.duration(since: model.startedAt, now: context.date))
                                 .font(.compound.bodyXS)
@@ -69,6 +47,8 @@ struct NyutagCallMiniWindow: View {
                                 .monospacedDigit()
                         }
                     }
+                    // Постоянная ширина: окно-хозяин не меняет размер, когда таймер переходит на минуты и часы.
+                    .frame(width: 120, alignment: .leading)
                 }
             }
             .buttonStyle(.plain)
@@ -97,34 +77,9 @@ struct NyutagCallMiniWindow: View {
         .background(Color(red: 0.13, green: 0.15, blue: 0.18), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(.white.opacity(0.12)))
         .shadow(color: .black.opacity(0.35), radius: 12, y: 4)
-    }
-
-    // MARK: Положение и перетаскивание
-
-    private func position(in container: CGSize) -> CGPoint {
-        let base = CGPoint(x: container.width - margin - windowSize.width / 2 + storedX,
-                           y: margin + windowSize.height / 2 + storedY)
-        return clamp(CGPoint(x: base.x + dragTranslation.width, y: base.y + dragTranslation.height), in: container)
-    }
-
-    private func clamp(_ point: CGPoint, in container: CGSize) -> CGPoint {
-        CGPoint(x: min(max(point.x, margin + windowSize.width / 2), container.width - margin - windowSize.width / 2),
-                y: min(max(point.y, margin + windowSize.height / 2), container.height - margin - windowSize.height / 2))
-    }
-
-    private func drag(in container: CGSize) -> some Gesture {
-        DragGesture(minimumDistance: 6)
-            .onChanged { dragTranslation = $0.translation }
-            .onEnded { value in
-                let dropped = clamp(CGPoint(x: container.width - margin - windowSize.width / 2 + storedX + value.translation.width,
-                                            y: margin + windowSize.height / 2 + storedY + value.translation.height),
-                                    in: container)
-                // Липнем к ближнему краю по горизонтали, по вертикали остаёмся где отпустили.
-                let snappedX = dropped.x < container.width / 2 ? margin + windowSize.width / 2 : container.width - margin - windowSize.width / 2
-                dragTranslation = .zero
-                storedX = snappedX - (container.width - margin - windowSize.width / 2)
-                storedY = dropped.y - (margin + windowSize.height / 2)
-            }
+        // Поле под тень: окно-хозяин обрезает всё, что за его краями.
+        .padding(NyutagFloatingWindowHost.shadowInset)
+        .environment(\.colorScheme, .dark)
     }
 
     private static func duration(since start: Date, now: Date) -> String {
@@ -134,16 +89,85 @@ struct NyutagCallMiniWindow: View {
     }
 }
 
-/// Сообщает фактический размер содержимого, чтобы окно не вылезало за экран.
-private struct SizeReader: View {
-    let onChange: (CGSize) -> Void
+/// Держит мини-окно звонка в отдельном UIWindow над всем приложением — над листами («Настройки», сведения о чате)
+/// и полноэкранными экранами, как плашку звонка в Telegram. Раньше окно рисовалось поверх вкладок и пряталось под любым листом.
+/// Окно размером ровно с плашку: касания мимо неё уходят приложению. Перетаскивается пальцем и липнет к краю.
+final class NyutagFloatingWindowHost: NSObject {
+    static let shadowInset = 12.0
+    private static let margin = 4.0
 
-    var body: some View {
-        GeometryReader { geometry in
-            Color.clear
-                .onAppear { onChange(geometry.size) }
-                .onChange(of: geometry.size) { _, size in onChange(size) }
+    /// Положение относительно правого верхнего угла безопасной зоны; хранится между звонками.
+    private static let offsetXKey = "nyutag.callMiniWindow.offset.x"
+    private static let offsetYKey = "nyutag.callMiniWindow.offset.y"
+
+    private var window: UIWindow?
+
+    var isShown: Bool { window != nil }
+
+    func show(_ view: AnyView) {
+        hide()
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) ?? UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first else {
+            MXLog.warning("Nyutag call mini window: no window scene to show it in")
+            return
         }
+
+        let hostingController = UIHostingController(rootView: view)
+        hostingController.view.backgroundColor = .clear
+        let size = hostingController.sizeThatFits(in: CGSize(width: 1000, height: 1000))
+
+        let window = UIWindow(windowScene: scene)
+        // Над окном приложения, но под системными алертами.
+        window.windowLevel = .normal + 1
+        window.backgroundColor = .clear
+        window.rootViewController = hostingController
+        let area = Self.allowedArea(in: scene)
+        let defaults = UserDefaults.standard
+        let center = CGPoint(x: area.maxX - size.width / 2 + defaults.double(forKey: Self.offsetXKey),
+                             y: area.minY + size.height / 2 + defaults.double(forKey: Self.offsetYKey))
+        window.frame = CGRect(origin: .zero, size: size)
+        window.center = Self.clamp(center, size: size, in: area)
+        hostingController.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
+        window.isHidden = false
+        self.window = window
+    }
+
+    func hide() {
+        window?.isHidden = true
+        window = nil
+    }
+
+    @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
+        guard let window, let scene = window.windowScene else { return }
+        let translation = recognizer.translation(in: nil)
+        recognizer.setTranslation(.zero, in: nil)
+        window.center = CGPoint(x: window.center.x + translation.x, y: window.center.y + translation.y)
+
+        guard recognizer.state == .ended || recognizer.state == .cancelled else { return }
+        let area = Self.allowedArea(in: scene)
+        let size = window.bounds.size
+        var target = Self.clamp(window.center, size: size, in: area)
+        // Липнем к ближнему краю по горизонтали, по вертикали остаёмся где отпустили.
+        target.x = target.x < area.midX ? area.minX + size.width / 2 : area.maxX - size.width / 2
+        UIView.animate(withDuration: 0.3, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0) {
+            window.center = target
+        }
+        UserDefaults.standard.set(target.x - (area.maxX - size.width / 2), forKey: Self.offsetXKey)
+        UserDefaults.standard.set(target.y - (area.minY + size.height / 2), forKey: Self.offsetYKey)
+    }
+
+    /// Безопасная зона экрана (без чёлки и полоски «домой»); поле под тень может заходить за неё.
+    private static func allowedArea(in scene: UIWindowScene) -> CGRect {
+        let insets = scene.windows.first { $0.isKeyWindow }?.safeAreaInsets ?? scene.windows.first?.safeAreaInsets ?? .zero
+        return scene.coordinateSpace.bounds
+            .inset(by: insets)
+            .insetBy(dx: margin - shadowInset, dy: margin - shadowInset)
+    }
+
+    private static func clamp(_ point: CGPoint, size: CGSize, in area: CGRect) -> CGPoint {
+        CGPoint(x: min(max(point.x, area.minX + size.width / 2), area.maxX - size.width / 2),
+                y: min(max(point.y, area.minY + size.height / 2), area.maxY - size.height / 2))
     }
 }
 
