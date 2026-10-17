@@ -86,9 +86,13 @@ struct CallView: UIViewRepresentable {
         
         private var webView: WKWebView!
         private var pictureInPictureController: AVPictureInPictureController?
-        /// Нютаг: контроллер окна PiP пересоздаётся при каждом включении видео — повторное подключение
-        /// того же контроллера после `contentSource = nil` роняет AVKit (бесконечная рекурсия по иерархии).
+        /// Нютаг: контроллер окна PiP пересоздаётся при каждой смене источника — повторное подключение
+        /// того же контроллера роняет AVKit (бесконечная рекурсия по иерархии).
         private var pictureInPictureViewController: AVPictureInPictureVideoCallViewController
+        private let miniWindow: NyutagCallMiniWindowModel
+        private weak var pictureInPictureSourceView: UIView?
+        private var isVideoActive = false
+        private var isWebViewInPictureInPicture = false
         private var routePickerView: AVRoutePickerView!
         
         /// The view to be shown in the app. This will contain the web view when picture in picture isn't running.
@@ -96,12 +100,14 @@ struct CallView: UIViewRepresentable {
         
         private var url: URL!
         
-        init(viewModelContext: CallScreenViewModel.Context) {
+        init(viewModelContext: CallScreenViewModel.Context, miniWindow: NyutagCallMiniWindowModel) {
             self.viewModelContext = viewModelContext
-            pictureInPictureViewController = AVPictureInPictureVideoCallViewController()
-            pictureInPictureViewController.preferredContentSize = PiPSize.portrait.size
+            self.miniWindow = miniWindow
+            pictureInPictureViewController = Self.makePictureInPictureViewController(miniWindow: miniWindow, isVideoActive: false)
             
             super.init()
+            
+            miniWindow.onPictureInPictureAnchorChange = { [weak self] in self?.updatePictureInPictureSource() }
             
             DispatchQueue.main.async { // Avoid `Publishing changes from within view update` warnings
                 viewModelContext.javaScriptEvaluator = self.evaluateJavaScript
@@ -164,9 +170,10 @@ struct CallView: UIViewRepresentable {
                                                                                contentViewController: pictureInPictureViewController)
                 let pictureInPictureController = AVPictureInPictureController(contentSource: contentSource)
                 pictureInPictureController.delegate = self
-                // Нютаг: как в Telegram — голосовой звонок без окна PiP (его ведёт CallKit в Dynamic Island),
-                // окно появляется только при включённом видео, см. setVideoActive.
-                pictureInPictureController.contentSource = nil
+                // Нютаг: веб-звонок не держится в CallKit, поэтому вне приложения о нём говорит только PiP —
+                // и для голосового звонка тоже (плашка с именем и таймером), при уходе приложения в фон.
+                pictureInPictureController.canStartPictureInPictureAutomaticallyFromInline = true
+                pictureInPictureSourceView = webViewWrapper
                 self.pictureInPictureController = pictureInPictureController
                 viewModelContext.send(viewAction: .pictureInPictureIsAvailable(pictureInPictureController))
             }
@@ -232,7 +239,7 @@ struct CallView: UIViewRepresentable {
             case .onBackButtonPressed:
                 viewModelContext?.send(viewAction: .navigateBack)
             case .onPipMediaOrientationUpdate:
-                guard let orientation = message.body as? String else { return }
+                guard isVideoActive, let orientation = message.body as? String else { return }
                 switch orientation {
                 case "portrait":
                     pictureInPictureViewController.preferredContentSize = PiPSize.portrait.size
@@ -356,23 +363,36 @@ struct CallView: UIViewRepresentable {
         
         // MARK: - Picture in Picture
         
-        /// Нютаг: подключает системное PiP, пока в звонке включено видео, и отключает его для голосового звонка.
+        /// Нютаг: с видео в PiP показывается сам звонок, без видео — плашка с именем и таймером.
         func setVideoActive(_ isActive: Bool) {
-            guard let pictureInPictureController else { return }
-            if isActive {
-                if pictureInPictureController.contentSource == nil {
-                    let viewController = AVPictureInPictureVideoCallViewController()
-                    viewController.preferredContentSize = PiPSize.portrait.size
-                    pictureInPictureViewController = viewController
-                    pictureInPictureController.contentSource = .init(activeVideoCallSourceView: webViewWrapper,
-                                                                     contentViewController: viewController)
-                }
-            } else {
-                if pictureInPictureController.isPictureInPictureActive {
-                    pictureInPictureController.stopPictureInPicture()
-                }
-                pictureInPictureController.contentSource = nil
+            guard isActive != isVideoActive else { return }
+            isVideoActive = isActive
+            pictureInPictureSourceView = nil
+            updatePictureInPictureSource()
+        }
+        
+        /// Источник PiP должен быть на экране, иначе iOS не запустит его при уходе в фон:
+        /// пока звонок свёрнут — мини-окно, иначе экран звонка. Пока PiP идёт, источник не трогаем.
+        private func updatePictureInPictureSource() {
+            guard let pictureInPictureController, !pictureInPictureController.isPictureInPictureActive else { return }
+            let sourceView = miniWindow.pictureInPictureAnchor ?? webViewWrapper
+            guard sourceView !== pictureInPictureSourceView else { return }
+            pictureInPictureSourceView = sourceView
+            let viewController = Self.makePictureInPictureViewController(miniWindow: miniWindow, isVideoActive: isVideoActive)
+            pictureInPictureViewController = viewController
+            pictureInPictureController.contentSource = .init(activeVideoCallSourceView: sourceView, contentViewController: viewController)
+        }
+        
+        private static func makePictureInPictureViewController(miniWindow: NyutagCallMiniWindowModel, isVideoActive: Bool) -> AVPictureInPictureVideoCallViewController {
+            let viewController = AVPictureInPictureVideoCallViewController()
+            viewController.preferredContentSize = isVideoActive ? PiPSize.portrait.size : PiPSize.landscape.size
+            if !isVideoActive {
+                let content = UIHostingController(rootView: NyutagCallPictureInPictureContent(model: miniWindow))
+                viewController.addChild(content)
+                viewController.view.addMatchedSubview(content.view)
+                content.didMove(toParent: viewController)
             }
+            return viewController
         }
         
         func requestPictureInPicture() async -> Result<Void, CallScreenError> {
@@ -388,6 +408,8 @@ struct CallView: UIViewRepresentable {
         
         nonisolated func pictureInPictureControllerWillStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
             Task { @MainActor in
+                guard isVideoActive else { return }
+                isWebViewInPictureInPicture = true
                 // We move the view via the delegate so it works when you background the app without calling requestPictureInPicture
                 pictureInPictureViewController.view.addMatchedSubview(webView)
                 _ = try? await evaluateJavaScript("controls.enablePip()")
@@ -396,6 +418,7 @@ struct CallView: UIViewRepresentable {
         
         nonisolated func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
             Task { @MainActor in
+                guard isWebViewInPictureInPicture else { return }
                 // Double check that the controller is definitely showing a page that supports picture in picture.
                 // This is necessary as it doesn't get checked when backgrounding the app or tapping a notification.
                 guard case .success(true) = await webViewCanEnterPictureInPicture() else {
@@ -406,12 +429,19 @@ struct CallView: UIViewRepresentable {
             }
         }
         
-        nonisolated func pictureInPictureControllerWillStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+        /// Нютаг: кнопка «развернуть» в PiP открывает звонок; просто возврат в приложение оставляет его как был (свёрнутым или нет).
+        nonisolated func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController,
+                                                    restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
+            completionHandler(true)
             Task { await viewModelContext?.send(viewAction: .pictureInPictureWillStop) }
         }
         
         nonisolated func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
             Task { @MainActor in
+                // Мини-окно могло появиться или исчезнуть, пока шёл PiP.
+                defer { updatePictureInPictureSource() }
+                guard isWebViewInPictureInPicture else { return }
+                isWebViewInPictureInPicture = false
                 webViewWrapper.addMatchedSubview(webView)
                 _ = try? await evaluateJavaScript("controls.disablePip()")
             }

@@ -20,6 +20,15 @@ final class NyutagCallMiniWindowModel: ObservableObject {
     var onToggleMute: () -> Void = { }
     var onEnd: () -> Void = { }
 
+    /// Вид внутри показанного мини-окна: из него iOS разворачивает системный PiP, пока звонок свёрнут.
+    private(set) weak var pictureInPictureAnchor: UIView?
+    var onPictureInPictureAnchorChange: () -> Void = { }
+
+    fileprivate func setPictureInPictureAnchor(_ view: UIView?) {
+        pictureInPictureAnchor = view
+        onPictureInPictureAnchorChange()
+    }
+
     init(title: String) {
         self.title = title
     }
@@ -76,16 +85,66 @@ struct NyutagCallMiniWindow: View {
         .padding(.vertical, 10)
         .background(Color(red: 0.13, green: 0.15, blue: 0.18), in: RoundedRectangle(cornerRadius: 20, style: .continuous))
         .overlay(RoundedRectangle(cornerRadius: 20, style: .continuous).strokeBorder(.white.opacity(0.12)))
+        .background(PictureInPictureAnchor(model: model))
         .shadow(color: .black.opacity(0.35), radius: 12, y: 4)
         // Поле под тень: окно-хозяин обрезает всё, что за его краями.
         .padding(NyutagFloatingWindowHost.shadowInset)
         .environment(\.colorScheme, .dark)
     }
 
-    private static func duration(since start: Date, now: Date) -> String {
+    fileprivate static func duration(since start: Date, now: Date) -> String {
         let total = max(0, Int(now.timeIntervalSince(start)))
         let hours = total / 3600, minutes = total % 3600 / 60, seconds = total % 60
         return hours > 0 ? String(format: "%d:%02d:%02d", hours, minutes, seconds) : String(format: "%d:%02d", minutes, seconds)
+    }
+}
+
+/// Голосовой звонок в системном PiP, когда приложение свёрнуто: имя, таймер, микрофон — как плашка звонка вне приложения.
+struct NyutagCallPictureInPictureContent: View {
+    @ObservedObject var model: NyutagCallMiniWindowModel
+
+    var body: some View {
+        VStack(spacing: 6) {
+            Image(systemSymbol: model.isMuted ? .micSlashFill : .phoneFill)
+                .font(.system(size: 34))
+                .foregroundStyle(model.isMuted ? Color.red : Color.green)
+            Text(model.title)
+                .font(.system(size: 30, weight: .semibold))
+                .foregroundStyle(.white)
+                .lineLimit(1)
+            SwiftUI.TimelineView(.periodic(from: model.startedAt, by: 1)) { context in
+                Text(NyutagCallMiniWindow.duration(since: model.startedAt, now: context.date))
+                    .font(.system(size: 26))
+                    .foregroundStyle(.white.opacity(0.7))
+                    .monospacedDigit()
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color(red: 0.13, green: 0.15, blue: 0.18))
+    }
+}
+
+/// Сообщает модели, что мини-окно на экране (вид попал в окно) или убрано.
+private struct PictureInPictureAnchor: UIViewRepresentable {
+    let model: NyutagCallMiniWindowModel
+
+    func makeUIView(context: Context) -> AnchorView {
+        let view = AnchorView()
+        view.isUserInteractionEnabled = false
+        view.onWindowChange = { [weak model] view in model?.setPictureInPictureAnchor(view.window == nil ? nil : view) }
+        return view
+    }
+
+    func updateUIView(_ uiView: AnchorView, context: Context) { }
+
+    final class AnchorView: UIView {
+        var onWindowChange: (AnchorView) -> Void = { _ in }
+
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            onWindowChange(self)
+        }
     }
 }
 
@@ -135,6 +194,8 @@ final class NyutagFloatingWindowHost: NSObject {
 
     func hide() {
         window?.isHidden = true
+        // Снимаем содержимое явно: якорь PiP узнаёт, что мини-окна больше нет.
+        window?.rootViewController = nil
         window = nil
     }
 

@@ -63,7 +63,7 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
         
         super.init(initialViewState: CallScreenViewState(script: CallScreenJavaScriptMessageName.allCasesInjectionScript))
         
-        state.swiftUICallViewCoordinator = .init(viewModelContext: context)
+        state.swiftUICallViewCoordinator = .init(viewModelContext: context, miniWindow: miniWindow)
         
         miniWindow.onRestore = { [weak self] in self?.actionsSubject.send(.pictureInPictureStopped) }
         miniWindow.onToggleMute = { [weak self] in
