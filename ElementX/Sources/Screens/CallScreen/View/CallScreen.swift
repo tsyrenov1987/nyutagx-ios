@@ -93,6 +93,8 @@ struct CallView: UIViewRepresentable {
         private weak var pictureInPictureSourceView: UIView?
         private var isVideoActive = false
         private var isWebViewInPictureInPicture = false
+        private var isCallEnded = false
+        private var didBecomeActiveObserver: AnyCancellable?
         private var routePickerView: AVRoutePickerView!
         
         /// The view to be shown in the app. This will contain the web view when picture in picture isn't running.
@@ -108,6 +110,13 @@ struct CallView: UIViewRepresentable {
             super.init()
             
             miniWindow.onPictureInPictureAnchorChange = { [weak self] in self?.updatePictureInPictureSource() }
+            // PiP — только напоминание о звонке вне приложения: вернулись в приложение — убираем, звонок остаётся как был.
+            didBecomeActiveObserver = NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)
+                .sink { [weak self] _ in
+                    guard let pictureInPictureController = self?.pictureInPictureController,
+                          pictureInPictureController.isPictureInPictureActive else { return }
+                    pictureInPictureController.stopPictureInPicture()
+                }
             
             DispatchQueue.main.async { // Avoid `Publishing changes from within view update` warnings
                 viewModelContext.javaScriptEvaluator = self.evaluateJavaScript
@@ -374,7 +383,7 @@ struct CallView: UIViewRepresentable {
         /// Источник PiP должен быть на экране, иначе iOS не запустит его при уходе в фон:
         /// пока звонок свёрнут — мини-окно, иначе экран звонка. Пока PiP идёт, источник не трогаем.
         private func updatePictureInPictureSource() {
-            guard let pictureInPictureController, !pictureInPictureController.isPictureInPictureActive else { return }
+            guard !isCallEnded, let pictureInPictureController, !pictureInPictureController.isPictureInPictureActive else { return }
             let sourceView = miniWindow.pictureInPictureAnchor ?? webViewWrapper
             guard sourceView !== pictureInPictureSourceView else { return }
             pictureInPictureSourceView = sourceView
@@ -393,6 +402,14 @@ struct CallView: UIViewRepresentable {
                 content.didMove(toParent: viewController)
             }
             return viewController
+        }
+        
+        /// Звонок завершён: PiP больше не должен всплывать при уходе приложения в фон.
+        func tearDownPictureInPicture() {
+            isCallEnded = true
+            didBecomeActiveObserver = nil
+            pictureInPictureController?.stopPictureInPicture()
+            pictureInPictureController?.contentSource = nil
         }
         
         func requestPictureInPicture() async -> Result<Void, CallScreenError> {

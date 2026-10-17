@@ -159,9 +159,19 @@ final class NyutagFloatingWindowHost: NSObject {
     private static let offsetXKey = "nyutag.callMiniWindow.offset.x"
     private static let offsetYKey = "nyutag.callMiniWindow.offset.y"
 
+    /// Окно блокировки приложения: пока оно видно, мини-окно прячем — иначе имя собеседника и кнопки звонка видны поверх экрана с кодом.
+    static weak var coveringWindow: UIWindow?
+
     private var window: UIWindow?
 
     var isShown: Bool { window != nil }
+
+    override init() {
+        super.init()
+        for name in [UIWindow.didBecomeVisibleNotification, UIWindow.didBecomeHiddenNotification] {
+            NotificationCenter.default.addObserver(self, selector: #selector(coveringWindowDidChange), name: name, object: nil)
+        }
+    }
 
     func show(_ view: AnyView) {
         hide()
@@ -188,7 +198,7 @@ final class NyutagFloatingWindowHost: NSObject {
         window.frame = CGRect(origin: .zero, size: size)
         window.center = Self.clamp(center, size: size, in: area)
         hostingController.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(handlePan)))
-        window.isHidden = false
+        window.isHidden = Self.coveringWindow?.isHidden == false
         self.window = window
     }
 
@@ -197,6 +207,11 @@ final class NyutagFloatingWindowHost: NSObject {
         // Снимаем содержимое явно: якорь PiP узнаёт, что мини-окна больше нет.
         window?.rootViewController = nil
         window = nil
+    }
+
+    @objc private func coveringWindowDidChange(_ notification: Notification) {
+        guard let window, let coveringWindow = Self.coveringWindow, notification.object as? UIWindow === coveringWindow else { return }
+        window.isHidden = !coveringWindow.isHidden
     }
 
     @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {

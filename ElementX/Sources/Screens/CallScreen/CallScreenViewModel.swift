@@ -162,6 +162,7 @@ class CallScreenViewModel: CallScreenViewModelType, CallScreenViewModelProtocol 
         
         elementCallService.tearDownCallSession(roomID: configuration.callRoomID)
         UIDevice.current.isProximityMonitoringEnabled = false
+        state.swiftUICallViewCoordinator?.tearDownPictureInPicture()
     }
     
     // MARK: - Private

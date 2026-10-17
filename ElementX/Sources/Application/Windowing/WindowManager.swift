@@ -78,6 +78,8 @@ class WindowManager: SecureWindowManagerProtocol {
         
         alternateWindow = UIWindow(windowScene: scene)
         alternateWindow.tintColor = .compound.textActionPrimary
+        // Нютаг: мини-окно звонка в своём UIWindow выше основного — прячем его под блокировкой приложения.
+        NyutagFloatingWindowHost.coveringWindow = alternateWindow
         
         delegate?.windowManagerDidConfigureWindows(self)
     }
