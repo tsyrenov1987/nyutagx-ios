@@ -4,6 +4,7 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 //
 
+import CryptoKit
 import FarvaterCore
 import Foundation
 import Network
@@ -132,15 +133,16 @@ nonisolated enum NyutagTunnel {
         return nil
     }
 
-    /// Сообщает ядру о смене сети (Wi-Fi ↔ сотовая), без перезапуска туннеля — как в Farvater.
+    /// Сообщает ядру о смене сети (другой Wi-Fi ↔ сотовая), без перезапуска туннеля — как в Farvater.
     private static func startMonitorIfNeeded(_ state: inout State) {
         guard state.monitor == nil else { return }
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { path in
             let network = Self.network(of: path)
             let changed = Self.state.withLock { state in
-                defer { state.network = network }
-                return state.network != network
+                guard let next = NyutagNetworkKey.change(last: state.network, next: network) else { return false }
+                state.network = next
+                return true
             }
             if changed, MobileRunning() { MobileSetNetwork(network) }
         }
@@ -150,9 +152,9 @@ nonisolated enum NyutagTunnel {
     }
 
     private static func network(of path: NWPath) -> String {
-        if path.usesInterfaceType(.wifi) { return "wifi" }
-        if path.usesInterfaceType(.wiredEthernet) { return "wired" }
-        return "cell"
+        NyutagNetworkKey.of(wifi: path.usesInterfaceType(.wifi),
+                            wired: path.usesInterfaceType(.wiredEthernet),
+                            gateways: path.gateways.compactMap(NyutagNetworkKey.address))
     }
 
     /// Что ядро выучило про сети; хранится в Application Support и не попадает в бэкап.
@@ -163,6 +165,38 @@ nonisolated enum NyutagTunnel {
         values.isExcludedFromBackup = true
         try? directory.setResourceValues(values)
         return directory.appending(path: "nyutag-core-memory.json")
+    }
+}
+
+/// Имя сети, под которым farvater-core ведёт память путей (`wifi`, `wifi:<хеш шлюзов>`, `cell`, `wired`).
+/// Wi-Fi различаются по шлюзам, и наружу уходит хеш, а не адреса: у домашней и рабочей сети — своя память,
+/// и ядро не начинает разведку заново, вернувшись в знакомую. Та же схема, что в Android и Farvater.
+nonisolated enum NyutagNetworkKey {
+    /// Wi-Fi без известных шлюзов — просто `wifi`; сотовая и провод — по одной сети каждая.
+    static func of(wifi: Bool, wired: Bool, gateways: [String]) -> String {
+        if wifi, gateways.isEmpty { return "wifi" }
+        if wifi {
+            let digest = SHA256.hash(data: Data(gateways.sorted().joined(separator: ",").utf8))
+            return "wifi:" + digest.prefix(4).map { String(format: "%02x", $0) }.joined()
+        }
+        return wired ? "wired" : "cell"
+    }
+
+    /// Что сказать ядру, когда после `last` телефон сообщил `next`: nil — ничего не менялось.
+    /// Wi-Fi, увиденный мельком без шлюзов, считается той же сетью, в которой телефон уже был.
+    static func change(last: String, next: String) -> String? {
+        guard next != last, !(next == "wifi" && last.hasPrefix("wifi:")) else { return nil }
+        return next
+    }
+
+    /// Адрес шлюза из пути без порта и интерфейса; имена не берём.
+    static func address(_ endpoint: NWEndpoint) -> String? {
+        guard case .hostPort(let host, _) = endpoint else { return nil }
+        switch host {
+        case .ipv4(let address): return "\(address)"
+        case .ipv6(let address): return "\(address)"
+        default: return nil
+        }
     }
 }
 

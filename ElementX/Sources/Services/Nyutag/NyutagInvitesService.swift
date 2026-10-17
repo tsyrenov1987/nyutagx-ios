@@ -222,14 +222,17 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
     }
     
     // MARK: - Transport
-    
+
+    /// Ответ ядра через туннель приходит за секунды; 20 с без ответа — «нет связи, попробуйте ещё раз», а не долгое ожидание.
+    private static let timeout: TimeInterval = 20
+
     /// То же, что `request`, но для ответов-массивов (например, `/state`).
     private func requestArray(_ method: String, _ path: String, bearer: String? = nil) async throws(NyutagInviteError) -> [[String: Any]] {
         guard let endpoint = NyutagTunnel.endpoint,
               let url = URL(string: NyutagTunnel.homeserverURL + path) else {
             throw .init(errcode: NyutagInviteError.network)
         }
-        var request = URLRequest(url: url, timeoutInterval: 30)
+        var request = URLRequest(url: url, timeoutInterval: Self.timeout)
         request.httpMethod = method
         if let bearer {
             request.setValue("Bearer \(bearer)", forHTTPHeaderField: "Authorization")
@@ -260,7 +263,7 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
               let url = URL(string: NyutagTunnel.homeserverURL + path) else {
             throw .init(errcode: NyutagInviteError.network)
         }
-        var request = URLRequest(url: url, timeoutInterval: 30)
+        var request = URLRequest(url: url, timeoutInterval: Self.timeout)
         request.httpMethod = method
         if let body {
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
