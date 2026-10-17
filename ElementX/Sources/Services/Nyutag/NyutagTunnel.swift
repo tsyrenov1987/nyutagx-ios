@@ -43,17 +43,27 @@ nonisolated enum NyutagTunnel {
         return NyutagCatalogue.compose(bundled: bundledCatalogue, fetched: saved)
     }
 
-    /// Раз за процесс, уже через туннель, берёт у ядра актуальный состав входов и сохраняет его. Работающий туннель
-    /// не перезапускается (живые соединения не рвём) — новый состав применяется при следующем запуске.
+    /// Повторы обновления каталога без ответа ядра: через 1, 2, 4 и 8 минут (старт без сети — обычное дело).
+    private static let catalogueRetries = 4
+    private static let catalogueRetryDelay: Duration = .seconds(60)
+
+    /// Раз за процесс, уже через туннель, берёт у ядра актуальный состав входов и сохраняет его. Ответ сервера
+    /// (любой код) — финал; сетевая ошибка — повтор с удвоением паузы. Работающий туннель не перезапускается
+    /// (живые соединения не рвём) — новый состав применяется при следующем запуске.
     private static func refreshCatalogue() {
         Task.detached(priority: .utility) {
-            do {
-                let data = try await NyutagInvitesService.shared.catalogue()
-                guard let fetched = NyutagCatalogue(data: data) else { return }
-                UserDefaults.standard.set(fetched.data, forKey: catalogueDefaultsKey)
-                MXLog.info("Nyutag tunnel: catalogue v\(fetched.version) saved, \(fetched.paths.count) paths")
-            } catch {
-                MXLog.warning("Nyutag tunnel: catalogue refresh failed")
+            for attempt in 0...catalogueRetries {
+                do throws(NyutagInviteError) {
+                    let data = try await NyutagInvitesService.shared.catalogue()
+                    guard let fetched = NyutagCatalogue(data: data) else { return }
+                    UserDefaults.standard.set(fetched.data, forKey: catalogueDefaultsKey)
+                    MXLog.info("Nyutag tunnel: catalogue v\(fetched.version) saved, \(fetched.paths.count) paths")
+                    return
+                } catch {
+                    MXLog.warning("Nyutag tunnel: catalogue refresh failed (attempt \(attempt))")
+                    guard error.errcode == NyutagInviteError.network, attempt < catalogueRetries else { return }
+                }
+                try? await Task.sleep(for: catalogueRetryDelay * (1 << attempt))
             }
         }
     }
