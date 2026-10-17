@@ -26,6 +26,14 @@ takes back as they are.
 FOUNDATION_EXPORT NSString* _Nonnull MobileDirectNames(NSString* _Nullable input);
 
 /**
+ * EnsureListening makes sure the SOCKS port takes connections, listening
+again on the same port when the system took the socket while the app slept.
+The apps call it when they come to the foreground, before their clients
+reconnect. Blocks up to two seconds; false if the port did not come back.
+ */
+FOUNDATION_EXPORT BOOL MobileEnsureListening(void);
+
+/**
  * FetchCatalogue downloads a catalogue URL and returns JSON
 {"ok":true,"text":"...","paths":n,"title":"...","provider":{...}} or
 {"ok":false,"error":"..."}; provider (see catalogue.Provider) only when the

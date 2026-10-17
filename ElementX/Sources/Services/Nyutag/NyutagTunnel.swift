@@ -114,6 +114,17 @@ nonisolated enum NyutagTunnel {
         }
     }
 
+    /// iOS может отобрать слушающий сокет у приостановленного приложения, не разбудив ждущий его accept:
+    /// после сна порт отвечает отказом, а ядро этого не видит. Перед возобновлением синхронизации проверяем порт;
+    /// мёртвый — ядро слушает заново на том же порту с тем же логином (до 2 с), SDK держит прежний адрес прокси.
+    static func ensureListening() async {
+        guard MobileRunning() else { return }
+        let alive = await Task.detached(priority: .userInitiated) { MobileEnsureListening() }.value
+        if !alive {
+            MXLog.error("Nyutag tunnel: SOCKS port did not come back after sleep")
+        }
+    }
+
     /// Случайный порт на loopback; повтор, если порт занят.
     private static func start(network: String) -> Int? {
         guard let catalogue else {

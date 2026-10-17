@@ -1191,6 +1191,9 @@ class ClientProxy: ClientProxyProtocol {
     private func reconcileServiceState() async {
         switch desiredServiceState {
         case .running(let offline):
+            // Нютаг: SDK ходит через SOCKS туннеля, а сокет порта iOS мог отобрать во сне.
+            await NyutagTunnel.ensureListening()
+            
             if appSettings.clientPausingAndResumingEnabled {
                 do {
                     MXLog.info("Resuming client")
