@@ -341,7 +341,8 @@ private extension EventBasedTimelineItemProtocol {
         switch self {
         case is ImageRoomTimelineItem, is VideoRoomTimelineItem:
             // In case a reply detail or a thread decorator is present we render the color and the padding
-            return properties.replyDetails != nil || properties.isThreaded || hasMediaCaption ? defaultColor : nil
+            // Нютаг: исчезающее фото — заглушка-текст в обычном пузыре.
+            return properties.replyDetails != nil || properties.isThreaded || hasMediaCaption || isNyutagViewOnce ? defaultColor : nil
         case is StickerRoomTimelineItem:
             return nil
         default:
@@ -366,7 +367,7 @@ private extension EventBasedTimelineItemProtocol {
             return .init(top: 12, leading: 12, bottom: 4, trailing: 12)
         // In case a reply detail or a thread decorator is present we render the color and the padding
         case is ImageRoomTimelineItem, is VideoRoomTimelineItem:
-            return properties.replyDetails != nil || properties.isThreaded || hasMediaCaption ? defaultInsets : .zero
+            return properties.replyDetails != nil || properties.isThreaded || hasMediaCaption || isNyutagViewOnce ? defaultInsets : .zero
         case let locationTimelineItem as LocationRoomTimelineItem:
             return locationTimelineItem.content.geoURI == nil ||
                 properties.replyDetails != nil ||

@@ -229,7 +229,7 @@ nonisolated struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                               canBeRepliedTo: eventItemProxy.canBeRepliedTo,
                               shouldBoost: eventItemProxy.shouldBoost,
                               sender: eventItemProxy.sender,
-                              content: buildImageTimelineItemContent(imageMessageContent),
+                              content: buildImageTimelineItemContent(imageMessageContent, eventItemProxy: eventItemProxy),
                               properties: .init(replyDetails: buildTimelineItemReplyDetails(messageLikeContent.inReplyTo),
                                                 isThreaded: messageLikeContent.threadRoot != nil,
                                                 threadSummary: buildTimelineItemThreadSummary(messageLikeContent.threadSummary),
@@ -664,6 +664,13 @@ nonisolated struct RoomTimelineItemFactory: RoomTimelineItemFactoryProtocol {
                                             source: MediaSourceProxy(source: messageContent.source, mimeType: messageContent.info?.mimetype),
                                             fileSize: messageContent.info?.size.map(UInt.init),
                                             contentType: UTType(mimeType: messageContent.info?.mimetype, fallbackFilename: messageContent.filename))
+    }
+    
+    /// Нютаг: метку исчезающего фото SDK не разбирает — читаем её из исходного JSON события.
+    private func buildImageTimelineItemContent(_ messageContent: ImageMessageContent, eventItemProxy: EventTimelineItemProxy) -> ImageRoomTimelineItemContent {
+        var content = buildImageTimelineItemContent(messageContent)
+        content.nyutagViewOnce = NyutagViewOnce.isMarked(originalJSON: eventItemProxy.debugInfo.originalJSON)
+        return content
     }
     
     private func buildImageTimelineItemContent(_ messageContent: ImageMessageContent) -> ImageRoomTimelineItemContent {

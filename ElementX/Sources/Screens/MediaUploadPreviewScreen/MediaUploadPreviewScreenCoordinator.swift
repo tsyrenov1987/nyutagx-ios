@@ -20,6 +20,8 @@ struct MediaUploadPreviewScreenCoordinatorParameters {
     let timelineController: TimelineControllerProtocol
     let clientProxy: ClientProxyProtocol
     let userIndicatorController: UserIndicatorControllerProtocol
+    /// Нютаг: личный чат — можно отправить исчезающее фото.
+    var isDirectChat = false
 }
 
 enum MediaUploadPreviewScreenCoordinatorAction {
@@ -44,7 +46,8 @@ final class MediaUploadPreviewScreenCoordinator: CoordinatorProtocol {
                                                       mediaUploadingPreprocessor: parameters.mediaUploadingPreprocessor,
                                                       timelineController: parameters.timelineController,
                                                       clientProxy: parameters.clientProxy,
-                                                      userIndicatorController: parameters.userIndicatorController)
+                                                      userIndicatorController: parameters.userIndicatorController,
+                                                      isDirectChat: parameters.isDirectChat)
     }
     
     func start() {

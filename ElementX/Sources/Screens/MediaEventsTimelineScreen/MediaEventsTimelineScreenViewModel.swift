@@ -191,6 +191,8 @@ class MediaEventsTimelineScreenViewModel: MediaEventsTimelineScreenViewModelType
         
         timelineViewState.timelineState.itemViewStates.flatMap { itemViewState -> [RoomTimelineItemViewState] in
             switch itemViewState.type {
+            case .image(let item) where item.content.nyutagViewOnce:
+                return [] // Нютаг: исчезающее фото в галерею чата не попадает.
             case .image, .video:
                 return state.screenMode == .media ? [itemViewState] : []
             case .audio, .file, .voice:

@@ -14,6 +14,7 @@ import SwiftUI
 
 typealias TimelineViewModelType = StateStoreViewModel<TimelineViewState, TimelineViewAction>
 
+// swiftlint:disable:next type_body_length
 class TimelineViewModel: TimelineViewModelType, TimelineViewModelProtocol {
     private enum Constants {
         static let paginationEventLimit: UInt16 = 20
@@ -167,6 +168,8 @@ class TimelineViewModel: TimelineViewModelType, TimelineViewModelProtocol {
             Task { await timelineController.processItemDisappearance(id) }
         case .mediaTapped(let id):
             Task { await handleMediaTapped(with: id) }
+        case .nyutagViewOnceOpened(let itemID):
+            timelineInteractionHandler.redact(itemID, reason: nil)
         case .galleryItemTapped(let galleryItemID):
             Task { await handleMediaTapped(with: galleryItemID.timelineItemID, galleryIndex: galleryItemID.mediaIndex) }
         case .itemSendInfoTapped(let itemID):

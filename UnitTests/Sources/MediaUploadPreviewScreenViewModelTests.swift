@@ -57,6 +57,25 @@ final class MediaUploadPreviewScreenViewModelTests {
     }
     
     @Test
+    func viewOnceOnlyForSingleImageInDirectChat() {
+        setUpViewModel(urls: [imageURL], expectedCaption: nil, isDirectChat: true)
+        #expect(context.viewState.canSendViewOnce)
+        
+        context.send(viewAction: .toggleViewOnce)
+        
+        #expect(context.viewState.isViewOnce)
+        #expect(userIndicatorController.submitIndicatorDelayCallsCount == 1)
+        
+        setUpViewModel(urls: [imageURL], expectedCaption: nil)
+        context.send(viewAction: .toggleViewOnce)
+        #expect(!context.viewState.canSendViewOnce)
+        #expect(!context.viewState.isViewOnce)
+        
+        setUpViewModel(urls: [imageURL, videoURL], expectedCaption: nil, isDirectChat: true)
+        #expect(!context.viewState.canSendViewOnce)
+    }
+    
+    @Test
     func imageUploadWithoutCaption() async throws {
         setUpViewModel(urls: [imageURL], expectedCaption: nil)
         context.caption = .init("")
@@ -315,7 +334,8 @@ final class MediaUploadPreviewScreenViewModelTests {
                                 expectedCaption: String?,
                                 maxUploadSizeResult: Result<UInt, ClientProxyError>? = nil,
                                 simulateGallerySendFailure: Bool = false,
-                                galleryEnabled: Bool = true) {
+                                galleryEnabled: Bool = true,
+                                isDirectChat: Bool = false) {
         timelineProxy = TimelineProxyMock(.init())
         timelineProxy.sendAudioUrlAudioInfoCaptionRequestHandleClosure = { [weak self] _, _, caption, _ in
             self?.verifyCaption(caption, expectedCaption: expectedCaption) ?? .failure(.sdkError(TestError.unknown))
@@ -347,7 +367,8 @@ final class MediaUploadPreviewScreenViewModelTests {
                                                       mediaUploadingPreprocessor: MediaUploadingPreprocessor(appSettings: appSettings),
                                                       timelineController: TimelineControllerMock(.init(timelineProxy: timelineProxy)),
                                                       clientProxy: clientProxy,
-                                                      userIndicatorController: userIndicatorController)
+                                                      userIndicatorController: userIndicatorController,
+                                                      isDirectChat: isDirectChat)
     }
     
     private func verifyCaption(_ caption: String?, expectedCaption: String?) -> Result<Void, TimelineProxyError> {

@@ -21,4 +21,6 @@ nonisolated struct ImageRoomTimelineItemContent: Hashable {
     
     var blurhash: String?
     var contentType: UTType?
+    /// Нютаг: исчезающее фото (метка `chat.nyutag.view_once` в content события).
+    var nyutagViewOnce = false
 }

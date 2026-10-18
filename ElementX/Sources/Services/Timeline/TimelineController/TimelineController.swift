@@ -346,11 +346,23 @@ class TimelineController: TimelineControllerProtocol {
                    imageInfo: MatrixRustSDK.ImageInfo,
                    caption: String?,
                    requestHandle: @MainActor (SendAttachmentJoinHandleProtocol) -> Void) async -> Result<Void, TimelineControllerError> {
-        switch await activeTimeline.sendImage(url: url,
-                                              thumbnailURL: thumbnailURL,
-                                              imageInfo: imageInfo,
-                                              caption: caption,
-                                              requestHandle: requestHandle).mapError(TimelineControllerError.timelineProxyError) {
+        await sendImage(url: url, thumbnailURL: thumbnailURL, imageInfo: imageInfo, caption: caption, extraContentJSON: nil, requestHandle: requestHandle)
+    }
+    
+    /// Нютаг: отправка картинки с дополнительными полями content (метка исчезающего фото).
+    func sendImage(url: URL,
+                   thumbnailURL: URL,
+                   imageInfo: MatrixRustSDK.ImageInfo,
+                   caption: String?,
+                   extraContentJSON: String?,
+                   requestHandle: @MainActor (SendAttachmentJoinHandleProtocol) -> Void) async -> Result<Void, TimelineControllerError> {
+        let result = if let extraContentJSON, let timelineProxy = activeTimeline as? TimelineProxy {
+            await timelineProxy.sendImage(url: url, thumbnailURL: thumbnailURL, imageInfo: imageInfo, caption: caption,
+                                          extraContentJSON: extraContentJSON, requestHandle: requestHandle)
+        } else {
+            await activeTimeline.sendImage(url: url, thumbnailURL: thumbnailURL, imageInfo: imageInfo, caption: caption, requestHandle: requestHandle)
+        }
+        switch result.mapError(TimelineControllerError.timelineProxyError) {
         case .success:
             callbacks.send(.messageSentOrEdited)
             return .success(())

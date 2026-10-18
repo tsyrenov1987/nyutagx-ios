@@ -39,7 +39,8 @@ class MediaUploadPreviewScreenViewModel: MediaUploadPreviewScreenViewModelType, 
          mediaUploadingPreprocessor: MediaUploadingPreprocessor,
          timelineController: TimelineControllerProtocol,
          clientProxy: ClientProxyProtocol,
-         userIndicatorController: UserIndicatorControllerProtocol) {
+         userIndicatorController: UserIndicatorControllerProtocol,
+         isDirectChat: Bool = false) {
         self.mediaURLs = mediaURLs
         self.mediaUploadingPreprocessor = mediaUploadingPreprocessor
         self.timelineController = timelineController
@@ -56,6 +57,7 @@ class MediaUploadPreviewScreenViewModel: MediaUploadPreviewScreenViewModelType, 
                                                                        canChooseQuality: Self.canChooseQuality(for: mediaURLs),
                                                                        isHighQuality: !(mediaUploadingPreprocessor.optimizeOverride
                                                                            ?? mediaUploadingPreprocessor.appSettings.optimizeMediaUploads),
+                                                                       canSendViewOnce: isDirectChat && Self.canSendViewOnce(for: mediaURLs),
                                                                        bindings: .init(caption: caption ?? NSAttributedString())))
     }
     
@@ -128,7 +130,17 @@ class MediaUploadPreviewScreenViewModel: MediaUploadPreviewScreenViewModelType, 
             processingTask.cancel()
             processingTask = Self.processMedia(at: mediaURLs, preprocessor: mediaUploadingPreprocessor, clientProxy: clientProxy)
             userIndicatorController.submitIndicator(UserIndicator(title: state.isHighQuality ? NyutagL10n.mediaQualityHighOn : NyutagL10n.mediaQualityHighOff))
+        case .toggleViewOnce:
+            state.isViewOnce = state.canSendViewOnce && !state.isViewOnce
+            if state.isViewOnce {
+                userIndicatorController.submitIndicator(UserIndicator(title: NyutagL10n.viewOnceToggle))
+            }
         }
+    }
+    
+    nonisolated static func canSendViewOnce(for mediaURLs: [URL]) -> Bool {
+        guard mediaURLs.count == 1, let type = mediaURLs.first.flatMap({ UTType(filenameExtension: $0.pathExtension) }) else { return false }
+        return type.conforms(to: .image)
     }
     
     /// Нютаг: сжимаются только фото (кроме GIF) и видео — для остальных файлов выбор качества не нужен.
@@ -194,11 +206,12 @@ class MediaUploadPreviewScreenViewModel: MediaUploadPreviewScreenViewModelType, 
         
         switch mediaInfo {
         case let .image(imageURL, thumbnailURL, imageInfo):
-            return await timelineController.sendImage(url: imageURL,
-                                                      thumbnailURL: thumbnailURL,
-                                                      imageInfo: imageInfo,
-                                                      caption: caption,
-                                                      requestHandle: requestHandle)
+            return await timelineController.nyutagSendImage(url: imageURL,
+                                                            thumbnailURL: thumbnailURL,
+                                                            imageInfo: imageInfo,
+                                                            caption: caption,
+                                                            isViewOnce: state.canSendViewOnce && state.isViewOnce,
+                                                            requestHandle: requestHandle)
         case let .video(videoURL, thumbnailURL, videoInfo):
             return await timelineController.sendVideo(url: videoURL,
                                                       thumbnailURL: thumbnailURL,

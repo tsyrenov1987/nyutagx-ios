@@ -20,6 +20,14 @@ struct ImageRoomTimelineView: View {
     }
     
     var body: some View {
+        if timelineItem.content.nyutagViewOnce {
+            NyutagViewOnceImageView(timelineItem: timelineItem)
+        } else {
+            mediaBody
+        }
+    }
+    
+    private var mediaBody: some View {
         TimelineStyler(timelineItem: timelineItem) {
             // The caption sits 8pts below the content scanner failure placeholder, 4pts below the media.
             VStack(alignment: .leading, spacing: contentScanningFailure == nil ? 4 : 8) {

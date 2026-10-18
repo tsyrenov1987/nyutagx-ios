@@ -25,6 +25,10 @@ struct MediaUploadPreviewScreenViewState: BindableState {
     var canChooseQuality = false
     var isHighQuality = false
     
+    /// Нютаг: исчезающее фото — только одна картинка в личном чате.
+    var canSendViewOnce = false
+    var isViewOnce = false
+    
     var bindings: MediaUploadPreviewScreenBindings
 }
 
@@ -48,4 +52,5 @@ enum MediaUploadPreviewScreenViewAction {
     case cancel
     case editedMedia(image: UIImage, index: Int)
     case toggleHighQuality
+    case toggleViewOnce
 }

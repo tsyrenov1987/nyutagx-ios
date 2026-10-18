@@ -53,6 +53,8 @@ enum TimelineViewAction {
     case itemDisappeared(itemID: TimelineItemIdentifier)
     
     case mediaTapped(itemID: TimelineItemIdentifier)
+    /// Нютаг: исчезающее фото просмотрено — удаляем событие.
+    case nyutagViewOnceOpened(itemID: TimelineItemIdentifier)
     case galleryItemTapped(GalleryItemID)
     case itemSendInfoTapped(itemID: TimelineItemIdentifier)
     case toggleReaction(key: String, itemID: TimelineItemIdentifier)

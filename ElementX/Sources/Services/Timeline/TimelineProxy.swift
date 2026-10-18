@@ -299,6 +299,16 @@ final class TimelineProxy: TimelineProxyProtocol {
                    imageInfo: ImageInfo,
                    caption: String?,
                    requestHandle: @MainActor (SendAttachmentJoinHandleProtocol) -> Void) async -> Result<Void, TimelineProxyError> {
+        await sendImage(url: url, thumbnailURL: thumbnailURL, imageInfo: imageInfo, caption: caption, extraContentJSON: nil, requestHandle: requestHandle)
+    }
+    
+    /// Нютаг: `extraContentJSON` — дополнительные поля в content события (метка исчезающего фото).
+    func sendImage(url: URL,
+                   thumbnailURL: URL,
+                   imageInfo: ImageInfo,
+                   caption: String?,
+                   extraContentJSON: String?,
+                   requestHandle: @MainActor (SendAttachmentJoinHandleProtocol) -> Void) async -> Result<Void, TimelineProxyError> {
         MXLog.info("Sending image")
         
         do {
@@ -306,7 +316,8 @@ final class TimelineProxy: TimelineProxyProtocol {
                                                               caption: caption,
                                                               formattedCaption: nil, // Rust will build this from the caption's markdown.
                                                               mentions: nil,
-                                                              inReplyTo: nil),
+                                                              inReplyTo: nil,
+                                                              extraContentJson: extraContentJSON),
                                                 thumbnailSource: .file(filename: thumbnailURL.path(percentEncoded: false)),
                                                 imageInfo: imageInfo)
             

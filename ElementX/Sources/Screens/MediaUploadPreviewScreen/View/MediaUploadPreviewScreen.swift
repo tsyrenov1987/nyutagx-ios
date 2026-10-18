@@ -182,6 +182,18 @@ struct MediaUploadPreviewScreen: View {
             }
         }
         
+        if context.viewState.canSendViewOnce {
+            ToolbarItem(placement: .primaryAction) {
+                Button { context.send(viewAction: .toggleViewOnce) } label: {
+                    CompoundIcon(\.time)
+                        .foregroundStyle(context.viewState.isViewOnce ? .compound.iconAccentPrimary : .compound.iconSecondary)
+                }
+                .accessibilityLabel(NyutagL10n.viewOnceToggle)
+                .accessibilityAddTraits(context.viewState.isViewOnce ? .isSelected : [])
+                .accessibilityIdentifier("mediaUploadPreview-viewOnce")
+            }
+        }
+        
         if isCurrentMediaImage {
             ToolbarItem(placement: .primaryAction) {
                 Button { context.isPresentingMediaEditor = true } label: {
