@@ -50,6 +50,16 @@ nonisolated enum NyutagLanguage: String, CaseIterable, Identifiable {
         Task { @MainActor in NyutagLanguageRevision.shared.value += 1 }
     }
     
+    /// Язык для Element Call (`lang` в адресе виджета). Бурятского в Element Call нет, и он открывался по-английски —
+    /// даём русский. `systemTag` — язык системы, когда выбор в приложении не сделан.
+    func callLanguageTag(systemTag: String) -> String {
+        switch self {
+        case .system: systemTag.hasPrefix("bxr") ? "ru-RU" : systemTag
+        case .russian, .buryat: "ru-RU"
+        case .english: "en-US"
+        }
+    }
+    
     /// Вызывается при запуске до первого экрана.
     static func apply() {
         Bundle.overrideLocalizations = current.localizations

@@ -102,7 +102,8 @@ final class ElementCallWidgetDriver: WidgetCapabilitiesProvider, ElementCallWidg
             return .failure(.failedBuildingWidgetSettings)
         }
         
-        let languageTag = "\(Locale.current.language.languageCode ?? "en")-\(Locale.current.language.region ?? "US")"
+        // Нютаг: язык, выбранный в приложении (бурятский → русский, его в Element Call нет).
+        let languageTag = NyutagLanguage.current.callLanguageTag(systemTag: "\(Locale.current.language.languageCode ?? "en")-\(Locale.current.language.region ?? "US")")
         let theme = "dark"
         
         let urlString: String
