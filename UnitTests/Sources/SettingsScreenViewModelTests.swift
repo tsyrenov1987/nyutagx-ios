@@ -274,4 +274,16 @@ struct NyutagCallLanguageTagTests {
         #expect(NyutagLanguage.system.callLanguageTag(systemTag: "de-DE") == "de-DE")
         #expect(NyutagLanguage.english.callLanguageTag(systemTag: "ru-RU") == "en-US")
     }
+    
+    @Test
+    func buryatCallStringsGoOverRussian() throws {
+        #expect(NyutagLanguage.buryat.usesBuryatCallStrings(systemTag: "en"))
+        #expect(NyutagLanguage.system.usesBuryatCallStrings(systemTag: "bxr"))
+        #expect(!NyutagLanguage.system.usesBuryatCallStrings(systemTag: "ru"))
+        #expect(!NyutagLanguage.russian.usesBuryatCallStrings(systemTag: "bxr"))
+        
+        let script = try #require(NyutagLanguage.buryatCallStringsScript())
+        #expect(script.hasPrefix("window.nyutagCallStrings = {"))
+        #expect(script.contains("\"hangup_button_label\": \"Дуудалга дүүргэхэ\""))
+    }
 }

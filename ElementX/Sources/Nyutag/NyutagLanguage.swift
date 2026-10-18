@@ -60,6 +60,23 @@ nonisolated enum NyutagLanguage: String, CaseIterable, Identifiable {
         }
     }
     
+    /// Бурятского в Element Call нет: звонок открывается по-русски (`callLanguageTag`), а его русские строки
+    /// подменяются переводом из `NyutagCallBuryat.json` — чего в переводе нет, остаётся по-русски.
+    func usesBuryatCallStrings(systemTag: String) -> Bool {
+        switch self {
+        case .system: systemTag.hasPrefix("bxr")
+        case .buryat: true
+        case .russian, .english: false
+        }
+    }
+    
+    /// Скрипт для страницы звонка: перевод в `window.nyutagCallStrings`, его подкладывает обёртка `fetch` в `CallScreen`.
+    static func buryatCallStringsScript(bundle: Bundle = .main) -> String? {
+        guard let url = bundle.url(forResource: "NyutagCallBuryat", withExtension: "json"),
+              let json = try? String(contentsOf: url, encoding: .utf8) else { return nil }
+        return "window.nyutagCallStrings = \(json);"
+    }
+    
     /// Вызывается при запуске до первого экрана.
     static func apply() {
         Bundle.overrideLocalizations = current.localizations

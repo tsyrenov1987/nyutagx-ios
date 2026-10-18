@@ -976,6 +976,7 @@
 		94871CA883F44022086FE750 /* AuthenticationStartLogo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 98784280D98C852727BE0111 /* AuthenticationStartLogo.swift */; };
 		94A65DD8A353DF112EBEF67A /* SessionVerificationControllerProxyProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D56469A9EE0CFA2B7BA9760 /* SessionVerificationControllerProxyProtocol.swift */; };
 		94C2B531B96493B68B976E5F /* SpaceServiceProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226A56746AD99ABDA97189E1 /* SpaceServiceProxy.swift */; };
+		94CC64BE5406BAC9C59B40D5 /* NyutagCallBuryat.json in Resources */ = {isa = PBXBuildFile; fileRef = 015B40E88AA30D05E5E6360D /* NyutagCallBuryat.json */; };
 		94D0F36A87E596A93C0C178A /* Bundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6E89E530A8E92EC44301CA1 /* Bundle.swift */; };
 		94D9172C4B91FC6971C668CE /* LeaveSpaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE4B7AD74E402BBC46A801A /* LeaveSpaceView.swift */; };
 		94E15D018D70563FA4AB4E5A /* ComposerToolbarModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3A7375AB22721C436EB056 /* ComposerToolbarModels.swift */; };
@@ -1783,6 +1784,7 @@
 		00E5B2CBEF8F96424F095508 /* RoomDetailsEditScreenViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomDetailsEditScreenViewModelTests.swift; sourceTree = "<group>"; };
 		011AFA4990C585D157829679 /* DeclineAndBlockScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeclineAndBlockScreenViewModel.swift; sourceTree = "<group>"; };
 		012A284622B32052015F1F89 /* ReadMarkerRoomTimelineView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadMarkerRoomTimelineView.swift; sourceTree = "<group>"; };
+		015B40E88AA30D05E5E6360D /* NyutagCallBuryat.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NyutagCallBuryat.json; sourceTree = "<group>"; };
 		01B795AAAB7B8747FE2FF311 /* LogViewerScreenModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewerScreenModels.swift; sourceTree = "<group>"; };
 		01C4C7DB37597D7D8379511A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		022E6BD64CB4610B9C95FC02 /* UserDetailsEditScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetailsEditScreenViewModel.swift; sourceTree = "<group>"; };
@@ -6915,6 +6917,7 @@
 			isa = PBXGroup;
 			children = (
 				84A93AB649EFF5F7BC995E53 /* NyutagBrand.swift */,
+				015B40E88AA30D05E5E6360D /* NyutagCallBuryat.json */,
 				588793AC5A886B2D11241454 /* NyutagCallMiniWindow.swift */,
 				6DD0B897AA1FD6A88BC9B54E /* NyutagChatWallpaper.swift */,
 				A6C0AAA3FA6BAF7F6F4657DD /* NyutagFindByPhone.swift */,
@@ -8063,18 +8066,18 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C0C687DE1D270F9895FEE186 /* AccessibilityTests */,
 				C0FAEB81CFD9776CD78CE489 /* ElementX */,
+				FEB53A5BC378C913769656D8 /* NSE */,
+				19F0C845D67E9BEA4BE7133E /* ShareExtension */,
+				32C23C8D224D46EFE62AFAD0 /* UnitTests */,
+				7A17BE29BAC81ADBAC6349D9 /* PreviewTests */,
+				0E28CD62691FDBC63147D5E3 /* UITests */,
 				D3DB351B7FBE0F49649171FC /* IntegrationTests */,
+				C0C687DE1D270F9895FEE186 /* AccessibilityTests */,
 				96435A765678A64A956EE59C /* MapLibreInterface */,
 				392E7AA23D7BA2CEEB25CF73 /* MapLibreShim */,
 				676A87694F0F247B2AF1A142 /* MatrixRustSDKMocks */,
-				FEB53A5BC378C913769656D8 /* NSE */,
 				F8E276FD6DC43EADB85241BC /* Periphery */,
-				7A17BE29BAC81ADBAC6349D9 /* PreviewTests */,
-				19F0C845D67E9BEA4BE7133E /* ShareExtension */,
-				0E28CD62691FDBC63147D5E3 /* UITests */,
-				32C23C8D224D46EFE62AFAD0 /* UnitTests */,
 			);
 		};
 /* End PBXProject section */
@@ -8100,6 +8103,7 @@
 				0EA6537A07E2DC882AEA5962 /* Localizable.stringsdict in Resources */,
 				E6DEA23B948289A44738FCD4 /* Nyutag.strings in Resources */,
 				D5F63D8515FFBD999994DFAE /* Nyutag.stringsdict in Resources */,
+				94CC64BE5406BAC9C59B40D5 /* NyutagCallBuryat.json in Resources */,
 				8B408C574E35E1C9B43A50CE /* PrivacyInfo.xcprivacy in Resources */,
 				C3317EF833AB4060988DF098 /* SAS.strings in Resources */,
 				5FCD8AFA364206EE32B909A3 /* Settings.bundle in Resources */,

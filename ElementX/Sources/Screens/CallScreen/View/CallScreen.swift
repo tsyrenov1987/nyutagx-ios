@@ -151,6 +151,10 @@ struct CallView: UIViewRepresentable {
                 configuration.websiteDataStore.proxyConfigurations = [proxy]
             }
             configuration.userContentController.addUserScript(WKUserScript(source: Self.nyutagConfigScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+            let systemLanguageTag = Locale.current.language.languageCode?.identifier ?? "en"
+            if NyutagLanguage.current.usesBuryatCallStrings(systemTag: systemLanguageTag), let script = NyutagLanguage.buryatCallStringsScript() {
+                configuration.userContentController.addUserScript(WKUserScript(source: script, injectionTime: .atDocumentStart, forMainFrameOnly: true))
+            }
             
             webView = WKWebView(frame: .zero, configuration: configuration)
             webView.uiDelegate = self
@@ -362,6 +366,23 @@ struct CallView: UIViewRepresentable {
                     throw error;
                 }
                 if (url.protocol !== "file:" && !response.ok) { report("warn", "fetch " + target + " -> " + response.status); }
+                // Бурятский перевод поверх русских строк Element Call (см. NyutagLanguage.usesBuryatCallStrings).
+                if (window.nyutagCallStrings && new RegExp("/ru-app-[^/]+[.]json$").test(url.pathname)) {
+                    const merge = (base, overrides) => {
+                        const result = Object.assign({}, base);
+                        for (const [key, value] of Object.entries(overrides)) {
+                            result[key] = value && typeof value === "object" && base[key] && typeof base[key] === "object" ? merge(base[key], value) : value;
+                        }
+                        return result;
+                    };
+                    try {
+                        const strings = merge(await response.clone().json(), window.nyutagCallStrings);
+                        return new Response(JSON.stringify(strings), { status: 200, headers: { "Content-Type": "application/json" } });
+                    } catch (error) {
+                        report("warn", "Buryat call strings not applied: " + error);
+                        return response;
+                    }
+                }
                 if (!url.pathname.endsWith("/config.json")) { return response; }
                 const config = await response.json();
                 config.matrix_rtc_session = Object.assign({}, config.matrix_rtc_session, { membership_event_expiry_ms: 600000 });
