@@ -26,6 +26,10 @@ struct UserDetailsEditScreen: View {
             }
             
             nameSection
+            
+            if context.viewState.nyutagProfileOriginal != nil {
+                NyutagProfileFieldsEditor(info: $context.nyutagProfile)
+            }
         }
         .compoundList()
         .scrollDismissesKeyboard(.immediately)

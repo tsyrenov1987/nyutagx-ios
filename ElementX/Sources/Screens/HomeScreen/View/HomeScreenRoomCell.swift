@@ -178,6 +178,11 @@ struct HomeScreenRoomCell: View {
                             .frame(width: 12, height: 12)
                             .accessibilityLabel(L10n.a11yNotificationsNewMessages)
                     }
+                } else if room.isNyutagPinned {
+                    // Нютаг: как в Telegram — скрепка у закреплённого, пока нет непрочитанного.
+                    CompoundIcon(\.pinSolid, size: .custom(15), relativeTo: .compound.bodyMD)
+                        .foregroundColor(.compound.iconQuaternary)
+                        .accessibilityLabel(NyutagL10n.a11yPinnedChat)
                 }
             }
             .foregroundColor(room.isHighlighted ? .compound.iconAccentTertiary : .compound.iconQuaternary)

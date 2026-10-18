@@ -183,6 +183,8 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             state.reportRoomEnabled = await userSession.clientProxy.isReportRoomSupported
         }
         
+        loadNyutagChatLayout()
+        
         let isSearchFieldFocused = context.$viewState.map(\.bindings.isSearchFieldFocused)
         let searchQuery = context.$viewState.map(\.bindings.searchQuery)
         let activeFilters = context.$viewState.map(\.bindings.filtersState.activeFilters)
@@ -238,18 +240,15 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
         case .dismissNewSoundBanner:
             appSettings.hasSeenNewSoundBanner = true
         case .updateVisibleItemRange(let range):
-            roomSummaryProvider?.updateVisibleRange(range)
+            // Нютаг: закреплённые подняты наверх, поэтому индексы в списке сдвинуты относительно провайдера.
+            let shift = min(range.lowerBound, state.nyutagChatLayout.pins.count)
+            roomSummaryProvider?.updateVisibleRange((range.lowerBound - shift)..<range.upperBound)
         case .startChat:
             actionsSubject.send(.presentStartChatScreen)
-        case .nyutagInviteFriend:
-            Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
-        case .nyutagDrawer(let action):
-            state.bindings.isPresentingNyutagDrawer = false
-            handleNyutagDrawer(action)
-        case .nyutagAnnouncementDismiss:
-            closeNyutagAnnouncement(action: nil)
-        case .nyutagAnnouncementAction(let action):
-            closeNyutagAnnouncement(action: action)
+        case .nyutagInviteFriend, .nyutagDrawer, .nyutagAnnouncementDismiss, .nyutagAnnouncementAction,
+             .nyutagSetPinned, .nyutagSelectFolder, .nyutagSetRoomInFolder, .nyutagPromptFolder,
+             .nyutagConfirmFolderPrompt, .nyutagDeleteFolder:
+            processNyutag(viewAction)
         case .spaceFilters:
             if spaceFilterSubject.value != nil {
                 spaceFilterSubject.send(nil)
@@ -315,6 +314,66 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
         }
     }
     
+    /// Нютаг: закрепы и папки из account data; правка, сделанная до ответа сервера, не затирается.
+    private func loadNyutagChatLayout() {
+        Task { [weak self] in
+            guard let clientProxy = self?.userSession.clientProxy as? ClientProxy else { return }
+            let layout = await clientProxy.nyutagChatLayout()
+            guard let self, state.nyutagChatLayout.pins.isEmpty, state.nyutagChatLayout.folders.isEmpty else { return }
+            state.nyutagChatLayout = layout
+            updateRooms()
+        }
+    }
+    
+    /// Нютаг: приглашение, меню, объявления, закрепы и папки — отдельно, чтобы не раздувать process(viewAction:).
+    private func processNyutag(_ viewAction: HomeScreenViewAction) {
+        switch viewAction {
+        case .nyutagInviteFriend:
+            Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
+        case .nyutagDrawer(let action):
+            state.bindings.isPresentingNyutagDrawer = false
+            handleNyutagDrawer(action)
+        case .nyutagAnnouncementDismiss:
+            closeNyutagAnnouncement(action: nil)
+        case .nyutagAnnouncementAction(let action):
+            closeNyutagAnnouncement(action: action)
+        case .nyutagSetPinned(let roomIdentifier, let isPinned):
+            if isPinned, !state.nyutagChatLayout.canPinMore {
+                userIndicatorController.submitIndicator(UserIndicator(id: UUID().uuidString, type: .toast, title: NyutagL10n.pinLimit))
+                return
+            }
+            nyutagUpdateLayout(state.nyutagChatLayout.withPinned(roomIdentifier, pinned: isPinned))
+        case .nyutagSelectFolder(let folderID):
+            state.nyutagSelectedFolderID = folderID
+            updateFilter()
+            updateRooms()
+        case .nyutagSetRoomInFolder(let roomIdentifier, let folderID, let isIn):
+            nyutagUpdateLayout(state.nyutagChatLayout.withRoom(roomIdentifier, inFolder: folderID, isIn: isIn))
+        case .nyutagPromptFolder(let prompt):
+            if case let .rename(folderID) = prompt {
+                state.bindings.nyutagFolderNameDraft = state.nyutagChatLayout.folders.first { $0.id == folderID }?.name ?? ""
+            } else {
+                state.bindings.nyutagFolderNameDraft = ""
+            }
+            state.bindings.nyutagFolderPrompt = prompt
+        case .nyutagConfirmFolderPrompt:
+            let name = state.bindings.nyutagFolderNameDraft
+            switch state.bindings.nyutagFolderPrompt {
+            case .create(let roomID):
+                nyutagUpdateLayout(state.nyutagChatLayout.withNewFolder(id: UUID().uuidString.lowercased(), name: name, roomID: roomID))
+            case .rename(let folderID):
+                nyutagUpdateLayout(state.nyutagChatLayout.withRenamedFolder(id: folderID, name: name))
+            case .none:
+                break
+            }
+            state.bindings.nyutagFolderPrompt = nil
+        case .nyutagDeleteFolder(let folderID):
+            nyutagUpdateLayout(state.nyutagChatLayout.withoutFolder(id: folderID))
+        default:
+            break
+        }
+    }
+    
     // perphery: ignore - used in release mode
     func presentCrashedLastRunAlert() {
         // Delay setting the alert otherwise it automatically gets dismissed. Same as the force logout one.
@@ -370,7 +429,13 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             if state.bindings.isSearchFieldFocused {
                 roomSummaryProvider?.setFilter(.search(query: state.bindings.searchQuery))
             } else {
-                if let spaceFilter = spaceFilterSubject.value {
+                if let folder = state.nyutagSelectedFolder {
+                    var roomIDs = Set(folder.rooms)
+                    if let spaceFilter = spaceFilterSubject.value {
+                        roomIDs.formIntersection(spaceFilter.descendants)
+                    }
+                    roomSummaryProvider?.setFilter(.rooms(roomsIDs: roomIDs, filters: state.bindings.filtersState.activeFilters.set))
+                } else if let spaceFilter = spaceFilterSubject.value {
                     roomSummaryProvider?.setFilter(.rooms(roomsIDs: spaceFilter.descendants,
                                                           filters: state.bindings.filtersState.activeFilters.set))
                 } else {
@@ -465,7 +530,61 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             rooms.append(room)
         }
         
-        state.rooms = rooms
+        state.rooms = nyutagPinnedFirst(rooms)
+    }
+    
+    // MARK: - Нютаг: закреплённые чаты и папки
+    
+    /// Закреплённые — наверх в порядке закрепления. Не попавшие в подгруженную часть списка берём из полного,
+    /// если ничто их не отфильтровывает (поиск, фильтры, пространство, чужая папка).
+    private func nyutagPinnedFirst(_ rooms: [HomeScreenRoom]) -> [HomeScreenRoom] {
+        let pins = state.nyutagChatLayout.pins
+        guard !pins.isEmpty, !state.bindings.isSearchFieldFocused else { return rooms }
+        
+        let canAddMissing = !state.bindings.filtersState.isFiltering && spaceFilterSubject.value == nil
+        let folderRooms = state.nyutagSelectedFolder.map { Set($0.rooms) }
+        var others = rooms
+        var pinned = [HomeScreenRoom]()
+        for roomID in pins {
+            if let index = others.firstIndex(where: { $0.id == roomID }) {
+                var room = others.remove(at: index)
+                room.isNyutagPinned = room.type == .room
+                pinned.append(room)
+            } else if canAddMissing, folderRooms?.contains(roomID) ?? true,
+                      let summary = userSession.clientProxy.staticRoomSummaryProvider.roomListPublisher.value.first(where: { $0.id == roomID }),
+                      summary.joinRequestType == nil, !summary.isSpace {
+                var room = HomeScreenRoom(summary: summary,
+                                          roomListActivityVisibility: appSettings.roomListActivityVisibility,
+                                          seenInvites: appSettings.seenInvites)
+                room.isNyutagPinned = true
+                pinned.append(room)
+            }
+        }
+        return pinned + others
+    }
+    
+    /// Показываем сразу, сохраняем в фоне; при ошибке возвращаем как было, если никто не успел поменять снова.
+    private func nyutagUpdateLayout(_ layout: NyutagChatLayout) {
+        let previous = state.nyutagChatLayout
+        guard layout != previous else { return }
+        applyNyutagLayout(layout)
+        
+        Task { [weak self] in
+            guard let clientProxy = self?.userSession.clientProxy as? ClientProxy else { return }
+            let isSaved = await clientProxy.nyutagSetChatLayout(layout)
+            guard let self, !isSaved, state.nyutagChatLayout == layout else { return }
+            applyNyutagLayout(previous)
+            userIndicatorController.submitIndicator(UserIndicator(id: UUID().uuidString, type: .toast, title: L10n.errorUnknown))
+        }
+    }
+    
+    private func applyNyutagLayout(_ layout: NyutagChatLayout) {
+        state.nyutagChatLayout = layout
+        if state.nyutagSelectedFolderID != nil, state.nyutagSelectedFolder == nil {
+            state.nyutagSelectedFolderID = nil
+        }
+        updateFilter()
+        updateRooms()
     }
     
     /// Нютаг: заявку одобрили (пришло приглашение) — вступаем сами, без второго подтверждения, как во ВКонтакте.

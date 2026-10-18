@@ -24,6 +24,9 @@ struct UserDetailsEditScreenViewState: BindableState {
     var selectedAvatarURL: URL?
     var localMedia: MediaInfo?
     
+    /// Нютаг: «о себе» как на сервере; nil — ещё не загружено (поля не показываем и не сохраняем).
+    var nyutagProfileOriginal: NyutagProfileInfo?
+    
     var bindings: UserDetailsEditScreenViewStateBindings
     
     var nameDidChange: Bool {
@@ -34,8 +37,13 @@ struct UserDetailsEditScreenViewState: BindableState {
         localMedia != nil || selectedAvatarURL != currentUserProfile.avatarURL
     }
     
+    var nyutagProfileDidChange: Bool {
+        guard let nyutagProfileOriginal else { return false }
+        return bindings.nyutagProfile.normalized != nyutagProfileOriginal.normalized
+    }
+    
     var canSave: Bool {
-        !bindings.name.isEmpty && (avatarDidChange || nameDidChange)
+        !bindings.name.isEmpty && (avatarDidChange || nameDidChange || nyutagProfileDidChange)
     }
     
     var showDeleteImageAction: Bool {
@@ -45,6 +53,7 @@ struct UserDetailsEditScreenViewState: BindableState {
 
 struct UserDetailsEditScreenViewStateBindings {
     var name = ""
+    var nyutagProfile = NyutagProfileInfo()
     var showMediaSheet = false
     /// Нютаг: просмотр своего аватара во весь экран.
     var mediaPreviewItem: MediaPreviewItem?

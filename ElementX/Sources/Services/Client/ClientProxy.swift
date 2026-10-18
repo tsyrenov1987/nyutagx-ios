@@ -1763,6 +1763,22 @@ extension ClientProxy {
         }
     }
     
+    /// Закреплённые чаты и папки (`chat.nyutag.chat_layout`), общие с Android.
+    func nyutagChatLayout() async -> NyutagChatLayout {
+        NyutagChatLayout.fromJSON(try? await client.accountData(eventType: NyutagChatLayout.eventType))
+    }
+
+    func nyutagSetChatLayout(_ layout: NyutagChatLayout) async -> Bool {
+        guard let json = layout.json else { return false }
+        do {
+            try await client.setAccountData(eventType: NyutagChatLayout.eventType, content: json)
+            return true
+        } catch {
+            MXLog.error("Nyutag: failed storing chat layout: \(error)")
+            return false
+        }
+    }
+
     /// Отдельный экземпляр поиска (у каждого свой запрос и выдача) — для поиска внутри одного чата.
     func nyutagMakeSearchService() -> SearchServiceProxyProtocol? {
         guard let userID = try? client.userId() else { return nil }

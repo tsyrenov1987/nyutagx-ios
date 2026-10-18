@@ -217,6 +217,35 @@ nonisolated enum NyutagL10n {
     static var mediaQualityHighOn: String { tr("nyutag_media_quality_high_on") }
     static var mediaQualityHighOff: String { tr("nyutag_media_quality_high_off") }
     
+    /// Закреплённые чаты и папки.
+    static var pinLimit: String { tr("nyutag_pin_limit") }
+    static var folderAdd: String { tr("nyutag_folder_add") }
+    static var folderAll: String { tr("nyutag_folder_all") }
+    static var folderNew: String { tr("nyutag_folder_new") }
+    static var folderName: String { tr("nyutag_folder_name") }
+    static var folderRename: String { tr("nyutag_folder_rename") }
+    static var folderDelete: String { tr("nyutag_folder_delete") }
+    static var folderDeleteHint: String { tr("nyutag_folder_delete_hint") }
+    static var folderEmptyTitle: String { tr("nyutag_folder_empty_title") }
+    static var folderEmpty: String { tr("nyutag_folder_empty") }
+    static var a11yPinnedChat: String { tr("a11y_nyutag_pinned_chat") }
+
+    /// «О себе» в профиле.
+    static var profileAbout: String { tr("nyutag_profile_about") }
+    static var profileToonto: String { tr("nyutag_profile_toonto") }
+    static var profileUg: String { tr("nyutag_profile_ug") }
+    static var profileEastYear: String { tr("nyutag_profile_east_year") }
+    static var profileAboutPlaceholder: String { tr("nyutag_profile_about_placeholder") }
+    static var profileToontoPlaceholder: String { tr("nyutag_profile_toonto_placeholder") }
+    static var profileUgPlaceholder: String { tr("nyutag_profile_ug_placeholder") }
+    static var profileEastYearNone: String { tr("nyutag_profile_east_year_none") }
+    static var profileEastYearPick: String { tr("nyutag_profile_east_year_pick") }
+    static var profileEastYearHint: String { tr("nyutag_profile_east_year_hint") }
+    static func eastYearFormat(_ element: String, _ animal: String) -> String { tr("nyutag_east_year_format", element, animal) }
+    static func eastYearElementMasculine(_ index: Int) -> String { tr("nyutag_east_year_elements_m_\(index)") }
+    static func eastYearElementFeminine(_ index: Int) -> String { tr("nyutag_east_year_elements_f_\(index)") }
+    static func eastYearAnimal(_ index: Int) -> String { tr("nyutag_east_year_animals_\(index)") }
+
     private static func tr(_ key: String, _ args: CVarArg...) -> String {
         let languages = (Bundle.overrideLocalizations ?? Bundle.app.preferredLocalizations) + ["en"]
         for language in languages {

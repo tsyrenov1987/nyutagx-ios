@@ -55,6 +55,13 @@ enum HomeScreenViewAction {
     case markRoomAsUnread(roomIdentifier: String)
     case markRoomAsRead(roomIdentifier: String)
     case markRoomAsFavourite(roomIdentifier: String, isFavourite: Bool)
+    /// Нютаг: закреплённые чаты и папки.
+    case nyutagSetPinned(roomIdentifier: String, isPinned: Bool)
+    case nyutagSelectFolder(folderID: String?)
+    case nyutagSetRoomInFolder(roomIdentifier: String, folderID: String, isIn: Bool)
+    case nyutagPromptFolder(NyutagFolderPrompt)
+    case nyutagConfirmFolderPrompt
+    case nyutagDeleteFolder(folderID: String)
     
     case acceptInvite(roomIdentifier: String)
     case declineInvite(roomIdentifier: String)
@@ -69,6 +76,12 @@ enum NyutagDrawerAction: CaseIterable {
     case savedMessages
     case settings
     case invite
+}
+
+/// Нютаг: окно с названием папки — новая (с чатом внутри) или переименование.
+enum NyutagFolderPrompt: Equatable {
+    case create(roomID: String)
+    case rename(folderID: String)
 }
 
 enum HomeScreenRoomListMode: CustomStringConvertible {
@@ -132,6 +145,14 @@ struct HomeScreenViewState: BindableState {
     var shouldShowSpaceFilters = false
     var selectedSpaceFilter: SpaceServiceFilter?
     
+    /// Нютаг: закреплённые чаты и папки (account data `chat.nyutag.chat_layout`).
+    var nyutagChatLayout = NyutagChatLayout()
+    var nyutagSelectedFolderID: String?
+    
+    var nyutagSelectedFolder: NyutagChatFolder? {
+        nyutagChatLayout.folders.first { $0.id == nyutagSelectedFolderID }
+    }
+    
     /// Inline room list search is disabled when the dedicated global search tab is shown instead (see `UserSessionFlowCoordinator`).
     var isRoomListSearchEnabled = true
     
@@ -158,7 +179,7 @@ struct HomeScreenViewState: BindableState {
     
     var shouldShowEmptyFilterState: Bool {
         !bindings.isSearchFieldFocused &&
-            (bindings.filtersState.isFiltering || selectedSpaceFilter != nil) &&
+            (bindings.filtersState.isFiltering || selectedSpaceFilter != nil || nyutagSelectedFolderID != nil) &&
             visibleRooms.isEmpty
     }
     
@@ -189,6 +210,9 @@ struct HomeScreenViewStateBindings {
     var isPresentingNyutagDrawer = false
     /// Свой аватар во весь экран (из бокового меню).
     var mediaPreviewItem: MediaPreviewItem?
+    /// Окно с названием папки и текст в нём.
+    var nyutagFolderPrompt: NyutagFolderPrompt?
+    var nyutagFolderNameDraft = ""
 }
 
 enum CallBadgeType {
@@ -253,6 +277,9 @@ struct HomeScreenRoom: Identifiable, Equatable {
     let canonicalAlias: String?
     
     let isTombstoned: Bool
+    
+    /// Нютаг: закреплён наверху списка.
+    var isNyutagPinned = false
     
     var displayedLastMessage: AttributedString? {
         if isTombstoned {

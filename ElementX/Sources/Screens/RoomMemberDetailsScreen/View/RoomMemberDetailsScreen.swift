@@ -16,6 +16,8 @@ struct RoomMemberDetailsScreen: View {
         Form {
             headerSection
             
+            NyutagProfileFieldsSection(info: context.viewState.nyutagProfile)
+            
             if context.viewState.showVerifyIdentitySection {
                 verificationSection
             }

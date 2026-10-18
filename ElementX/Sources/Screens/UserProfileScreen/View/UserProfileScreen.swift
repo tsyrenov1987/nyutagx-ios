@@ -15,6 +15,8 @@ struct UserProfileScreen: View {
     var body: some View {
         Form {
             headerSection
+            
+            NyutagProfileFieldsSection(info: context.viewState.nyutagProfile)
         }
         .compoundList()
         .navigationTitle(L10n.screenRoomMemberDetailsTitle)

@@ -45,6 +45,10 @@ class UserProfileScreenViewModel: UserProfileScreenViewModelType, UserProfileScr
             await loadProfile()
             hideLoadingIndicator()
         }
+        Task { [weak self] in
+            guard let self, let info = await NyutagProfileFields.load(userID: userID, clientProxy: userSession.clientProxy) else { return }
+            state.nyutagProfile = info
+        }
     }
     
     // MARK: - Public

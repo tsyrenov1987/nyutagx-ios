@@ -47,6 +47,10 @@ class RoomMemberDetailsScreenViewModel: RoomMemberDetailsScreenViewModelType, Ro
             await loadMember()
             hideMemberLoadingIndicator()
         }
+        Task { [weak self] in
+            guard let self, let info = await NyutagProfileFields.load(userID: userID, clientProxy: userSession.clientProxy) else { return }
+            state.nyutagProfile = info
+        }
         
         roomProxy.identityStatusChangesPublisher
             .receive(on: DispatchQueue.main)

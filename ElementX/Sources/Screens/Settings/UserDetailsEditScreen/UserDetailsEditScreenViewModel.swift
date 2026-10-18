@@ -50,6 +50,12 @@ class UserDetailsEditScreenViewModel: UserDetailsEditScreenViewModelType, UserDe
             state.canEditAvatar = await clientProxy.capabilities.canChangeAvatar()
             state.canEditDisplayName = await clientProxy.capabilities.canChangeDisplayName()
         }
+        
+        Task {
+            guard let info = await NyutagProfileFields.load(userID: clientProxy.userID, clientProxy: clientProxy) else { return }
+            state.nyutagProfileOriginal = info
+            state.bindings.nyutagProfile = info
+        }
     }
     
     // MARK: - Public
@@ -139,6 +145,12 @@ class UserDetailsEditScreenViewModel: UserDetailsEditScreenViewModelType, UserDe
                     }
                 }
                 
+                if state.nyutagProfileDidChange {
+                    group.addTask {
+                        try await self.saveNyutagProfile()
+                    }
+                }
+                
                 try await group.waitForAll()
             }
             
@@ -161,4 +173,15 @@ class UserDetailsEditScreenViewModel: UserDetailsEditScreenViewModelType, UserDe
     private func saveDisplayName() async throws {
         try await clientProxy.setUserDisplayName(state.bindings.name).get()
     }
+    
+    private func saveNyutagProfile() async throws {
+        guard let original = state.nyutagProfileOriginal else { return }
+        let edited = state.bindings.nyutagProfile.normalized
+        guard await NyutagProfileFields.save(old: original, new: edited, clientProxy: clientProxy) else {
+            throw NyutagProfileSaveError()
+        }
+        state.nyutagProfileOriginal = edited
+    }
 }
+
+private struct NyutagProfileSaveError: Error { }

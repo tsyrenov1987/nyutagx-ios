@@ -81,6 +81,8 @@ struct HomeScreenRoomList: View {
                             }
                         }
                         
+                        nyutagLayoutMenu(room: room)
+                        
                         Button {
                             context.send(viewAction: .showRoomDetails(roomIdentifier: room.id))
                         } label: {
@@ -102,6 +104,36 @@ struct HomeScreenRoomList: View {
                         }
                     }
             }
+        }
+    }
+    
+    /// Нютаг: закрепить наверху (до 5) и разложить по папкам, как в Telegram.
+    @ViewBuilder
+    private func nyutagLayoutMenu(room: HomeScreenRoom) -> some View {
+        Button {
+            context.send(viewAction: .nyutagSetPinned(roomIdentifier: room.id, isPinned: !room.isNyutagPinned))
+        } label: {
+            if room.isNyutagPinned {
+                Label(L10n.actionUnpin, icon: \.unpin)
+            } else {
+                Label(L10n.actionPin, icon: \.pin)
+            }
+        }
+        
+        Menu {
+            ForEach(context.viewState.nyutagChatLayout.folders) { folder in
+                let isIn = folder.rooms.contains(room.id)
+                Toggle(folder.name, isOn: Binding(get: { isIn },
+                                                  set: { context.send(viewAction: .nyutagSetRoomInFolder(roomIdentifier: room.id, folderID: folder.id, isIn: $0)) }))
+            }
+            
+            Button {
+                context.send(viewAction: .nyutagPromptFolder(.create(roomID: room.id)))
+            } label: {
+                Label(NyutagL10n.folderNew, icon: \.plus)
+            }
+        } label: {
+            Label(NyutagL10n.folderAdd, icon: \.folder)
         }
     }
 }

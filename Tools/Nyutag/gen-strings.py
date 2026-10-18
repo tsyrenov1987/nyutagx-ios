@@ -25,6 +25,12 @@ def android_strings(pattern):
             if len(el) or el.get("translatable") == "false":
                 continue
             out[el.get("name")] = android_to_ios(el.text or "")
+        # Массивы (стихии и животные восточного года) — по ключу на элемент: name_0, name_1, …
+        for el in ET.parse(path).getroot().findall("string-array"):
+            if el.get("translatable") == "false":
+                continue
+            for index, item in enumerate(el.findall("item")):
+                out[f"{el.get('name')}_{index}"] = android_to_ios(item.text or "")
     return out
 
 def android_to_ios(text):
@@ -145,9 +151,10 @@ def main():
         if replaced != value:
             tables["en"][key] = replaced
     # 1. Свои ключи из Android.
-    tables["en"].update(android_strings("**/src/main/res/values/strings_nyutag.xml"))
-    tables["ru"].update(android_strings("**/src/main/res/values-ru/strings_nyutag.xml"))
-    tables["bxr"].update(android_strings("**/src/main/res/values-b+bxr/strings_nyutag.xml"))
+    for name in ("strings_nyutag.xml", "strings_nyutag_profile.xml"):
+        tables["en"].update(android_strings(f"**/src/main/res/values/{name}"))
+        tables["ru"].update(android_strings(f"**/src/main/res/values-ru/{name}"))
+        tables["bxr"].update(android_strings(f"**/src/main/res/values-b+bxr/{name}"))
     # 2. iOS и ручные замены.
     tsv = os.path.join(IOS, "Tools/Nyutag/strings.tsv")
     if os.path.exists(tsv):

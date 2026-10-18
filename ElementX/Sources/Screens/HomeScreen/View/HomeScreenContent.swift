@@ -48,8 +48,14 @@ struct HomeScreenContent: View {
                     LazyVStack(spacing: 0) {
                         Section {
                             if context.viewState.shouldShowEmptyFilterState {
-                                RoomListFiltersEmptyStateView(state: context.filtersState)
-                                    .frame(maxWidth: .infinity, minHeight: max(0, geometry.size.height - topSectionHeight))
+                                Group {
+                                    if context.viewState.nyutagSelectedFolderID != nil, !context.filtersState.isFiltering {
+                                        NyutagFolderEmptyStateView()
+                                    } else {
+                                        RoomListFiltersEmptyStateView(state: context.filtersState)
+                                    }
+                                }
+                                .frame(maxWidth: .infinity, minHeight: max(0, geometry.size.height - topSectionHeight))
                             } else {
                                 HomeScreenRoomList(context: context)
                                     .accessibilityAddTraits(.updatesFrequently)
@@ -108,6 +114,24 @@ struct HomeScreenContent: View {
             .animation(.elementDefault, value: context.viewState.roomListMode)
             .animation(.none, value: context.viewState.visibleRooms)
         }
+        .alert(nyutagFolderPromptTitle,
+               isPresented: Binding(get: { context.nyutagFolderPrompt != nil },
+                                    set: { if !$0 { context.nyutagFolderPrompt = nil } })) {
+            TextField(NyutagL10n.folderName, text: $context.nyutagFolderNameDraft)
+            Button(L10n.actionCancel, role: .cancel) { }
+            Button(L10n.actionSave) {
+                context.send(viewAction: .nyutagConfirmFolderPrompt)
+            }
+            .disabled(context.nyutagFolderNameDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        }
+    }
+    
+    private var nyutagFolderPromptTitle: String {
+        if case .rename = context.nyutagFolderPrompt {
+            NyutagL10n.folderRename
+        } else {
+            NyutagL10n.folderNew
+        }
     }
     
     @ViewBuilder
@@ -115,6 +139,12 @@ struct HomeScreenContent: View {
         // An empty VStack causes glitches within the room list
         if context.viewState.shouldShowFilters || context.viewState.shouldShowBanner {
             VStack(spacing: 0) {
+                if context.viewState.shouldShowFilters, !context.viewState.nyutagChatLayout.folders.isEmpty {
+                    NyutagFolderTabs(folders: context.viewState.nyutagChatLayout.folders,
+                                     selectedFolderID: context.viewState.nyutagSelectedFolderID,
+                                     send: context.send)
+                }
+                
                 if context.viewState.shouldShowFilters {
                     RoomListFiltersView(state: $context.filtersState)
                 }

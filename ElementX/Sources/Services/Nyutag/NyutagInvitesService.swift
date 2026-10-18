@@ -221,6 +221,34 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         return NyutagPresence(json: try await request("GET", path, bearer: accessToken))
     }
     
+    /// Поля профиля MSC4133 (Tuwunel): строковые значения по ключам. Неизвестный участник — пустой профиль.
+    func profileFields(userID: String, accessToken: String) async throws(NyutagInviteError) -> [String: String] {
+        do throws(NyutagInviteError) {
+            let json = try await request("GET", "/_matrix/client/v3/profile/\(Self.pathComponent(userID))", bearer: accessToken)
+            return json.compactMapValues { $0 as? String }
+        } catch where error.errcode == "M_NOT_FOUND" {
+            return [:]
+        }
+    }
+
+    /// Пустое значение удаляет поле (повторное удаление сервер тоже принимает).
+    func setProfileField(userID: String, key: String, value: String, accessToken: String) async throws(NyutagInviteError) {
+        let path = "/_matrix/client/v3/profile/\(Self.pathComponent(userID))/\(Self.pathComponent(key))"
+        if value.isEmpty {
+            do throws(NyutagInviteError) {
+                _ = try await request("DELETE", path, bearer: accessToken)
+            } catch where error.errcode == "M_NOT_FOUND" {
+                return
+            }
+        } else {
+            _ = try await request("PUT", path, body: [key: value], bearer: accessToken)
+        }
+    }
+
+    private static func pathComponent(_ value: String) -> String {
+        value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed.subtracting(.init(charactersIn: "/"))) ?? value
+    }
+
     // MARK: - Transport
 
     /// Ответ ядра через туннель приходит за секунды; 20 с без ответа — «нет связи, попробуйте ещё раз», а не долгое ожидание.

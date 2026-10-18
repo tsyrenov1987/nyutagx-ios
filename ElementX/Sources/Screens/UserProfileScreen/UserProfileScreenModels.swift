@@ -25,6 +25,8 @@ struct UserProfileScreenViewState: BindableState {
     var permalink: URL?
     var dmRoomID: String?
     var isCallingEnabled = true
+    /// Нютаг: «о себе» — тоонто нютаг, уг гарбал, восточный год.
+    var nyutagProfile = NyutagProfileInfo()
     
     var bindings: UserProfileScreenViewStateBindings
     
