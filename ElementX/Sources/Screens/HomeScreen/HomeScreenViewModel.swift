@@ -153,6 +153,9 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             .sink { [weak self] summaries in
                 self?.joinApprovedKnocks(summaries)
                 self?.joinDirectInvites(summaries)
+                if let clientProxy = self?.userSession.clientProxy {
+                    NyutagSavedMessages.localizeName(summaries, clientProxy: clientProxy)
+                }
             }
             .store(in: &cancellables)
         

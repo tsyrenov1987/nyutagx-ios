@@ -26,7 +26,7 @@
 "a11y_notifications_mentions_only" = "Только упоминания";
 "a11y_notifications_muted" = "Без звука";
 "a11y_notifications_new_mentions" = "Новые упоминания";
-"a11y_notifications_new_messages" = "Новые сообшения";
+"a11y_notifications_new_messages" = "Новые сообщения";
 "a11y_notifications_ongoing_call" = "Текущий вызов";
 "a11y_page_n" = "Страница %1$d";
 "a11y_pause" = "Приостановить";

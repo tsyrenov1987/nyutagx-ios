@@ -21,6 +21,7 @@ final class ElementCallServiceTests {
     private var pushRegistry: PKPushRegistry!
     private var service: ElementCallService!
     private var userSession: UserSessionMock!
+    private var isAppActive = false
     
     init() {
         appSettings = AppSettings.volatile()
@@ -35,7 +36,8 @@ final class ElementCallServiceTests {
         service = ElementCallService(appSettings: appSettings,
                                      callProvider: callProvider,
                                      callController: callController,
-                                     timeProvider: TimeProvider(clock: clock, now: dateProvider))
+                                     timeProvider: TimeProvider(clock: clock, now: dateProvider),
+                                     isAppActive: { self.isAppActive })
     }
     
     isolated deinit {
@@ -306,6 +308,26 @@ final class ElementCallServiceTests {
         
         service.tearDownCallSession(roomID: "!room:example.com")
         #expect(service.ongoingCallRoomIDPublisher.value == nil)
+    }
+    
+    // MARK: - Нютаг: голосовой входящий как сотовый
+    
+    @Test
+    func voiceCallWhileAppIsOnScreenIsReportedWithoutVideo() async {
+        isAppActive = true
+        
+        await reportIncomingPush(isVoiceCall: true)
+        
+        #expect(callProvider.reportNewIncomingCallWithUpdateCompletionReceivedArguments?.update.hasVideo == false)
+    }
+    
+    @Test
+    func videoCallWhileAppIsOnScreenIsReportedWithVideo() async {
+        isAppActive = true
+        
+        await reportIncomingPush(isVoiceCall: false)
+        
+        #expect(callProvider.reportNewIncomingCallWithUpdateCompletionReceivedArguments?.update.hasVideo == true)
     }
     
     // MARK: - Native calls

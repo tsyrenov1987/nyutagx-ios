@@ -87,6 +87,30 @@ enum NyutagSavedMessages {
             return nil
         }
     }
+    
+    /// Имя комнаты задаётся при создании и остаётся на том языке, на каком её создали: стандартное имя
+    /// на другом языке меняем на текущий перевод, своё имя пользователя не трогаем.
+    static func localizeName(_ summaries: [RoomSummary], clientProxy: ClientProxyProtocol) {
+        let localizedName = NyutagL10n.savedMessages
+        let candidates = Set(summaries.filter { defaultNames.contains($0.name) && $0.name != localizedName }.map(\.id))
+        guard !isLocalizingName, !candidates.isSubset(of: localizeNameAttempts), let proxy = clientProxy as? ClientProxy else { return }
+        isLocalizingName = true
+        Task {
+            defer { isLocalizingName = false }
+            guard let roomID = await proxy.nyutagSavedMessagesRoomID() else { return }
+            // Одна попытка за запуск; чужие комнаты с таким же именем дальше не проверяем.
+            localizeNameAttempts.formUnion(candidates)
+            guard candidates.contains(roomID), case let .joined(roomProxy) = await clientProxy.roomForIdentifier(roomID) else { return }
+            if case .failure(let error) = await roomProxy.setName(localizedName) {
+                MXLog.error("Nyutag: failed renaming saved messages \(roomID): \(error)")
+            }
+        }
+    }
+    
+    /// Стандартные имена на языках Нютага (`nyutag_saved_messages`).
+    private static let defaultNames: Set<String> = ["Saved messages", "Избранное", "Хадагалһан"]
+    private static var localizeNameAttempts = Set<String>()
+    private static var isLocalizingName = false
 }
 
 // MARK: - Поиск по чату

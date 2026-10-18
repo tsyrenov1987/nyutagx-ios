@@ -35,6 +35,8 @@ class ElementCallService: NSObject, ElementCallServiceProtocol, PKPushRegistryDe
     private let callController: CXCallControllerProtocol
     private let callProvider: CXProviderProtocol
     private let timeProvider: TimeProvider
+    /// Нютаг: Нютаг открыт на экране (не свёрнут, телефон не заблокирован).
+    private let isAppActive: () -> Bool
     
     private weak var clientProxy: ClientProxyProtocol? {
         didSet {
@@ -88,8 +90,10 @@ class ElementCallService: NSObject, ElementCallServiceProtocol, PKPushRegistryDe
     init(appSettings: AppSettings,
          callProvider: CXProviderProtocol? = nil,
          callController: CXCallControllerProtocol? = nil,
-         timeProvider: TimeProvider? = nil) {
+         timeProvider: TimeProvider? = nil,
+         isAppActive: (() -> Bool)? = nil) {
         self.appSettings = appSettings
+        self.isAppActive = isAppActive ?? { UIApplication.shared.applicationState == .active }
         self.callController = callController ?? CXCallController()
         pushRegistry = PKPushRegistry(queue: nil)
         
@@ -397,7 +401,9 @@ class ElementCallService: NSObject, ElementCallServiceProtocol, PKPushRegistryDe
         // If not for audio call the app will not be put to foreground and the webview won't be able to handle the call...
         // Consequence: The call will be presented to the user as a video call in CallKit UI,
         // but once Element Call is launched it will correctly route to a voice-only call.
-        update.hasVideo = appSettings.nativeCallEnabled ? !isVoiceCall : true
+        // Нютаг: если Нютаг открыт на экране, ответ его не сворачивает и веб-звонок слышит — голосовой показываем как
+        // обычный звонок («Аудио»), как сотовый.
+        update.hasVideo = appSettings.nativeCallEnabled || isAppActive() ? !isVoiceCall : true
         update.localizedCallerName = roomDisplayName
         // https://stackoverflow.com/a/41230020/730924
         update.remoteHandle = .init(type: .generic, value: roomID)
