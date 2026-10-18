@@ -117,7 +117,13 @@ extension XCUIApplication {
         // `Failed to scroll to visible (by AX action) Button` https://stackoverflow.com/a/33534187/730924
         profileButton.tap(.center)
         
-        // Make the logout button visible
+        // Make the advanced settings button visible
+        swipeUp()
+        
+        // Нютаг: «Выйти» — в «Дополнительно».
+        let advancedSettingsButton = buttons[A11yIdentifiers.settingsScreen.advancedSettings]
+        XCTAssertTrue(advancedSettingsButton.waitForExistence(timeout: 10.0))
+        advancedSettingsButton.tap(.center)
         swipeUp()
         
         // Logout

@@ -41,8 +41,6 @@ struct SettingsScreen: View {
             
             generalSection
             
-            signOutSection
-            
             if context.viewState.showDeveloperOptions {
                 developerOptionsSection
             }
@@ -237,28 +235,8 @@ struct SettingsScreen: View {
                         })
                         .accessibilityIdentifier(A11yIdentifiers.settingsScreen.analytics)
             }
-        }
-    }
-    
-    private var signOutSection: some View {
-        Section {
-            ListRow(label: .action(title: L10n.screenSignoutPreferenceItem,
-                                   icon: \.close,
-                                   role: .destructive),
-                    kind: .button {
-                        context.send(viewAction: .logout)
-                    })
-                    .accessibilityIdentifier(A11yIdentifiers.settingsScreen.logout)
-            
-            if context.viewState.showAccountDeactivation {
-                ListRow(label: .action(title: L10n.actionDeleteAccount,
-                                       icon: \.delete,
-                                       role: .destructive),
-                        kind: .navigationLink {
-                            context.send(viewAction: .deactivateAccount)
-                        })
-            }
         } footer: {
+            // Нютаг: «Выйти» и «Удалить аккаунт» — в «Дополнительно».
             if !context.viewState.showDeveloperOptions {
                 versionSection
             }

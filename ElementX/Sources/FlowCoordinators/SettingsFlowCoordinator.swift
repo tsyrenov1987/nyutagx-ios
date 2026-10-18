@@ -277,6 +277,20 @@ class SettingsFlowCoordinator: FlowCoordinatorProtocol {
                                                                               analytics: flowParameters.analytics,
                                                                               clientProxy: flowParameters.userSession.clientProxy,
                                                                               userIndicatorController: flowParameters.userIndicatorController))
+        
+        coordinator.actions
+            .sink { [weak self] action in
+                guard let self else { return }
+                
+                switch action {
+                case .logout:
+                    actionsSubject.send(.runLogoutFlow)
+                case .deactivateAccount:
+                    presentDeactivateAccount()
+                }
+            }
+            .store(in: &cancellables)
+        
         navigationStackCoordinator.push(coordinator)
     }
     

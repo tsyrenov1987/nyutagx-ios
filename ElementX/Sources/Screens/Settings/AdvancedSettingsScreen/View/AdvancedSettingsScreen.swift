@@ -40,6 +40,9 @@ struct AdvancedSettingsScreen: View {
             
             // Нютаг: «аватары в приглашениях» и настройка геолокации убраны — лишнее для обычного человека.
             timelineMediaSection
+            
+            // Нютаг: выход и удаление аккаунта перенесены сюда с главного экрана настроек — чтобы не нажать случайно.
+            signOutSection
         }
         .compoundList()
         .navigationTitle(L10n.commonAdvancedSettings)
@@ -62,6 +65,27 @@ struct AdvancedSettingsScreen: View {
         } header: {
             Text(L10n.screenAdvancedSettingsModerationAndSafetySectionTitle)
                 .compoundListSectionHeader()
+        }
+    }
+    
+    private var signOutSection: some View {
+        Section {
+            ListRow(label: .action(title: L10n.screenSignoutPreferenceItem,
+                                   icon: \.close,
+                                   role: .destructive),
+                    kind: .button {
+                        context.send(viewAction: .logout)
+                    })
+                    .accessibilityIdentifier(A11yIdentifiers.settingsScreen.logout)
+            
+            if context.viewState.showAccountDeactivation {
+                ListRow(label: .action(title: L10n.actionDeleteAccount,
+                                       icon: \.delete,
+                                       role: .destructive),
+                        kind: .navigationLink {
+                            context.send(viewAction: .deactivateAccount)
+                        })
+            }
         }
     }
     

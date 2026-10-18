@@ -19,6 +19,11 @@ class AdvancedSettingsScreenViewModel: AdvancedSettingsScreenViewModelType, Adva
     private var timelineMediaVisibilityTask: Task<Void, Never>?
     private var hideInviteAvatarsTask: Task<Void, Never>?
     
+    private let actionsSubject: PassthroughSubject<AdvancedSettingsScreenViewModelAction, Never> = .init()
+    var actions: AnyPublisher<AdvancedSettingsScreenViewModelAction, Never> {
+        actionsSubject.eraseToAnyPublisher()
+    }
+    
     init(advancedSettings: AdvancedSettingsProtocol,
          analytics: AnalyticsServiceProtocol,
          clientProxy: ClientProxyProtocol,
@@ -29,6 +34,7 @@ class AdvancedSettingsScreenViewModel: AdvancedSettingsScreenViewModelType, Adva
         
         let state = AdvancedSettingsScreenViewState(timelineMediaVisibility: clientProxy.timelineMediaVisibilityPublisher.value,
                                                     hideInviteAvatars: clientProxy.hideInviteAvatarsPublisher.value,
+                                                    showAccountDeactivation: clientProxy.canDeactivateAccount,
                                                     bindings: .init(advancedSettings: advancedSettings))
         super.init(initialViewState: state)
         
@@ -54,6 +60,10 @@ class AdvancedSettingsScreenViewModel: AdvancedSettingsScreenViewModelType, Adva
             hideInviteAvatarsTask = Task { [weak self] in await self?.updateHideInviteAvatars(value) }
         case let .updateTimelineMediaVisibility(value):
             timelineMediaVisibilityTask = Task { [weak self] in await self?.updateTimelineMediaVisibility(value) }
+        case .logout:
+            actionsSubject.send(.logout)
+        case .deactivateAccount:
+            actionsSubject.send(.deactivateAccount)
         }
     }
     

@@ -9,9 +9,15 @@
 import Foundation
 import UIKit
 
+enum AdvancedSettingsScreenViewModelAction {
+    case logout
+    case deactivateAccount
+}
+
 struct AdvancedSettingsScreenViewState: BindableState {
-    init(timelineMediaVisibility: TimelineMediaVisibility, hideInviteAvatars: Bool, isWaitingTimelineMediaVisibility: Bool = false, isWaitingHideInviteAvatars: Bool = false, bindings: AdvancedSettingsScreenViewStateBindings) {
+    init(timelineMediaVisibility: TimelineMediaVisibility, hideInviteAvatars: Bool, isWaitingTimelineMediaVisibility: Bool = false, isWaitingHideInviteAvatars: Bool = false, showAccountDeactivation: Bool = false, bindings: AdvancedSettingsScreenViewStateBindings) {
         self.timelineMediaVisibility = timelineMediaVisibility
+        self.showAccountDeactivation = showAccountDeactivation
         self.hideInviteAvatars = hideInviteAvatars
         self.isWaitingTimelineMediaVisibility = isWaitingTimelineMediaVisibility
         self.isWaitingHideInviteAvatars = isWaitingHideInviteAvatars
@@ -31,6 +37,7 @@ struct AdvancedSettingsScreenViewState: BindableState {
     var hideInviteAvatars: Bool
     var isWaitingTimelineMediaVisibility: Bool
     var isWaitingHideInviteAvatars: Bool
+    let showAccountDeactivation: Bool
     var bindings: AdvancedSettingsScreenViewStateBindings
 }
 
@@ -52,6 +59,8 @@ enum AdvancedSettingsScreenViewAction {
     case optimizeMediaUploadsChanged
     case updateTimelineMediaVisibility(TimelineMediaVisibility)
     case updateHideInviteAvatars(Bool)
+    case logout
+    case deactivateAccount
 }
 
 protocol AdvancedSettingsProtocol: AnyObject {

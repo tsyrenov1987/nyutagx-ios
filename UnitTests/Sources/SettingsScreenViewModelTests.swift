@@ -227,3 +227,51 @@ private extension SettingsScreenViewModelAction {
         }
     }
 }
+
+// Нютаг: «Выйти» и «Удалить аккаунт» живут в «Дополнительно».
+@MainActor
+struct AdvancedSettingsScreenViewModelTests {
+    @Test
+    func logout() async throws {
+        let viewModel = makeViewModel(canDeactivateAccount: false)
+        
+        let deferred = deferFulfillment(viewModel.actions) { $0 == .logout }
+        viewModel.context.send(viewAction: .logout)
+        try await deferred.fulfill()
+    }
+    
+    @Test
+    func deactivateAccount() async throws {
+        let viewModel = makeViewModel(canDeactivateAccount: true)
+        #expect(viewModel.context.viewState.showAccountDeactivation)
+        
+        let deferred = deferFulfillment(viewModel.actions) { $0 == .deactivateAccount }
+        viewModel.context.send(viewAction: .deactivateAccount)
+        try await deferred.fulfill()
+    }
+    
+    @Test
+    func deactivationHiddenWhenUnsupported() {
+        let viewModel = makeViewModel(canDeactivateAccount: false)
+        #expect(!viewModel.context.viewState.showAccountDeactivation)
+    }
+    
+    private func makeViewModel(canDeactivateAccount: Bool) -> AdvancedSettingsScreenViewModel {
+        let clientProxy = ClientProxyMock(.init(userID: ""))
+        clientProxy.canDeactivateAccount = canDeactivateAccount
+        return AdvancedSettingsScreenViewModel(advancedSettings: AppSettings.volatile(),
+                                               analytics: AnalyticsServiceMock(.init()),
+                                               clientProxy: clientProxy,
+                                               userIndicatorController: UserIndicatorControllerMock())
+    }
+}
+
+struct NyutagCallLanguageTagTests {
+    @Test
+    func buryatFallsBackToRussian() {
+        #expect(NyutagLanguage.buryat.callLanguageTag(systemTag: "en-US") == "ru-RU")
+        #expect(NyutagLanguage.system.callLanguageTag(systemTag: "bxr-RU") == "ru-RU")
+        #expect(NyutagLanguage.system.callLanguageTag(systemTag: "de-DE") == "de-DE")
+        #expect(NyutagLanguage.english.callLanguageTag(systemTag: "ru-RU") == "en-US")
+    }
+}
