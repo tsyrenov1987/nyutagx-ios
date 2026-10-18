@@ -361,6 +361,7 @@
 		36FDE74D301AF4A08318B96D /* preview_video.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 369236171C351AB8C70BB161 /* preview_video.jpg */; };
 		370AF5BFCD4384DD455479B6 /* ElementCallWidgetDriverProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A6C11AD9813045E44F950410 /* ElementCallWidgetDriverProtocol.swift */; };
 		377980ABF16525114E72DDE2 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = D2330417C6BE2F6872FFF96B /* SwiftSoup */; };
+		378FE71E6F042DFF5E8768CE /* NyutagAutoDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37BB6A88BAD430FF082CBB8E /* NyutagAutoDeleteTests.swift */; };
 		37906355E207DB5703754675 /* AppLockSetupBiometricsScreenViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9F893F4A111CB7BA5C96949 /* AppLockSetupBiometricsScreenViewModel.swift */; };
 		37D789F24199B32E3FD1AA7B /* FileRoomTimelineItemContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 216F0DDC98F2A2C162D09C28 /* FileRoomTimelineItemContent.swift */; };
 		37E47F5101C0C036289D3807 /* Emojibase in Frameworks */ = {isa = PBXBuildFile; productRef = C05729B1684C331F5FFE9232 /* Emojibase */; };
@@ -582,6 +583,7 @@
 		5AA81A4E2D40A32A9E7F71F2 /* ShareExtensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C3ADF21BE301D0DA48F2A7E /* ShareExtensionView.swift */; };
 		5AC5CD6D893073EE4D9A277E /* ShareExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D27299A36536DBF91AE8FA6 /* ShareExtensionViewController.swift */; };
 		5AE6404C4FD4848ACCFF9EDC /* SecureBackupLogoutConfirmationScreenCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1573D28C8A9FB6399D0EEFB /* SecureBackupLogoutConfirmationScreenCoordinator.swift */; };
+		5B15FE50118FE2BEACAE4D5C /* NyutagAutoDelete.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68ED55A38EE0F0D67480A3D9 /* NyutagAutoDelete.swift */; };
 		5B2CE8FE14CB16F2FCAFC4B2 /* MapLibreShim.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 44E8BAA982EC260E74CCCB22 /* MapLibreShim.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5B6E5AD224509E6C0B520D6E /* RoomMemberDetailsScreenViewModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DDF49CEBC0DFC59C308335F /* RoomMemberDetailsScreenViewModelProtocol.swift */; };
 		5BC6C4ADFE7F2A795ECDE130 /* SecureBackupKeyBackupScreenCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2D4EEBE8C098BBADD10939 /* SecureBackupKeyBackupScreenCoordinator.swift */; };
@@ -2143,6 +2145,7 @@
 		36FD673E24FBFCFDF398716A /* RoomMemberProxyMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomMemberProxyMock.swift; sourceTree = "<group>"; };
 		3747C96188856006F784BF49 /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ko; path = ko.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		37A63A59BFDDC494B1C20119 /* CallScreenViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallScreenViewModel.swift; sourceTree = "<group>"; };
+		37BB6A88BAD430FF082CBB8E /* NyutagAutoDeleteTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NyutagAutoDeleteTests.swift; sourceTree = "<group>"; };
 		37CA26F55123E36B50DB0B3A /* AttributedStringTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttributedStringTests.swift; sourceTree = "<group>"; };
 		37F46CC4FD89ECF4CF26391A /* AuthenticationFlowCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationFlowCoordinatorTests.swift; sourceTree = "<group>"; };
 		37FEE10AB666891E6A675E5E /* SecureBackupLogoutConfirmationScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureBackupLogoutConfirmationScreen.swift; sourceTree = "<group>"; };
@@ -2438,6 +2441,7 @@
 		682BC7BAF0EFEF512A8C5140 /* AuthenticationStartScreenBackgroundImage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationStartScreenBackgroundImage.swift; sourceTree = "<group>"; };
 		6861FE915C7B5466E6962BBA /* StartChatScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartChatScreen.swift; sourceTree = "<group>"; };
 		6885D1340AA9C76063E26868 /* LinkMetadataProviderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkMetadataProviderProtocol.swift; sourceTree = "<group>"; };
+		68ED55A38EE0F0D67480A3D9 /* NyutagAutoDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NyutagAutoDelete.swift; sourceTree = "<group>"; };
 		68F8744C32ACA0821A771EBB /* test_audio.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = test_audio.mp3; sourceTree = "<group>"; };
 		690915157A874D1F21ADE70C /* preview_avatar_room.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = preview_avatar_room.jpg; sourceTree = "<group>"; };
 		693E16574C6F7F9FA1015A8C /* Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Search.swift; sourceTree = "<group>"; };
@@ -5424,6 +5428,7 @@
 				514363244AE7D68080D44C6F /* NotificationSettingsScreenViewModelTests.swift */,
 				D148332A613AD27E9A2896C9 /* NotificationToneManagerTests.swift */,
 				B4ED859C6363DAB2E8CFF2CE /* NSItemProviderTests.swift */,
+				37BB6A88BAD430FF082CBB8E /* NyutagAutoDeleteTests.swift */,
 				7F33393091CC89761657415F /* NyutagChatLayoutTests.swift */,
 				5B0145FFBEBBBF66438B5E64 /* NyutagContactsScreenViewModelTests.swift */,
 				FA3EB5B1848CF4F64E63C6B7 /* PermalinkTests.swift */,
@@ -6958,6 +6963,7 @@
 		CD9F518FE28BF21C7EED702E /* Nyutag */ = {
 			isa = PBXGroup;
 			children = (
+				68ED55A38EE0F0D67480A3D9 /* NyutagAutoDelete.swift */,
 				84A93AB649EFF5F7BC995E53 /* NyutagBrand.swift */,
 				015B40E88AA30D05E5E6360D /* NyutagCallBuryat.json */,
 				588793AC5A886B2D11241454 /* NyutagCallMiniWindow.swift */,
@@ -8584,6 +8590,7 @@
 				C11939FDC40716C4387275A4 /* NotificationSettingsEditScreenViewModelTests.swift in Sources */,
 				E3AC72E3E58F364EF15C1CC7 /* NotificationSettingsScreenViewModelTests.swift in Sources */,
 				E593841CEBFDDC5387A75EBA /* NotificationToneManagerTests.swift in Sources */,
+				378FE71E6F042DFF5E8768CE /* NyutagAutoDeleteTests.swift in Sources */,
 				CBB4FF3274C524C91F1B82D0 /* NyutagChatLayoutTests.swift in Sources */,
 				FCE2C3F096CF4B42BD4CB4AE /* NyutagContactsScreenViewModelTests.swift in Sources */,
 				50381244BA280451771BE3ED /* PINTextFieldTests.swift in Sources */,
@@ -9327,6 +9334,7 @@
 				95B690EA99A3385D4B8A593D /* NotificationToneManager.swift in Sources */,
 				101C8BFCAE35F43F37A6D8ED /* NotificationToneManagerMock.swift in Sources */,
 				1E414736CCF094E2CBD8E482 /* NotificationToneManagerProtocol.swift in Sources */,
+				5B15FE50118FE2BEACAE4D5C /* NyutagAutoDelete.swift in Sources */,
 				31C4026774EC1D4E18C907F3 /* NyutagBrand.swift in Sources */,
 				BD1225187ACA13F566163E2C /* NyutagCallMiniWindow.swift in Sources */,
 				28DEB8B94BC47E531718F454 /* NyutagChatLayout.swift in Sources */,

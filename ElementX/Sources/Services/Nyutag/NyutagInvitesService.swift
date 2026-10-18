@@ -245,6 +245,23 @@ nonisolated final class NyutagInvitesService: NSObject, URLSessionDelegate, Send
         }
     }
 
+    /// Таймер автоудаления чата; 404 — таймер ни разу не включали.
+    func autoDeleteRule(roomID: String, accessToken: String) async throws(NyutagInviteError) -> NyutagAutoDeleteRule {
+        do throws(NyutagInviteError) {
+            return try await NyutagAutoDeleteRule(json: request("GET", Self.autoDeletePath(roomID), bearer: accessToken))
+        } catch where error.errcode == "M_NOT_FOUND" || error.errcode == "HTTP_404" {
+            return NyutagAutoDeleteRule()
+        }
+    }
+
+    func setAutoDeleteRule(_ rule: NyutagAutoDeleteRule, roomID: String, accessToken: String) async throws(NyutagInviteError) {
+        _ = try await request("PUT", Self.autoDeletePath(roomID), body: rule.json, bearer: accessToken)
+    }
+
+    private static func autoDeletePath(_ roomID: String) -> String {
+        "/_matrix/client/v3/rooms/\(pathComponent(roomID))/state/\(NyutagAutoDeleteRule.eventType)/"
+    }
+
     private static func pathComponent(_ value: String) -> String {
         value.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed.subtracting(.init(charactersIn: "/"))) ?? value
     }

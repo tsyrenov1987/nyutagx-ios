@@ -47,6 +47,10 @@ class TimelineViewModel: TimelineViewModelType, TimelineViewModelProtocol {
     private var paginateBackwardsTask: Task<Void, Never>?
     private var paginateForwardsTask: Task<Void, Never>?
     
+    /// Нютаг: таймер автоудаления этого чата и уже отправленные на удаление события.
+    private var nyutagAutoDeleteRule = NyutagAutoDeleteRule()
+    private var nyutagRedactedIDs = Set<String>()
+    
     init(roomProxy: JoinedRoomProxyProtocol,
          focussedEventID: String? = nil,
          timelineController: TimelineControllerProtocol,
@@ -120,6 +124,7 @@ class TimelineViewModel: TimelineViewModelType, TimelineViewModelProtocol {
         
         setupSubscriptions()
         setupDirectRoomSubscriptionsIfNeeded()
+        nyutagStartAutoDelete()
         
         state.audioPlayerStateProvider = { [weak self] itemID -> AudioPlayerState? in
             guard let self else {
@@ -897,7 +902,8 @@ class TimelineViewModel: TimelineViewModelType, TimelineViewModelProtocol {
     
     // MARK: - Timeline Item Building
     
-    private func buildTimelineViews(timelineItems: [RoomTimelineItemProtocol], isSwitchingTimelines: Bool = false) {
+    private func buildTimelineViews(timelineItems allTimelineItems: [RoomTimelineItemProtocol], isSwitchingTimelines: Bool = false) {
+        let timelineItems = nyutagApplyAutoDelete(allTimelineItems)
         var timelineItemsDictionary = OrderedDictionary<TimelineItemIdentifier.UniqueID, RoomTimelineItemViewState>()
         
         timelineItems.filter { $0 is RedactedRoomTimelineItem }.forEach { timelineItem in
@@ -1318,5 +1324,43 @@ private extension TimelineViewModel {
             guard let event = item as? EventBasedTimelineItemProtocol, event.isOutgoing else { return nil }
             return event.id.uniqueID
         })
+    }
+}
+
+// MARK: - Нютаг: автоудаление
+
+private extension TimelineViewModel {
+    /// Правило перечитывается раз в минуту: так подхватывается смена таймера собеседником и истекают сообщения в открытом чате.
+    func nyutagStartAutoDelete() {
+        // Сильная ссылка только на время обновления: закрыли чат — цикл завершается.
+        Task { [weak self] in
+            while await self?.nyutagRefreshAutoDelete() != nil {
+                try? await Task.sleep(for: .seconds(60))
+            }
+        }
+    }
+    
+    func nyutagRefreshAutoDelete() async {
+        if let rule = await NyutagAutoDeleteService.load(roomID: roomProxy.id, clientProxy: userSession.clientProxy) {
+            nyutagAutoDeleteRule = rule
+        }
+        if nyutagAutoDeleteRule.isEnabled {
+            buildTimelineViews(timelineItems: timelineController.timelineItems)
+        }
+    }
+    
+    func nyutagApplyAutoDelete(_ items: [RoomTimelineItemProtocol]) -> [RoomTimelineItemProtocol] {
+        guard nyutagAutoDeleteRule.isEnabled else { return items }
+        let now = Date.now
+        let toRedact = NyutagAutoDeleteTimeline.ownToRedact(items, rule: nyutagAutoDeleteRule, now: now).filter { !nyutagRedactedIDs.contains($0) }
+        if !toRedact.isEmpty {
+            nyutagRedactedIDs.formUnion(toRedact)
+            Task {
+                for eventID in toRedact {
+                    await timelineController.redact(.eventID(eventID), reason: nil)
+                }
+            }
+        }
+        return NyutagAutoDeleteTimeline.visibleItems(items, rule: nyutagAutoDeleteRule, now: now)
     }
 }

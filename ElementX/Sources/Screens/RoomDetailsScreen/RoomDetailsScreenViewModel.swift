@@ -95,6 +95,8 @@ class RoomDetailsScreenViewModel: RoomDetailsScreenViewModelType, RoomDetailsScr
         
         setupNotificationSettingsSubscription()
         fetchNotificationSettings()
+        
+        Task { await nyutagLoadAutoDelete() }
     }
     
     // MARK: - Public
@@ -153,6 +155,8 @@ class RoomDetailsScreenViewModel: RoomDetailsScreenViewModelType, RoomDetailsScr
             actionsSubject.send(.displayMediaEventsTimeline)
         case .nyutagProcessTapSearch:
             actionsSubject.send(.nyutagDisplaySearch)
+        case .nyutagSetAutoDelete(let ttlSeconds):
+            Task { await nyutagSetAutoDelete(ttlSeconds) }
         case .processTapRequestsToJoin:
             actionsSubject.send(.displayKnockingRequests)
         case .processTapSecurityAndPrivacy:
@@ -506,6 +510,33 @@ class RoomDetailsScreenViewModel: RoomDetailsScreenViewModelType, RoomDetailsScr
                 pinnedEventsTimelineItemProvider = pinnedEventsTimeline.timelineItemProvider
             }
         }
+    }
+
+    // MARK: - Нютаг: автоудаление
+    
+    /// Срок, сохранённый на сервере; выбор того же значения (в том числе откат после ошибки) запрос не шлёт.
+    private var nyutagSavedAutoDeleteTTL: Int64 = 0
+    
+    private func nyutagLoadAutoDelete() async {
+        guard let rule = await NyutagAutoDeleteService.load(roomID: roomProxy.id, clientProxy: userSession.clientProxy) else { return }
+        nyutagSavedAutoDeleteTTL = Self.nyutagAutoDeleteOption(rule.ttlSeconds)
+        state.bindings.nyutagAutoDeleteTTL = nyutagSavedAutoDeleteTTL
+        state.nyutagAutoDeleteLoaded = true
+    }
+    
+    private func nyutagSetAutoDelete(_ ttlSeconds: Int64) async {
+        guard ttlSeconds != nyutagSavedAutoDeleteTTL else { return }
+        if let rule = await NyutagAutoDeleteService.set(roomID: roomProxy.id, ttlSeconds: ttlSeconds, clientProxy: userSession.clientProxy) {
+            nyutagSavedAutoDeleteTTL = rule.ttlSeconds
+        } else {
+            userIndicatorController.submitIndicator(.init(title: NyutagL10n.autoDeleteError))
+            state.bindings.nyutagAutoDeleteTTL = nyutagSavedAutoDeleteTTL
+        }
+    }
+    
+    /// Нестандартный срок (задан другим клиентом) показывается ближайшим из вариантов Telegram.
+    private static func nyutagAutoDeleteOption(_ ttlSeconds: Int64) -> Int64 {
+        NyutagAutoDeleteRule.options.first { ttlSeconds <= $0 } ?? NyutagAutoDeleteRule.month
     }
 }
 

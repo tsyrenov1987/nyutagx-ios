@@ -54,6 +54,8 @@ struct RoomDetailsScreenViewState: BindableState {
     var hasMemberIdentityVerificationStateViolations = false
     
     var isProcessingIgnoreRequest = false
+    /// Нютаг: таймер автоудаления показывается после загрузки с сервера.
+    var nyutagAutoDeleteLoaded = false
     var canInviteUsers = false
     var canEditRoomName = false
     var canEditRoomTopic = false
@@ -131,6 +133,9 @@ struct RoomDetailsScreenViewState: BindableState {
 }
 
 struct RoomDetailsScreenViewStateBindings {
+    /// Нютаг: выбранный срок автоудаления в секундах, 0 — выключено.
+    var nyutagAutoDeleteTTL: Int64 = 0
+    
     struct IgnoreUserAlertItem: AlertProtocol, Equatable {
         enum Action {
             case ignore
@@ -237,6 +242,7 @@ enum RoomDetailsScreenViewAction {
     case processTapPinnedEvents
     case processTapMediaEvents
     case nyutagProcessTapSearch
+    case nyutagSetAutoDelete(ttlSeconds: Int64)
     case processTapRequestsToJoin
     case processTapReport
 }

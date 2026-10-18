@@ -218,6 +218,15 @@ struct RoomDetailsScreen: View {
                     }
             }
             
+            if context.viewState.nyutagAutoDeleteLoaded {
+                ListRow(label: .default(title: NyutagL10n.autoDeleteTitle, icon: \.time),
+                        kind: .picker(selection: $context.nyutagAutoDeleteTTL,
+                                      items: NyutagAutoDeleteRule.options.map { (title: NyutagAutoDeleteRule.label($0), tag: $0) }))
+                    .onChange(of: context.nyutagAutoDeleteTTL) { _, newValue in
+                        context.send(viewAction: .nyutagSetAutoDelete(ttlSeconds: newValue))
+                    }
+            }
+            
             if context.viewState.canSeeSecurityAndPrivacy {
                 ListRow(label: .default(title: L10n.screenRoomDetailsSecurityAndPrivacyTitle, icon: \.lock),
                         kind: .navigationLink {

@@ -104,3 +104,4 @@ screen_advanced_settings_show_media_timeline_title	Show photos and videos in cha
 nyutag_media_quality_high	High quality	Высокое качество	Үндэр шанар
 nyutag_media_quality_high_on	Photos and videos will be sent in high quality	Фото и видео уйдут в высоком качестве	Фото, видео үндэр шанартайгаар эльгээгдэхэ
 nyutag_media_quality_high_off	Photos and videos will be compressed	Фото и видео будут сжаты	Фото, видео шахагдаха
+nyutag_schedule_hint_ios	The message is sent at the chosen time while Nyutag is open. If the app is closed, it is sent the next time you open it.	Сообщение уйдёт в выбранное время, пока Нютаг открыт. Если приложение закрыто — при следующем открытии.	Нютаг нээлтэй байхада, бэшэг шэлэгдэһэн сагта эльгээгдэхэ. Хаагдаһан байбал — дахин нээхэдэ.

@@ -246,6 +246,25 @@ nonisolated enum NyutagL10n {
     static func eastYearElementFeminine(_ index: Int) -> String { tr("nyutag_east_year_elements_f_\(index)") }
     static func eastYearAnimal(_ index: Int) -> String { tr("nyutag_east_year_animals_\(index)") }
 
+    static var autoDeleteTitle: String { tr("nyutag_autodelete_title") }
+    static var autoDeleteSubtitle: String { tr("nyutag_autodelete_subtitle") }
+    static var autoDeleteOff: String { tr("nyutag_autodelete_off") }
+    static var autoDeleteDay: String { tr("nyutag_autodelete_day") }
+    static var autoDeleteWeek: String { tr("nyutag_autodelete_week") }
+    static var autoDeleteMonth: String { tr("nyutag_autodelete_month") }
+    static var autoDeleteError: String { tr("nyutag_autodelete_error") }
+    static var viewOnceToggle: String { tr("nyutag_view_once_toggle") }
+    static var viewOnceReceived: String { tr("nyutag_view_once_received") }
+    static var viewOnceSent: String { tr("nyutag_view_once_sent") }
+    static var viewOnceOpened: String { tr("nyutag_view_once_opened") }
+    static var scheduleSend: String { tr("nyutag_schedule_send") }
+    static var scheduleTitle: String { tr("nyutag_schedule_title") }
+    static func scheduleBanner(_ count: Int) -> String { tr("nyutag_schedule_banner", count) }
+    static var scheduleSendNow: String { tr("nyutag_schedule_send_now") }
+    static func scheduleAt(_ time: String) -> String { tr("nyutag_schedule_at", time) }
+    static var scheduleHint: String { tr("nyutag_schedule_hint_ios") }
+    static var scheduleErrorPast: String { tr("nyutag_schedule_error_past") }
+
     private static func tr(_ key: String, _ args: CVarArg...) -> String {
         let languages = (Bundle.overrideLocalizations ?? Bundle.app.preferredLocalizations) + ["en"]
         for language in languages {
