@@ -21,6 +21,10 @@ struct MediaUploadPreviewScreenViewState: BindableState {
     
     var mediaEditVersion = 0
     
+    /// Нютаг: выбор качества — только когда среди файлов есть фото или видео.
+    var canChooseQuality = false
+    var isHighQuality = false
+    
     var bindings: MediaUploadPreviewScreenBindings
 }
 
@@ -43,4 +47,5 @@ enum MediaUploadPreviewScreenViewAction {
     case send
     case cancel
     case editedMedia(image: UIImage, index: Int)
+    case toggleHighQuality
 }

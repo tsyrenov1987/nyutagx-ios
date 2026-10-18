@@ -9,6 +9,7 @@
 import Combine
 import MatrixRustSDK
 import SwiftUI
+import UniformTypeIdentifiers
 
 typealias MediaUploadPreviewScreenViewModelType = StateStoreViewModelV2<MediaUploadPreviewScreenViewState, MediaUploadPreviewScreenViewAction>
 
@@ -16,7 +17,7 @@ class MediaUploadPreviewScreenViewModel: MediaUploadPreviewScreenViewModelType, 
     private let timelineController: TimelineControllerProtocol
     private let userIndicatorController: UserIndicatorControllerProtocol
     
-    private let mediaUploadingPreprocessor: MediaUploadingPreprocessor
+    private var mediaUploadingPreprocessor: MediaUploadingPreprocessor
     private var mediaURLs: [URL]
     
     private var processingTask: Task<Result<[MediaInfo], MediaUploadingPreprocessorError>, Never>
@@ -52,6 +53,9 @@ class MediaUploadPreviewScreenViewModel: MediaUploadPreviewScreenViewModelType, 
         super.init(initialViewState: MediaUploadPreviewScreenViewState(mediaURLs: mediaURLs,
                                                                        title: title,
                                                                        shouldShowCaptionWarning: shouldShowCaptionWarning,
+                                                                       canChooseQuality: Self.canChooseQuality(for: mediaURLs),
+                                                                       isHighQuality: !(mediaUploadingPreprocessor.optimizeOverride
+                                                                           ?? mediaUploadingPreprocessor.appSettings.optimizeMediaUploads),
                                                                        bindings: .init(caption: caption ?? NSAttributedString())))
     }
     
@@ -118,6 +122,20 @@ class MediaUploadPreviewScreenViewModel: MediaUploadPreviewScreenViewModelType, 
             } catch {
                 MXLog.error("Failed writing cropped image with error: \(error)")
             }
+        case .toggleHighQuality:
+            state.isHighQuality.toggle()
+            mediaUploadingPreprocessor.optimizeOverride = !state.isHighQuality
+            processingTask.cancel()
+            processingTask = Self.processMedia(at: mediaURLs, preprocessor: mediaUploadingPreprocessor, clientProxy: clientProxy)
+            userIndicatorController.submitIndicator(UserIndicator(title: state.isHighQuality ? NyutagL10n.mediaQualityHighOn : NyutagL10n.mediaQualityHighOff))
+        }
+    }
+    
+    /// Нютаг: сжимаются только фото (кроме GIF) и видео — для остальных файлов выбор качества не нужен.
+    nonisolated static func canChooseQuality(for mediaURLs: [URL]) -> Bool {
+        mediaURLs.contains { url in
+            guard let type = UTType(filenameExtension: url.pathExtension) else { return false }
+            return (type.conforms(to: .image) && !type.conforms(to: .gif)) || type.conforms(to: .movie)
         }
     }
     

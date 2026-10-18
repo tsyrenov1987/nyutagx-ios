@@ -200,6 +200,23 @@ nonisolated enum NyutagL10n {
     static var dmDeleteChat: String { tr("nyutag_dm_delete_chat") }
     static var dmDeleteChatSubtitle: String { tr("nyutag_dm_delete_chat_subtitle") }
     
+    /// Вкладка «Контакты» и боковое меню главного экрана — как в Telegram.
+    static var tabContacts: String { tr("nyutag_tab_contacts") }
+    static var contactsOnNyutag: String { tr("nyutag_contacts_on_nyutag") }
+    static var contactsInviteSection: String { tr("nyutag_contacts_invite_section") }
+    static var drawerOpen: String { tr("nyutag_drawer_open") }
+    static var drawerMyProfile: String { tr("nyutag_drawer_my_profile") }
+    static var drawerNewGroup: String { tr("nyutag_drawer_new_group") }
+    static var drawerContacts: String { tr("nyutag_drawer_contacts") }
+    static var drawerSavedMessages: String { tr("nyutag_drawer_saved_messages") }
+    static var drawerSettings: String { tr("nyutag_drawer_settings") }
+    static var drawerInvite: String { tr("nyutag_drawer_invite") }
+    
+    /// Переключатель качества на экране отправки фото и видео.
+    static var mediaQualityHigh: String { tr("nyutag_media_quality_high") }
+    static var mediaQualityHighOn: String { tr("nyutag_media_quality_high_on") }
+    static var mediaQualityHighOff: String { tr("nyutag_media_quality_high_off") }
+    
     private static func tr(_ key: String, _ args: CVarArg...) -> String {
         let languages = (Bundle.overrideLocalizations ?? Bundle.app.preferredLocalizations) + ["en"]
         for language in languages {

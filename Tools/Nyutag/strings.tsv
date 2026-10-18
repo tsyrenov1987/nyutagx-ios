@@ -101,3 +101,6 @@ screen_chat_backup_recovery_action_setup_description	Without a recovery key you 
 screen_chat_backup_recovery_action_change_description	Without a recovery key you cannot get your chats back if you lose all your devices.	Без ключа восстановления переписку не вернуть, если потеряете все устройства.	Сэргээхэ түлхюургүйгөөр бүхы түхеэрэлгэнүүдээ алдабал, бэшэлгэеэ бусааха аргагүй.
 screen_chat_backup_recovery_action_confirm_description	Enter your recovery key to see your chat history on this device.	Введите ключ восстановления, чтобы история чатов появилась на этом устройстве.	Энэ түхеэрэлгэ дээрэ чатнуудайнгаа түүхые харахын тула сэргээхэ түлхюураа оруулагты.
 screen_advanced_settings_show_media_timeline_title	Show photos and videos in chats	Показывать фото и видео в чатах	Чат соо фото, видео харуулха
+nyutag_media_quality_high	High quality	Высокое качество	Үндэр шанар
+nyutag_media_quality_high_on	Photos and videos will be sent in high quality	Фото и видео уйдут в высоком качестве	Фото, видео үндэр шанартайгаар эльгээгдэхэ
+nyutag_media_quality_high_off	Photos and videos will be compressed	Фото и видео будут сжаты	Фото, видео шахагдаха

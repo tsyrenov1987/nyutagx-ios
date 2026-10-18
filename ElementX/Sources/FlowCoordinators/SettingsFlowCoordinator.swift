@@ -69,6 +69,11 @@ class SettingsFlowCoordinator: FlowCoordinatorProtocol {
         fatalError("Unavailable")
     }
     
+    /// Нютаг: «Мой профиль» из бокового меню — настройки сразу с экраном профиля поверх.
+    func showUserDetails() {
+        presentUserDetailsEditScreen()
+    }
+    
     // MARK: - Private
     
     private func presentSettingsScreen(animated: Bool) {

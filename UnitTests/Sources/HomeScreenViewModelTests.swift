@@ -76,6 +76,39 @@ final class HomeScreenViewModelTests {
         #expect(correctResult)
     }
     
+    // MARK: Нютаг: боковое меню
+    
+    @Test
+    func drawerItemsSendTheirActions() async {
+        setupViewModel()
+        
+        let expected: [(NyutagDrawerAction, String)] = [(.settings, "presentSettingsScreen"),
+                                                        (.myProfile, "presentNyutagMyProfile"),
+                                                        (.contacts, "presentNyutagContacts"),
+                                                        (.newGroup, "presentStartChatScreen"),
+                                                        (.ownAvatar, "presentNyutagMyProfile")] // Без аватара — в профиль.
+        var received: [String] = []
+        viewModel.actions
+            .sink { action in
+                switch action {
+                case .presentSettingsScreen: received.append("presentSettingsScreen")
+                case .presentNyutagMyProfile: received.append("presentNyutagMyProfile")
+                case .presentNyutagContacts: received.append("presentNyutagContacts")
+                case .presentStartChatScreen: received.append("presentStartChatScreen")
+                default: break
+                }
+            }
+            .store(in: &cancellables)
+        
+        for (item, _) in expected {
+            context.isPresentingNyutagDrawer = true
+            context.send(viewAction: .nyutagDrawer(item))
+            await Task.yield()
+            #expect(!context.isPresentingNyutagDrawer)
+        }
+        #expect(received == expected.map(\.1))
+    }
+    
     @Test
     func leaveRoomAlert() async throws {
         setupViewModel()

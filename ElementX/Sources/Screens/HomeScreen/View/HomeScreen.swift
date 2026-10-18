@@ -17,6 +17,8 @@ struct HomeScreen: View {
     @ObservedObject var context: HomeScreenViewModel.Context
     
     @State private var scrollViewAdapter = ScrollViewAdapter()
+    /// Нютаг: пункт меню выполняется, когда меню уже закрыто — иначе следующий экран не откроется поверх.
+    @State private var pendingDrawerAction: NyutagDrawerAction?
     
     @Namespace private var navigationTransitionNamespace
     private enum NavigationTransitionSourceID {
@@ -48,6 +50,18 @@ struct HomeScreen: View {
             .sheet(isPresented: $context.isPresentingNyutagDonate) {
                 NyutagDonateSheet()
             }
+            .fullScreenCover(isPresented: $context.isPresentingNyutagDrawer) {
+                if let action = pendingDrawerAction {
+                    pendingDrawerAction = nil
+                    context.send(viewAction: .nyutagDrawer(action))
+                }
+            } content: {
+                NyutagDrawer(context: context, pendingAction: $pendingDrawerAction)
+                    .presentationBackground(.clear)
+            }
+            // Панель выезжает сама — системный подъём снизу ей не нужен.
+            .transaction(value: context.isPresentingNyutagDrawer) { $0.disablesAnimations = true }
+            .interactiveQuickLook(item: $context.mediaPreviewItem, allowEditing: false)
     }
     
     // MARK: - Private
@@ -62,22 +76,19 @@ struct HomeScreen: View {
     
     @ToolbarContentBuilder
     private var toolbar: some ToolbarContent {
-        ToolbarItem(placement: Compound.supportsGlass ? .title : .navigationBarLeading) {
-            HStack(spacing: isInSidebar ? 8 : 12) {
-                // The settings button is inside the title on iOS 26 to workaround a
-                // weird liquid glass transition when pushing/popping a room.
-                settingsButton
-                    .buttonStyle(.borderless)
-                
-                if #available(iOS 26, *) {
-                    Text(title)
-                        .font(isInSidebar ? .compound.bodyLGSemibold : .compound.headingLGBold)
-                        .foregroundStyle(.compound.textPrimary)
-                        .minimumScaleFactor(isInSidebar ? 1 : 0.6) // Allow scaling down to bodyLG if needed.
-                }
-            }
+        ToolbarItem(placement: .navigationBarLeading) {
+            settingsButton
+                .buttonStyle(.borderless)
         }
         .backportSharedBackgroundVisibility(.hidden)
+        
+        // Нютаг: заголовок по центру и мельче, как в Telegram iOS.
+        ToolbarItem(placement: .principal) {
+            Text(title)
+                .font(.compound.bodyLGSemibold)
+                .foregroundStyle(.compound.textPrimary)
+                .lineLimit(1)
+        }
         
         ToolbarItem(placement: .primaryAction) {
             if #available(iOS 26, *) {
@@ -105,12 +116,12 @@ struct HomeScreen: View {
     
     private var settingsButton: some View {
         Button {
-            context.send(viewAction: .showSettings)
+            context.isPresentingNyutagDrawer = true
         } label: {
             AvatarSettingsButtonLabel(userProfile: context.viewState.userProfile,
                                       mediaProvider: context.mediaProvider)
         }
-        .accessibilityLabel(L10n.commonSettings)
+        .accessibilityLabel(NyutagL10n.drawerOpen)
         .accessibilityIdentifier(A11yIdentifiers.homeScreen.userAvatar)
     }
     
@@ -184,6 +195,118 @@ struct HomeScreen: View {
             .accessibilityLabel(L10n.screenRoomlistYourSpaces)
             .accessibilityAddTraits(selected ? .isSelected : [])
             .accessibilityIdentifier(A11yIdentifiers.homeScreen.spaceFilters)
+        }
+    }
+}
+
+// MARK: - Нютаг: боковое меню
+
+/// Боковое меню как в Telegram Android: шапка с аватаром и пункты; тап мимо панели закрывает.
+private struct NyutagDrawer: View {
+    @ObservedObject var context: HomeScreenViewModel.Context
+    @Binding var pendingAction: NyutagDrawerAction?
+    @State private var isShown = false
+    
+    private let panelWidth: CGFloat = 300
+    
+    var body: some View {
+        ZStack(alignment: .leading) {
+            Color.black.opacity(isShown ? 0.4 : 0)
+                .ignoresSafeArea()
+                .onTapGesture { close(then: nil) }
+                .accessibilityHidden(true)
+            
+            panel
+                .frame(width: panelWidth)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .background(Color.compound.bgCanvasDefault.ignoresSafeArea())
+                .offset(x: isShown ? 0 : -panelWidth)
+                .gesture(DragGesture().onEnded { value in
+                    if value.translation.width < -60 { close(then: nil) }
+                })
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.25)) { isShown = true }
+        }
+    }
+    
+    private var panel: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            header
+            ScrollView {
+                VStack(spacing: 0) {
+                    row(NyutagL10n.drawerMyProfile, icon: \.userProfile, action: .myProfile)
+                    row(NyutagL10n.drawerNewGroup, icon: \.group, action: .newGroup)
+                    row(NyutagL10n.drawerContacts, icon: \.user, action: .contacts)
+                    row(NyutagL10n.drawerSavedMessages, icon: \.favourite, action: .savedMessages)
+                    row(NyutagL10n.drawerSettings, icon: \.settings, action: .settings)
+                    row(NyutagL10n.drawerInvite, icon: \.userAdd, action: .invite)
+                }
+                .padding(.top, 8)
+            }
+        }
+    }
+    
+    private var header: some View {
+        let profile = context.viewState.userProfile
+        return VStack(alignment: .leading, spacing: 12) {
+            Button {
+                close(then: .ownAvatar)
+            } label: {
+                LoadableAvatarImage(url: profile.avatarURL,
+                                    name: profile.displayName,
+                                    contentID: profile.id,
+                                    avatarSize: .user(on: .settings),
+                                    mediaProvider: context.mediaProvider)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(NyutagL10n.drawerMyProfile)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                if let name = profile.displayName, !name.isEmpty {
+                    Text(name)
+                        .font(.compound.bodyLGSemibold)
+                        .foregroundStyle(.compound.textPrimary)
+                }
+                Text(profile.id)
+                    .font(.compound.bodyMD)
+                    .foregroundStyle(.compound.textSecondary)
+            }
+            .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 20)
+        .padding(.top, 24)
+        .padding(.bottom, 16)
+        .background(Color.compound.bgSubtleSecondary.ignoresSafeArea(edges: .top))
+    }
+    
+    private func row(_ title: String, icon: KeyPath<CompoundIcons, Image>, action: NyutagDrawerAction) -> some View {
+        Button {
+            close(then: action)
+        } label: {
+            HStack(spacing: 20) {
+                CompoundIcon(icon)
+                    .foregroundStyle(.compound.iconSecondary)
+                Text(title)
+                    .font(.compound.bodyLG)
+                    .foregroundStyle(.compound.textPrimary)
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.vertical, 14)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+    
+    /// Сначала панель уезжает, потом закрывается окно и выполняется пункт.
+    private func close(then action: NyutagDrawerAction?) {
+        withAnimation(.easeIn(duration: 0.2)) {
+            isShown = false
+        } completion: {
+            pendingAction = action
+            context.isPresentingNyutagDrawer = false
         }
     }
 }

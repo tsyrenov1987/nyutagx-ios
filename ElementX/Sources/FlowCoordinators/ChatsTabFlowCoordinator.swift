@@ -13,6 +13,9 @@ import SwiftUI
 
 enum ChatsTabFlowCoordinatorAction {
     case switchToChatsTab
+    /// Нютаг: из бокового меню.
+    case switchToContactsTab
+    case showMyProfile
     case showSettings
     case showChatBackupSettings
     case sessionVerification(SessionVerificationScreenFlow)
@@ -411,6 +414,10 @@ class ChatsTabFlowCoordinator: FlowCoordinatorProtocol {
                     }
                 case .presentSettingsScreen:
                     actionsSubject.send(.showSettings)
+                case .presentNyutagMyProfile:
+                    actionsSubject.send(.showMyProfile)
+                case .presentNyutagContacts:
+                    actionsSubject.send(.switchToContactsTab)
                 case .presentFeedbackScreen:
                     stateMachine.processEvent(.feedbackScreen)
                 case .presentSecureBackupSettings:

@@ -168,6 +168,20 @@ struct MediaUploadPreviewScreen: View {
             }
         }
         
+        if context.viewState.canChooseQuality {
+            ToolbarItem(placement: .primaryAction) {
+                // Нютаг: «HD» — отправить фото и видео без сжатия.
+                Button { context.send(viewAction: .toggleHighQuality) } label: {
+                    Text("HD")
+                        .font(.compound.bodyMDSemibold)
+                        .foregroundStyle(context.viewState.isHighQuality ? .compound.textActionAccent : .compound.textSecondary)
+                }
+                .accessibilityLabel(NyutagL10n.mediaQualityHigh)
+                .accessibilityAddTraits(context.viewState.isHighQuality ? .isSelected : [])
+                .accessibilityIdentifier("mediaUploadPreview-highQuality")
+            }
+        }
+        
         if isCurrentMediaImage {
             ToolbarItem(placement: .primaryAction) {
                 Button { context.isPresentingMediaEditor = true } label: {

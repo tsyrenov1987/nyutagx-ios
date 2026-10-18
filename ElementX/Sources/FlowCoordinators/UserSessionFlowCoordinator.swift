@@ -21,7 +21,7 @@ enum UserSessionFlowCoordinatorAction {
 }
 
 class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
-    enum HomeTab: Hashable { case chats, spaces, search }
+    enum HomeTab: Hashable { case chats, contacts, spaces, search }
     
     private let navigationRootCoordinator: NavigationRootCoordinator
     private let navigationTabCoordinator: NavigationTabCoordinator<HomeTab>
@@ -38,6 +38,10 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
     private let onboardingStackCoordinator: NavigationStackCoordinator
     private let chatsTabFlowCoordinator: ChatsTabFlowCoordinator
     private let chatsTabDetails: NavigationTabCoordinator<HomeTab>.TabDetails
+    /// Нютаг: вкладка «Контакты» между «Чатами» и «Сообществами».
+    private let contactsScreenCoordinator: NyutagContactsScreenCoordinator
+    private let contactsTabNavigationStackCoordinator: NavigationStackCoordinator
+    private let contactsTabDetails: NavigationTabCoordinator<HomeTab>.TabDetails
     private let spacesTabFlowCoordinator: SpacesTabFlowCoordinator
     private let spacesTabDetails: NavigationTabCoordinator<HomeTab>.TabDetails
     
@@ -93,6 +97,13 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
         chatsTabDetails = .init(tag: HomeTab.chats, title: L10n.screenHomeTabChats, icon: \.chat, selectedIcon: \.chatSolid)
         chatsTabDetails.navigationSplitCoordinator = chatsSplitCoordinator
         
+        contactsScreenCoordinator = NyutagContactsScreenCoordinator(parameters: .init(clientProxy: flowParameters.userSession.clientProxy,
+                                                                                      mediaProvider: flowParameters.userSession.mediaProvider,
+                                                                                      userIndicatorController: flowParameters.userIndicatorController))
+        contactsTabNavigationStackCoordinator = NavigationStackCoordinator()
+        contactsTabNavigationStackCoordinator.setRootCoordinator(contactsScreenCoordinator)
+        contactsTabDetails = .init(tag: HomeTab.contacts, title: NyutagL10n.tabContacts, icon: \.userProfile, selectedIcon: \.userProfileSolid)
+        
         let spacesSplitCoordinator = NavigationSplitCoordinator(placeholderCoordinator: PlaceholderScreenCoordinator(hideBrandChrome: flowParameters.appSettings.hideBrandChrome))
         spacesTabFlowCoordinator = SpacesTabFlowCoordinator(navigationSplitCoordinator: spacesSplitCoordinator,
                                                             flowParameters: flowParameters)
@@ -125,6 +136,7 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
         
         var tabs: [NavigationTabCoordinator<HomeTab>.Tab] = [
             .init(coordinator: chatsSplitCoordinator, details: chatsTabDetails),
+            .init(coordinator: contactsTabNavigationStackCoordinator, details: contactsTabDetails),
             .init(coordinator: spacesSplitCoordinator, details: spacesTabDetails)
         ]
         if let searchTabNavigationStackCoordinator, let searchTabDetails {
@@ -228,13 +240,36 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
         }
     }
     
+    private func setupNyutagContactsObserver() {
+        contactsScreenCoordinator.start()
+        contactsScreenCoordinator.actionsPublisher
+            .sink { [weak self] action in
+                switch action {
+                case .openRoom(let roomID):
+                    self?.handleAppRoute(.room(roomID: roomID, via: []), animated: true)
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
+    private func showNyutagMyProfile() {
+        handleAppRoute(.settings, animated: true)
+        settingsFlowCoordinator?.showUserDetails()
+    }
+    
     private func setupObservers() {
+        setupNyutagContactsObserver()
+        
         chatsTabFlowCoordinator.actionsPublisher
             .sink { [weak self] action in
                 guard let self else { return }
                 switch action {
                 case .switchToChatsTab:
                     navigationTabCoordinator.selectedTab = .chats
+                case .switchToContactsTab:
+                    navigationTabCoordinator.selectedTab = .contacts
+                case .showMyProfile:
+                    showNyutagMyProfile()
                 case .showSettings:
                     handleAppRoute(.settings, animated: true)
                 case .showChatBackupSettings:

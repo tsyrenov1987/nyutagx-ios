@@ -85,7 +85,12 @@
 "nyutag_by_phone_subtitle" = "Enter the number of someone you know. If they are in Nyutag, you can write to them right away. If not, send them an invitation.";
 "nyutag_by_phone_title" = "Find by phone number";
 "nyutag_by_phone_write" = "Write";
+"nyutag_call_bar_calling" = "Calling…";
+"nyutag_call_bar_end" = "End call";
+"nyutag_call_bar_return" = "Return to the call";
 "nyutag_call_end" = "End call";
+"nyutag_call_microphone_denied_message" = "Nyutag is not allowed to use the microphone, so the other person cannot hear you. Allow the microphone in the app settings.";
+"nyutag_call_microphone_denied_title" = "No access to the microphone";
 "nyutag_call_permissions_banner_message" = "To show incoming calls on top of other apps and on the lock screen, allow it in the settings.";
 "nyutag_call_return" = "Back to call";
 "nyutag_call_speaker_off" = "Speaker off";
@@ -132,6 +137,9 @@
 "nyutag_contacts_allow_subtitle" = "Numbers are checked on the server and not stored.";
 "nyutag_contacts_denied" = "Allow access to contacts in the phone settings to see who is already on Nyutag.";
 "nyutag_contacts_empty" = "None of your contacts are on Nyutag yet. Invite them by phone number.";
+"nyutag_contacts_error_network" = "No connection to the server. Try again.";
+"nyutag_contacts_invite_section" = "Invite to Nyutag";
+"nyutag_contacts_on_nyutag" = "On Nyutag";
 "nyutag_contacts_section" = "Contacts on Nyutag";
 "nyutag_contacts_syncing" = "Checking contacts…";
 "nyutag_dm_delete_chat" = "Delete chat";
@@ -141,6 +149,14 @@
 "nyutag_donate_thanks" = "Thank you! Your support keeps Nyutag's servers running.";
 "nyutag_donate_title" = "Support Nyutag";
 "nyutag_donate_unavailable" = "Could not reach the store. Please try again later.";
+"nyutag_drawer_contacts" = "Contacts";
+"nyutag_drawer_invite" = "Invite friends";
+"nyutag_drawer_my_profile" = "My profile";
+"nyutag_drawer_new_group" = "New group";
+"nyutag_drawer_open" = "Open menu";
+"nyutag_drawer_saved_messages" = "Saved messages";
+"nyutag_drawer_settings" = "Settings";
+"nyutag_incoming_call_answer" = "Answer";
 "nyutag_invite_code_label" = "Invitation code";
 "nyutag_invite_creating" = "Creating an invitation…";
 "nyutag_invite_error_bad_code" = "The code looks like XXXX-XXXX.";
@@ -170,7 +186,11 @@
 "nyutag_language_title" = "Language";
 "nyutag_login_identifier_hint" = "Username, phone or email";
 "nyutag_login_no_account" = "No account yet? You need an invitation code.";
+"nyutag_media_quality_high" = "High quality";
+"nyutag_media_quality_high_off" = "Photos and videos will be compressed";
+"nyutag_media_quality_high_on" = "Photos and videos will be sent in high quality";
 "nyutag_message_read" = "Read";
+"nyutag_more_settings" = "More";
 "nyutag_new_chat" = "New chat";
 "nyutag_new_group" = "New group";
 "nyutag_not_in_contacts" = "This person is not in your contacts";
@@ -225,6 +245,7 @@
 "nyutag_start_have_invite" = "I have an invitation";
 "nyutag_start_sign_in" = "Sign in";
 "nyutag_start_sign_up" = "Create an account";
+"nyutag_tab_contacts" = "Contacts";
 "nyutag_wallpaper_dusk" = "Dusk";
 "nyutag_wallpaper_plain" = "No pattern";
 "nyutag_wallpaper_sand" = "Sand";

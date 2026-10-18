@@ -19,7 +19,8 @@ struct RoomAttachmentPicker: View {
         Menu {
             menuContent
         } label: {
-            CompoundIcon(\.plus,
+            // Нютаг: скрепка вместо «+», как в Telegram.
+            CompoundIcon(\.attachment,
                          size: Compound.supportsGlass ? .medium : .small,
                          relativeTo: .compound.headingLG)
         }

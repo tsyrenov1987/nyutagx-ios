@@ -626,7 +626,12 @@
 "nyutag_by_phone_subtitle" = "Танил хүнэйнгөө дугаар оруулагты. Нютагта байгаа һаа, тэрээндэ шууд бэшэжэ болохот. Үгы һаа, урилга эльгээгты.";
 "nyutag_by_phone_title" = "Утаһанай дугаараар";
 "nyutag_by_phone_write" = "Бэшэхэ";
+"nyutag_call_bar_calling" = "Дуудажа байна…";
+"nyutag_call_bar_end" = "Дуудалга дүүргэхэ";
+"nyutag_call_bar_return" = "Дуудалга руу бусаха";
 "nyutag_call_end" = "Дуудалга дүүргэхэ";
+"nyutag_call_microphone_denied_message" = "Нютагта микрофон хэрэглэхые хоридлогоор, тиимэһээ хамта хөөрэлдэгшэ шамайе дуулахагүй. Программын тааруулгада микрофон зүбшөөгыт.";
+"nyutag_call_microphone_denied_title" = "Микрофон хаалтатай";
 "nyutag_call_permissions_banner_message" = "Орожо байһан дуудалга ондоо программануудай дээрэ болон түгжээтэй дэлгэсэ дээрэ харуулхын тула, тохиргоонууд соо зүбшөөгты.";
 "nyutag_call_return" = "Дуудалга руу бусаха";
 "nyutag_call_speaker_off" = "Шанга дуун унтарааха";
@@ -673,6 +678,9 @@
 "nyutag_contacts_allow_subtitle" = "Дугаарнууд сервер дээрэ зэргэсүүлэгдэнэ, хадагалагдахагүй.";
 "nyutag_contacts_denied" = "Хэн Нютаг соо байһыень харахын тула утаһанайнгаа тохиргоодо контактнуудта хандаха зүбшөөл үгэгты.";
 "nyutag_contacts_empty" = "Танай контактнуудһаа Нютаг соо үшөө хэншье үгы. Утаһанай дугаараар уригты.";
+"nyutag_contacts_error_network" = "Сервертэй холбоо үгы. Дахин оролдогты.";
+"nyutag_contacts_invite_section" = "Нютаг руу уриха";
+"nyutag_contacts_on_nyutag" = "Нютаг соо";
 "nyutag_contacts_section" = "Нютаг соо байһан контактнууд";
 "nyutag_contacts_syncing" = "Контактнуудые шалгажа байнабди…";
 "nyutag_dm_delete_chat" = "Чат усадхаха";
@@ -682,6 +690,14 @@
 "nyutag_donate_thanks" = "Һайн даа! Таны туһаламжа Нютагай серверүүдые хүдэлгэнэ.";
 "nyutag_donate_title" = "Нютагта туһалха";
 "nyutag_donate_unavailable" = "Магазинтай холбоо үгы. Һүүлдэ дахин оролдыт.";
+"nyutag_drawer_contacts" = "Контактнууд";
+"nyutag_drawer_invite" = "Нүхэдөө уриха";
+"nyutag_drawer_my_profile" = "Минии профиль";
+"nyutag_drawer_new_group" = "Бүлэг байгуулха";
+"nyutag_drawer_open" = "Меню нээхэ";
+"nyutag_drawer_saved_messages" = "Хадагалһан";
+"nyutag_drawer_settings" = "Тохируулганууд";
+"nyutag_incoming_call_answer" = "Харюусаха";
 "nyutag_invite_code_label" = "Урилгын код";
 "nyutag_invite_creating" = "Урилга бэлдэжэ байна…";
 "nyutag_invite_error_bad_code" = "Код иимэ: XXXX-XXXX.";
@@ -711,7 +727,11 @@
 "nyutag_language_title" = "Хэлэн";
 "nyutag_login_identifier_hint" = "Нэрэ, утаһан али e-mail";
 "nyutag_login_no_account" = "Аккаунт үгы гү? Урилгын код хэрэгтэй.";
+"nyutag_media_quality_high" = "Үндэр шанар";
+"nyutag_media_quality_high_off" = "Фото, видео шахагдаха";
+"nyutag_media_quality_high_on" = "Фото, видео үндэр шанартайгаар эльгээгдэхэ";
 "nyutag_message_read" = "Уншагдаһан";
+"nyutag_more_settings" = "Нэмэлтэ";
 "nyutag_new_chat" = "Шэнэ чат";
 "nyutag_new_group" = "Шэнэ бүлэг";
 "nyutag_not_in_contacts" = "Энэ хүн таны контактнуудта үгы";
@@ -766,6 +786,7 @@
 "nyutag_start_have_invite" = "Намда урилга бии";
 "nyutag_start_sign_in" = "Орохо";
 "nyutag_start_sign_up" = "Бүридхүүлхэ";
+"nyutag_tab_contacts" = "Контактнууд";
 "nyutag_wallpaper_dusk" = "Бүрэнхы";
 "nyutag_wallpaper_plain" = "Хээгүй";
 "nyutag_wallpaper_sand" = "Элһэн";

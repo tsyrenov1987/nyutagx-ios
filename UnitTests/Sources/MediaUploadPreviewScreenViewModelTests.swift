@@ -34,6 +34,28 @@ final class MediaUploadPreviewScreenViewModelTests {
         userIndicatorController = UserIndicatorControllerMock()
     }
     
+    // MARK: Нютаг: выбор качества
+    
+    @Test
+    func qualityChoiceOnlyForPhotosAndVideos() {
+        #expect(MediaUploadPreviewScreenViewModel.canChooseQuality(for: [URL(filePath: "/tmp/a.jpg")]))
+        #expect(MediaUploadPreviewScreenViewModel.canChooseQuality(for: [URL(filePath: "/tmp/a.pdf"), URL(filePath: "/tmp/b.mp4")]))
+        #expect(!MediaUploadPreviewScreenViewModel.canChooseQuality(for: [URL(filePath: "/tmp/a.pdf")]))
+        #expect(!MediaUploadPreviewScreenViewModel.canChooseQuality(for: [URL(filePath: "/tmp/a.gif")]))
+    }
+    
+    @Test
+    func toggleHighQualityFollowsSettingsAndShowsToast() {
+        setUpViewModel(urls: [videoURL], expectedCaption: nil) // imageURL здесь — GIF, у него выбора нет.
+        #expect(context.viewState.canChooseQuality)
+        #expect(context.viewState.isHighQuality) // В настройках теста сжатие выключено.
+        
+        context.send(viewAction: .toggleHighQuality)
+        
+        #expect(!context.viewState.isHighQuality)
+        #expect(userIndicatorController.submitIndicatorDelayCallsCount == 1)
+    }
+    
     @Test
     func imageUploadWithoutCaption() async throws {
         setUpViewModel(urls: [imageURL], expectedCaption: nil)

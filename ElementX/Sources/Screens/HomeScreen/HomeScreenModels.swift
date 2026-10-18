@@ -23,6 +23,8 @@ enum HomeScreenViewModelAction {
     case presentRecoveryKeyScreen
     case presentEncryptionResetScreen
     case presentSettingsScreen
+    case presentNyutagMyProfile
+    case presentNyutagContacts
     case presentFeedbackScreen
     case presentStartChatScreen
     case logout
@@ -39,6 +41,8 @@ enum HomeScreenViewAction {
     case startChat
     /// Нютаг: выпустить код приглашения и поделиться им.
     case nyutagInviteFriend
+    /// Нютаг: пункт бокового меню.
+    case nyutagDrawer(NyutagDrawerAction)
     case nyutagAnnouncementAction(NyutagAnnouncement.Action)
     case nyutagAnnouncementDismiss
     case setupRecovery
@@ -54,6 +58,17 @@ enum HomeScreenViewAction {
     
     case acceptInvite(roomIdentifier: String)
     case declineInvite(roomIdentifier: String)
+}
+
+/// Нютаг: пункты бокового меню главного экрана — как в Telegram Android.
+enum NyutagDrawerAction: CaseIterable {
+    case ownAvatar
+    case myProfile
+    case newGroup
+    case contacts
+    case savedMessages
+    case settings
+    case invite
 }
 
 enum HomeScreenRoomListMode: CustomStringConvertible {
@@ -170,6 +185,10 @@ struct HomeScreenViewStateBindings {
     var nyutagAnnouncement: NyutagAnnouncement?
     /// Экран «Поддержать Нютаг» (кнопка `donate` в обращении).
     var isPresentingNyutagDonate = false
+    /// Боковое меню (тап по своему аватару).
+    var isPresentingNyutagDrawer = false
+    /// Свой аватар во весь экран (из бокового меню).
+    var mediaPreviewItem: MediaPreviewItem?
 }
 
 enum CallBadgeType {

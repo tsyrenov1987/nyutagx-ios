@@ -88,7 +88,12 @@
 "nyutag_by_phone_subtitle" = "Введите номер знакомого. Если он в Нютаге, сразу сможете ему написать. Если нет, отправьте приглашение.";
 "nyutag_by_phone_title" = "По номеру телефона";
 "nyutag_by_phone_write" = "Написать";
+"nyutag_call_bar_calling" = "Вызов…";
+"nyutag_call_bar_end" = "Завершить звонок";
+"nyutag_call_bar_return" = "Вернуться к звонку";
 "nyutag_call_end" = "Завершить звонок";
+"nyutag_call_microphone_denied_message" = "Нютагу запрещён микрофон, поэтому собеседник вас не слышит. Разрешите микрофон в настройках приложения.";
+"nyutag_call_microphone_denied_title" = "Нет доступа к микрофону";
 "nyutag_call_permissions_banner_message" = "Чтобы входящий звонок показывался поверх других приложений и на заблокированном экране, разрешите это в настройках.";
 "nyutag_call_return" = "Вернуться к звонку";
 "nyutag_call_speaker_off" = "Выключить громкую связь";
@@ -135,6 +140,9 @@
 "nyutag_contacts_allow_subtitle" = "Номера сверяются на сервере и не сохраняются.";
 "nyutag_contacts_denied" = "Разрешите доступ к контактам в настройках телефона, чтобы увидеть, кто уже в Нютаге.";
 "nyutag_contacts_empty" = "Из ваших контактов в Нютаге пока никого нет. Пригласите их по номеру телефона.";
+"nyutag_contacts_error_network" = "Нет связи с сервером. Попробуйте ещё раз.";
+"nyutag_contacts_invite_section" = "Пригласить в Нютаг";
+"nyutag_contacts_on_nyutag" = "В Нютаге";
 "nyutag_contacts_section" = "Контакты в Нютаге";
 "nyutag_contacts_syncing" = "Сверяем контакты…";
 "nyutag_dm_delete_chat" = "Удалить чат";
@@ -144,6 +152,14 @@
 "nyutag_donate_thanks" = "Спасибо! Ваша поддержка держит серверы Нютага.";
 "nyutag_donate_title" = "Поддержать Нютаг";
 "nyutag_donate_unavailable" = "Не удалось связаться с магазином. Попробуйте позже.";
+"nyutag_drawer_contacts" = "Контакты";
+"nyutag_drawer_invite" = "Пригласить друзей";
+"nyutag_drawer_my_profile" = "Мой профиль";
+"nyutag_drawer_new_group" = "Создать группу";
+"nyutag_drawer_open" = "Открыть меню";
+"nyutag_drawer_saved_messages" = "Избранное";
+"nyutag_drawer_settings" = "Настройки";
+"nyutag_incoming_call_answer" = "Ответить";
 "nyutag_invite_code_label" = "Код приглашения";
 "nyutag_invite_creating" = "Создаю приглашение…";
 "nyutag_invite_error_bad_code" = "Код выглядит так: XXXX-XXXX.";
@@ -173,7 +189,11 @@
 "nyutag_language_title" = "Язык";
 "nyutag_login_identifier_hint" = "Имя, телефон или e-mail";
 "nyutag_login_no_account" = "Нет аккаунта? Нужен код приглашения.";
+"nyutag_media_quality_high" = "Высокое качество";
+"nyutag_media_quality_high_off" = "Фото и видео будут сжаты";
+"nyutag_media_quality_high_on" = "Фото и видео уйдут в высоком качестве";
 "nyutag_message_read" = "Прочитано";
+"nyutag_more_settings" = "Дополнительно";
 "nyutag_new_chat" = "Новый чат";
 "nyutag_new_group" = "Новая группа";
 "nyutag_not_in_contacts" = "Этого человека нет в ваших контактах";
@@ -228,6 +248,7 @@
 "nyutag_start_have_invite" = "У меня есть приглашение";
 "nyutag_start_sign_in" = "Войти";
 "nyutag_start_sign_up" = "Зарегистрироваться";
+"nyutag_tab_contacts" = "Контакты";
 "nyutag_wallpaper_dusk" = "Сумерки";
 "nyutag_wallpaper_plain" = "Без узора";
 "nyutag_wallpaper_sand" = "Песок";

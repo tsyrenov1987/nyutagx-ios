@@ -243,6 +243,9 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
             actionsSubject.send(.presentStartChatScreen)
         case .nyutagInviteFriend:
             Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
+        case .nyutagDrawer(let action):
+            state.bindings.isPresentingNyutagDrawer = false
+            handleNyutagDrawer(action)
         case .nyutagAnnouncementDismiss:
             closeNyutagAnnouncement(action: nil)
         case .nyutagAnnouncementAction(let action):
@@ -322,6 +325,39 @@ class HomeScreenViewModel: HomeScreenViewModelType, HomeScreenViewModelProtocol 
                                                       secondaryButton: .init(title: L10n.actionYes) { [weak self] in
                                                           self?.actionsSubject.send(.presentFeedbackScreen)
                                                       })
+        }
+    }
+    
+    // MARK: - Нютаг: боковое меню
+    
+    private func handleNyutagDrawer(_ action: NyutagDrawerAction) {
+        switch action {
+        case .ownAvatar:
+            guard let url = state.userProfile.avatarURL else {
+                actionsSubject.send(.presentNyutagMyProfile)
+                return
+            }
+            Task {
+                state.bindings.mediaPreviewItem = await MediaPreviewItem.load(from: url,
+                                                                              title: state.userProfile.displayName,
+                                                                              using: userSession.mediaProvider)
+            }
+        case .myProfile:
+            actionsSubject.send(.presentNyutagMyProfile)
+        case .newGroup:
+            actionsSubject.send(.presentStartChatScreen)
+        case .contacts:
+            actionsSubject.send(.presentNyutagContacts)
+        case .savedMessages:
+            Task {
+                if let roomID = await NyutagSavedMessages.roomID(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) {
+                    actionsSubject.send(.presentRoom(roomIdentifier: roomID))
+                }
+            }
+        case .settings:
+            actionsSubject.send(.presentSettingsScreen)
+        case .invite:
+            Task { await NyutagInviteFriend.share(clientProxy: userSession.clientProxy, userIndicatorController: userIndicatorController) }
         }
     }
     
