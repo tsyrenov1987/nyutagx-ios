@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "سفارشی";
 "screen_notification_settings_sound_custom_sound_button_title" = "صدای سفارشی...";
 "screen_notification_settings_sound_delete_sound_error_title" = "خطا در حذف فایل";
-"screen_notification_settings_sound_element_default" = "Element پیش‌فرض";
-"screen_notification_settings_sound_element_fade" = "Element فید";
+"screen_notification_settings_sound_element_default" = "Nyutag پیش‌فرض";
+"screen_notification_settings_sound_element_fade" = "Nyutag فید";
 "screen_notification_settings_sound_import_sound_error_title" = "خطا در وارد کردن فایل";
 "screen_notification_settings_sound_preview_sound_error_title" = "مشکل در پیش‌نمایش صدای هشدار";
 "screen_notification_settings_sound_section_title" = "صدا";

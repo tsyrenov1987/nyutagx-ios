@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Egendefinert";
 "screen_notification_settings_sound_custom_sound_button_title" = "Tilpasset lyd...";
 "screen_notification_settings_sound_delete_sound_error_title" = "Feil ved sletting av fil";
-"screen_notification_settings_sound_element_default" = "Element-standard";
-"screen_notification_settings_sound_element_fade" = "Element Fade";
+"screen_notification_settings_sound_element_default" = "Nyutag-standard";
+"screen_notification_settings_sound_element_fade" = "Nyutag Fade";
 "screen_notification_settings_sound_import_sound_error_title" = "Feil ved import av fil";
 "screen_notification_settings_sound_preview_sound_error_title" = "Problem med å forhåndsavspille varsellyd";
 "screen_notification_settings_sound_section_title" = "Lyd";

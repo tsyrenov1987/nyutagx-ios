@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Власний";
 "screen_notification_settings_sound_custom_sound_button_title" = "Користувацький звук...";
 "screen_notification_settings_sound_delete_sound_error_title" = "Помилка видалення файлу";
-"screen_notification_settings_sound_element_default" = "Типово Element";
-"screen_notification_settings_sound_element_fade" = "Згасання Element";
+"screen_notification_settings_sound_element_default" = "Типово Nyutag";
+"screen_notification_settings_sound_element_fade" = "Згасання Nyutag";
 "screen_notification_settings_sound_import_sound_error_title" = "Помилка імпорту файлу";
 "screen_notification_settings_sound_preview_sound_error_title" = "Проблема з попереднім прослуховуванням звуку сповіщення";
 "screen_notification_settings_sound_section_title" = "Звук";

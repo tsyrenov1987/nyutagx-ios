@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Maxsus";
 "screen_notification_settings_sound_custom_sound_button_title" = "Maxsus ovoz...";
 "screen_notification_settings_sound_delete_sound_error_title" = "Faylni oʻchirishda xatolik yuz berdi";
-"screen_notification_settings_sound_element_default" = "Element standarti";
-"screen_notification_settings_sound_element_fade" = "Elementlarning yoʻqolishi";
+"screen_notification_settings_sound_element_default" = "Nyutag standarti";
+"screen_notification_settings_sound_element_fade" = "Nyutaglarning yoʻqolishi";
 "screen_notification_settings_sound_import_sound_error_title" = "Faylni import qilishda xatolik yuz berdi";
 "screen_notification_settings_sound_preview_sound_error_title" = "Ogohlantirish ovozini oldindan koʻrishda muammo";
 "screen_notification_settings_sound_section_title" = "Ovoz";

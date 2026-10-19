@@ -1090,7 +1090,7 @@
 "screen_notification_settings_sound_custom_fallback" = "Kohandatud";
 "screen_notification_settings_sound_custom_sound_button_title" = "Sinu valitud helin...";
 "screen_notification_settings_sound_delete_sound_error_title" = "Viga faili kustutamisel";
-"screen_notification_settings_sound_element_default" = "Elementi vaikimisi väärtus";
+"screen_notification_settings_sound_element_default" = "Nyutagi vaikimisi väärtus";
 "screen_notification_settings_sound_element_fade" = "Elemendi hajumine";
 "screen_notification_settings_sound_import_sound_error_title" = "Viga faili importimisel";
 "screen_notification_settings_sound_preview_sound_error_title" = "Viga helina eelvaate esitamisel";

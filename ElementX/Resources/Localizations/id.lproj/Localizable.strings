@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Kustom";
 "screen_notification_settings_sound_custom_sound_button_title" = "Suara kustom";
 "screen_notification_settings_sound_delete_sound_error_title" = "Terjadi kesalahan saat menghapus file.";
-"screen_notification_settings_sound_element_default" = "Pengaturan Default Element";
-"screen_notification_settings_sound_element_fade" = "Element Fade";
+"screen_notification_settings_sound_element_default" = "Pengaturan Default Nyutag";
+"screen_notification_settings_sound_element_fade" = "Nyutag Fade";
 "screen_notification_settings_sound_import_sound_error_title" = "Terjadi kesalahan saat mengimpor file";
 "screen_notification_settings_sound_preview_sound_error_title" = "Pratinjau suara peringatan bermasalah";
 "screen_notification_settings_sound_section_title" = "Suara";

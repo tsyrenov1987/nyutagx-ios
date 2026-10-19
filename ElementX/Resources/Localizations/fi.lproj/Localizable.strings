@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Mukautettu";
 "screen_notification_settings_sound_custom_sound_button_title" = "Mukautettu ääni...";
 "screen_notification_settings_sound_delete_sound_error_title" = "Virhe tiedoston poistamisessa";
-"screen_notification_settings_sound_element_default" = "Elementin oletus";
-"screen_notification_settings_sound_element_fade" = "Element Fade";
+"screen_notification_settings_sound_element_default" = "Nyutagin oletus";
+"screen_notification_settings_sound_element_fade" = "Nyutag Fade";
 "screen_notification_settings_sound_import_sound_error_title" = "Virhe tiedoston tuonnissa";
 "screen_notification_settings_sound_preview_sound_error_title" = "Ongelma ilmoitusäänen esikatselussa";
 "screen_notification_settings_sound_section_title" = "Ääni";

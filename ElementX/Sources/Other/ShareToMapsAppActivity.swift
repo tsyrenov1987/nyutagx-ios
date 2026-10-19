@@ -93,5 +93,5 @@ nonisolated extension ShareToMapsAppActivity.MapsAppType {
 }
 
 private nonisolated extension UIActivity.ActivityType {
-    static let shareToMapsApp = UIActivity.ActivityType("ElementX.ShareToMapsApp")
+    static let shareToMapsApp = UIActivity.ActivityType("Nyutag.ShareToMapsApp")
 }

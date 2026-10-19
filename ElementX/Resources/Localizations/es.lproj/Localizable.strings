@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Personalizado";
 "screen_notification_settings_sound_custom_sound_button_title" = "Sonido personalizado…";
 "screen_notification_settings_sound_delete_sound_error_title" = "Error al eliminar el archivo";
-"screen_notification_settings_sound_element_default" = "Predeterminado de Element";
-"screen_notification_settings_sound_element_fade" = "Desvanecimiento de Element";
+"screen_notification_settings_sound_element_default" = "Predeterminado de Nyutag";
+"screen_notification_settings_sound_element_fade" = "Desvanecimiento de Nyutag";
 "screen_notification_settings_sound_import_sound_error_title" = "Error al importar el archivo";
 "screen_notification_settings_sound_preview_sound_error_title" = "Problema al previsualizar el sonido de alerta";
 "screen_notification_settings_sound_section_title" = "Sonido";

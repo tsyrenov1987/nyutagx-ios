@@ -1089,8 +1089,8 @@
 "screen_notification_settings_sound_custom_fallback" = "مخصص";
 "screen_notification_settings_sound_custom_sound_button_title" = "صوت مخصص...";
 "screen_notification_settings_sound_delete_sound_error_title" = "خطأ في حذف الملف";
-"screen_notification_settings_sound_element_default" = "افتراضي Element";
-"screen_notification_settings_sound_element_fade" = "Element Fade";
+"screen_notification_settings_sound_element_default" = "افتراضي Nyutag";
+"screen_notification_settings_sound_element_fade" = "Nyutag Fade";
 "screen_notification_settings_sound_import_sound_error_title" = "خطأ في استيراد الملف";
 "screen_notification_settings_sound_preview_sound_error_title" = "مشكلة في معاينة صوت التنبيه";
 "screen_notification_settings_sound_section_title" = "الصوت";

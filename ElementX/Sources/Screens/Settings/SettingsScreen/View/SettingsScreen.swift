@@ -216,8 +216,14 @@ struct SettingsScreen: View {
                     })
                     .accessibilityIdentifier(A11yIdentifiers.settingsScreen.advancedSettings)
             
-            // Нютаг: «Лаборатории» и «О приложении» (ссылки на правила element.io) скрыты — свои правила появятся перед публикацией.
-            
+            // Нютаг: «Лаборатории» скрыты; «О приложении» ведёт на правила nyutag.chat.
+            ListRow(label: .default(title: L10n.commonAbout,
+                                    icon: \.info),
+                    kind: .navigationLink {
+                        context.send(viewAction: .about)
+                    })
+                    .accessibilityIdentifier(A11yIdentifiers.settingsScreen.about)
+
             if context.viewState.isBugReportServiceEnabled {
                 ListRow(label: .default(title: L10n.commonReportAProblem,
                                         icon: \.chatProblem),

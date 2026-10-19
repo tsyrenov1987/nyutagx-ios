@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Egyedi";
 "screen_notification_settings_sound_custom_sound_button_title" = "Egyedi hang...";
 "screen_notification_settings_sound_delete_sound_error_title" = "Hiba a fájl törlésekor";
-"screen_notification_settings_sound_element_default" = "Element alapértelmezett";
-"screen_notification_settings_sound_element_fade" = "Element Fade";
+"screen_notification_settings_sound_element_default" = "Nyutag alapértelmezett";
+"screen_notification_settings_sound_element_fade" = "Nyutag Fade";
 "screen_notification_settings_sound_import_sound_error_title" = "Hiba a fájl importálásakor";
 "screen_notification_settings_sound_preview_sound_error_title" = "Probléma a riasztási hang előnézetekor";
 "screen_notification_settings_sound_section_title" = "Hang";

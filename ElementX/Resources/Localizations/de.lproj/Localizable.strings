@@ -1090,8 +1090,8 @@
 "screen_notification_settings_sound_custom_fallback" = "Benutzerdefiniert";
 "screen_notification_settings_sound_custom_sound_button_title" = "Eigener Ton …";
 "screen_notification_settings_sound_delete_sound_error_title" = "Fehler beim Löschen der Datei";
-"screen_notification_settings_sound_element_default" = "Element-Standard";
-"screen_notification_settings_sound_element_fade" = "Element Fade";
+"screen_notification_settings_sound_element_default" = "Nyutag-Standard";
+"screen_notification_settings_sound_element_fade" = "Nyutag Fade";
 "screen_notification_settings_sound_import_sound_error_title" = "Fehler beim Importieren der Datei";
 "screen_notification_settings_sound_preview_sound_error_title" = "Fehler beim Abspielen der Hinweiston-Vorschau";
 "screen_notification_settings_sound_section_title" = "Ton";
