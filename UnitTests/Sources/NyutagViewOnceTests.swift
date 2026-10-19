@@ -35,7 +35,19 @@ struct NyutagViewOnceTests {
         #expect(!item.isForwardable)
         #expect(!item.isBulkSelectable)
     }
-    
+
+    @Test
+    func openedMarkSurvivesAppRestart() throws {
+        let defaults = try #require(UserDefaults(suiteName: UUID().uuidString))
+        let opened = TimelineItemIdentifier.randomEvent
+        NyutagViewOnceOpened.markOpened(opened, defaults: defaults)
+
+        // Новый запуск: та же картинка пришла с другим unique ID, но с тем же event ID.
+        let afterRestart = TimelineItemIdentifier.event(uniqueID: .init(UUID().uuidString), eventOrTransactionID: .eventID(try #require(opened.eventID)))
+        #expect(NyutagViewOnceOpened.wasOpened(afterRestart, defaults: defaults))
+        #expect(!NyutagViewOnceOpened.wasOpened(.randomEvent, defaults: defaults))
+    }
+
     // MARK: - Helpers
     
     private func makeImageItem(viewOnce: Bool) -> ImageRoomTimelineItem {

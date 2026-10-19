@@ -273,7 +273,9 @@
 "nyutag_schedule_banner" = "Scheduled: %1$d";
 "nyutag_schedule_error_past" = "Pick a time in the future.";
 "nyutag_schedule_hint" = "The message is sent at the chosen time if the phone is online.";
-"nyutag_schedule_hint_ios" = "The message is sent at the chosen time while Nyutag is open. If the app is closed, it is sent the next time you open it.";
+"nyutag_schedule_hint_ios" = "The message will be sent at the chosen time. If Nyutag is closed and iOS does not wake it up, you will get a reminder to open the app.";
+"nyutag_schedule_reminder_body" = "Open Nyutag to send it: “%1$@”";
+"nyutag_schedule_reminder_title" = "Scheduled message not sent yet";
 "nyutag_schedule_send" = "Send later";
 "nyutag_schedule_send_now" = "Send now";
 "nyutag_schedule_title" = "Scheduled messages";

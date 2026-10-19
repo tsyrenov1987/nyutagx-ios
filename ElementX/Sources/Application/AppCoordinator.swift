@@ -1301,6 +1301,8 @@ class AppCoordinator: AppCoordinatorProtocol, AuthenticationFlowCoordinatorDeleg
         _ = await userSession.clientProxy.configurePresence(.offline, sendImmediately: false)
         
         await resumeClientServices()
+        // Нютаг: отложенные сообщения, срок которых наступил, пока приложение спало.
+        NotificationCenter.default.post(name: .nyutagScheduledSendDue, object: nil)
         
         // Be a good citizen, run for a max of 10 SS responses or 10 seconds
         // An SS request will time out after 30 seconds if no new data is available

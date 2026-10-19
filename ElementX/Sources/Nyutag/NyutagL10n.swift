@@ -264,6 +264,8 @@ nonisolated enum NyutagL10n {
     static func scheduleAt(_ time: String) -> String { tr("nyutag_schedule_at", time) }
     static var scheduleHint: String { tr("nyutag_schedule_hint_ios") }
     static var scheduleErrorPast: String { tr("nyutag_schedule_error_past") }
+    static var scheduleReminderTitle: String { tr("nyutag_schedule_reminder_title") }
+    static func scheduleReminderBody(_ text: String) -> String { tr("nyutag_schedule_reminder_body", text) }
 
     private static func tr(_ key: String, _ args: CVarArg...) -> String {
         let languages = (Bundle.overrideLocalizations ?? Bundle.app.preferredLocalizations) + ["en"]

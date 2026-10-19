@@ -7,6 +7,7 @@
 @testable import ElementX
 import Foundation
 import Testing
+import UserNotifications
 import WysiwygComposer
 
 struct NyutagScheduledMessagesTests {
@@ -112,6 +113,42 @@ struct NyutagScheduledMessagesTests {
         threadComposer.context.plainComposerText = .init(string: "В ветке")
         threadComposer.process(viewAction: .nyutagSchedule(sendAt))
         #expect(store.all.count == 1)
+    }
+
+    @Test
+    func reminderFiresTwoMinutesAfterDueTimeAndOpensTheRoom() throws {
+        let message = makeMessage(id: "m", sendAt: now.addingTimeInterval(600))
+        let request = NyutagScheduledReminders.request(for: message, now: now)
+        let trigger = try #require(request.trigger as? UNTimeIntervalNotificationTrigger)
+
+        #expect(request.identifier == "nyutag-scheduled-m")
+        #expect(trigger.timeInterval == 600 + NyutagScheduledReminders.delay)
+        #expect(request.content.roomID == "!r:x")
+        #expect(request.content.receiverID == "@me:x")
+        #expect(request.content.body.contains("Привет"))
+
+        // Срок давно прошёл (приложение долго не открывали) — напоминание сразу.
+        let late = NyutagScheduledReminders.request(for: message, now: now.addingTimeInterval(3600))
+        #expect((late.trigger as? UNTimeIntervalNotificationTrigger)?.timeInterval == 1)
+    }
+
+    @Test
+    func backgroundWakeSendsDueMessages() async throws {
+        let roomProxy = JoinedRoomProxyMock(.init(id: "!r:x"))
+        let clientProxy = ClientProxyMock(.init(userID: "@me:x"))
+        clientProxy.roomForIdentifierClosure = { _ in .joined(roomProxy) }
+        let notificationCenter = NotificationCenter()
+        let sender = NyutagScheduledSender(clientProxy: clientProxy, store: store, notificationCenter: notificationCenter)
+        // Срок наступит через 2 с — первый проход таймера и подписки на очередь его ещё не видят.
+        store.schedule(makeMessage(id: "due", sendAt: .now.addingTimeInterval(2)))
+        try await Task.sleep(for: .seconds(2.5))
+
+        notificationCenter.post(name: .nyutagScheduledSendDue, object: nil)
+        for _ in 0..<50 where !store.all.isEmpty {
+            try await Task.sleep(for: .milliseconds(100))
+        }
+        #expect(store.all.isEmpty)
+        withExtendedLifetime(sender) { }
     }
 
     // MARK: - Helpers

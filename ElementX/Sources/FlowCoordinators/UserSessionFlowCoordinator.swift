@@ -30,6 +30,7 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
     // periphery:ignore - retaining purpose
     private let presenceService: PresenceService
     private let nyutagScheduledSender: NyutagScheduledSender
+    private let nyutagScheduledReminders = NyutagScheduledReminders()
     
     private var userSession: UserSessionProtocol {
         flowParameters.userSession

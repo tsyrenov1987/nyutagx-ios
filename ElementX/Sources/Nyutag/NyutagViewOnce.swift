@@ -25,13 +25,25 @@ nonisolated enum NyutagViewOnce {
     }
 }
 
-/// Открытые в этом запуске фото: пока удаление не дошло до сервера, второй раз не откроются, даже если ячейку пересоздали.
+/// Открытые фото: пока удаление не дошло до сервера, второй раз не откроются, даже если ячейку пересоздали.
+/// Event ID пишется на диск в момент открытия — переживает убийство приложения во время просмотра.
 @MainActor
 enum NyutagViewOnceOpened {
+    private static let defaultsKey = "nyutag_view_once_opened"
     private(set) static var itemIDs = Set<TimelineItemIdentifier.UniqueID>()
 
-    static func markOpened(_ itemID: TimelineItemIdentifier.UniqueID) {
-        itemIDs.insert(itemID)
+    static func markOpened(_ itemID: TimelineItemIdentifier, defaults: UserDefaults = .standard) {
+        itemIDs.insert(itemID.uniqueID)
+        guard let eventID = itemID.eventID else { return }
+        defaults.set(openedEventIDs(defaults: defaults) + [eventID], forKey: defaultsKey)
+    }
+
+    static func wasOpened(_ itemID: TimelineItemIdentifier, defaults: UserDefaults = .standard) -> Bool {
+        itemIDs.contains(itemID.uniqueID) || itemID.eventID.map(openedEventIDs(defaults: defaults).contains) == true
+    }
+
+    private static func openedEventIDs(defaults: UserDefaults) -> [String] {
+        defaults.stringArray(forKey: defaultsKey) ?? []
     }
 }
 
@@ -57,7 +69,7 @@ extension TimelineControllerProtocol {
     }
 }
 
-/// Заглушка в ленте и одноразовый просмотр во весь экран. При записи экрана фото скрыто.
+/// Заглушка в ленте и одноразовый просмотр во весь экран. На скриншоте и при записи экрана фото скрыто.
 struct NyutagViewOnceImageView: View {
     @Environment(\.timelineContext) private var context
     let timelineItem: ImageRoomTimelineItem
@@ -66,7 +78,7 @@ struct NyutagViewOnceImageView: View {
     @State private var isOpened = false
 
     private var canOpen: Bool {
-        !timelineItem.isOutgoing && !isOpened && !NyutagViewOnceOpened.itemIDs.contains(timelineItem.id.uniqueID)
+        !timelineItem.isOutgoing && !isOpened && !NyutagViewOnceOpened.wasOpened(timelineItem.id)
     }
 
     var body: some View {
@@ -83,10 +95,17 @@ struct NyutagViewOnceImageView: View {
             .contentShape(Rectangle())
             .onTapGesture {
                 guard canOpen else { return }
+                NyutagViewOnceOpened.markOpened(timelineItem.id)
                 isViewing = true
             }
         }
-        .fullScreenCover(isPresented: $isViewing, onDismiss: markOpened) {
+        .onAppear {
+            // Открыли, а приложение убили до закрытия просмотра — удаление тогда не ушло, отправляем сейчас.
+            if !timelineItem.isOutgoing, !isViewing, NyutagViewOnceOpened.wasOpened(timelineItem.id) {
+                redact()
+            }
+        }
+        .fullScreenCover(isPresented: $isViewing, onDismiss: redact) {
             NyutagViewOnceViewer(timelineItem: timelineItem, mediaProvider: context?.mediaProvider) { isViewing = false }
         }
     }
@@ -96,9 +115,8 @@ struct NyutagViewOnceImageView: View {
         return canOpen ? NyutagL10n.viewOnceReceived : NyutagL10n.viewOnceOpened
     }
 
-    private func markOpened() {
+    private func redact() {
         isOpened = true
-        NyutagViewOnceOpened.markOpened(timelineItem.id.uniqueID)
         context?.send(viewAction: .nyutagViewOnceOpened(itemID: timelineItem.id))
     }
 }
@@ -114,14 +132,17 @@ private struct NyutagViewOnceViewer: View {
         ZStack {
             Color.black.ignoresSafeArea()
             if !isCaptured {
-                LoadableImage(mediaSource: timelineItem.content.imageInfo.source,
-                              mediaType: .generic,
-                              blurhash: nil,
-                              size: timelineItem.content.imageInfo.size,
-                              mediaProvider: mediaProvider) {
-                    ProgressView().tint(.white)
+                NyutagScreenshotShield {
+                    LoadableImage(mediaSource: timelineItem.content.imageInfo.source,
+                                  mediaType: .generic,
+                                  blurhash: nil,
+                                  size: timelineItem.content.imageInfo.size,
+                                  mediaProvider: mediaProvider) {
+                        ProgressView().tint(.white)
+                    }
+                    .scaledToFit()
                 }
-                .scaledToFit()
+                .ignoresSafeArea()
             }
         }
         .contentShape(Rectangle())
@@ -129,5 +150,61 @@ private struct NyutagViewOnceViewer: View {
         .onReceive(NotificationCenter.default.publisher(for: UIScreen.capturedDidChangeNotification)) { _ in
             isCaptured = UIScreen.main.isCaptured
         }
+    }
+}
+
+/// Скрывает содержимое на скриншотах и записи экрана: слой поля пароля (`isSecureTextEntry`) система в снимок не пускает.
+/// Если такого слоя нет (iOS поменяла устройство поля), содержимое показывается как обычно — запись экрана всё равно
+/// прячет фото через `UIScreen.isCaptured`.
+struct NyutagScreenshotShield<Content: View>: UIViewRepresentable {
+    @ViewBuilder let content: () -> Content
+
+    func makeUIView(context: Context) -> UIView {
+        let host = UIHostingController(rootView: content())
+        host.view.backgroundColor = .clear
+        let container = UIView()
+        container.isUserInteractionEnabled = false
+        let shield = Self.secureCanvas() ?? UIView()
+        let hostView: UIView = host.view
+        for view in [shield, hostView] {
+            view.translatesAutoresizingMaskIntoConstraints = false
+        }
+        container.addSubview(shield)
+        shield.addSubview(hostView)
+        NSLayoutConstraint.activate(Self.pin(shield, to: container) + Self.pin(hostView, to: shield))
+        context.coordinator.host = host
+        return container
+    }
+
+    func updateUIView(_ uiView: UIView, context: Context) {
+        context.coordinator.host?.rootView = content()
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    final class Coordinator {
+        var host: UIHostingController<Content>?
+    }
+
+    /// Внутренний холст защищённого поля; его подвиды на снимке экрана пустые.
+    static func secureCanvas() -> UIView? {
+        let field = UITextField()
+        field.isSecureTextEntry = true
+        guard let canvas = field.layer.sublayers?.first?.delegate as? UIView else {
+            MXLog.warning("Nyutag view-once: secure canvas not found, screenshots are not blocked")
+            return nil
+        }
+        canvas.subviews.forEach { $0.removeFromSuperview() }
+        canvas.isUserInteractionEnabled = false
+        return canvas
+    }
+
+    private static func pin(_ view: UIView, to parent: UIView) -> [NSLayoutConstraint] {
+        [view.topAnchor.constraint(equalTo: parent.topAnchor),
+         view.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
+         view.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
+         view.trailingAnchor.constraint(equalTo: parent.trailingAnchor)]
     }
 }
