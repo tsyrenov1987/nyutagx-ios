@@ -108,7 +108,8 @@ final class RoomScreenCoordinator: CoordinatorProtocol {
                                                          mentionDisplayHelper: ComposerMentionDisplayHelper(timelineContext: timelineViewModel.context),
                                                          appSettings: parameters.appSettings,
                                                          analyticsService: parameters.analytics,
-                                                         composerDraftService: parameters.composerDraftService)
+                                                         composerDraftService: parameters.composerDraftService,
+                                                         nyutagCanSchedule: true)
         self.composerViewModel = composerViewModel
     }
     

@@ -83,6 +83,7 @@ struct ComposerToolbar: View {
         }
         .disabled(!context.viewState.canSend)
         .alert(item: $context.alertInfo)
+        .modifier(NyutagScheduledComposerModifier(context: context))
     }
     
     private var suggestionView: some View {
@@ -170,6 +171,7 @@ struct ComposerToolbar: View {
             .animation(.linear(duration: 0.1).disabledDuringTests(), value: context.viewState.sendButtonDisabled)
             .keyboardShortcut(.return, modifiers: [.command])
             .accessibilityIdentifier(A11yIdentifiers.roomScreen.sendButton)
+            .contextMenu { NyutagScheduleSendMenu(context: context) }
     }
     
     private var messageComposer: some View {

@@ -22,6 +22,7 @@ final class ComposerToolbarViewModel: ComposerToolbarViewModelType, ComposerTool
     private let roomProxy: JoinedRoomProxyProtocol
     private let analyticsService: AnalyticsServiceProtocol
     private let draftService: ComposerDraftServiceProtocol
+    private let nyutagScheduledStore: NyutagScheduledMessages
     private var identityPinningViolations = [String: RoomMemberProxyProtocol]()
     
     private let mentionBuilder: MentionBuilderProtocol
@@ -67,13 +68,16 @@ final class ComposerToolbarViewModel: ComposerToolbarViewModelType, ComposerTool
          mentionDisplayHelper: MentionDisplayHelper,
          appSettings: AppSettings,
          analyticsService: AnalyticsServiceProtocol,
-         composerDraftService: ComposerDraftServiceProtocol) {
+         composerDraftService: ComposerDraftServiceProtocol,
+         nyutagCanSchedule: Bool = false,
+         nyutagScheduledStore: NyutagScheduledMessages = .shared) {
         self.initialText = initialText
         self.wysiwygViewModel = wysiwygViewModel
         self.completionSuggestionService = completionSuggestionService
         self.analyticsService = analyticsService
         self.roomProxy = roomProxy
         draftService = composerDraftService
+        self.nyutagScheduledStore = nyutagScheduledStore
         
         mentionBuilder = MentionBuilder()
         attributedStringBuilder = AttributedStringBuilder(cacheKey: "Composer", mentionBuilder: mentionBuilder)
@@ -89,6 +93,13 @@ final class ComposerToolbarViewModel: ComposerToolbarViewModelType, ComposerTool
                 self?.process(viewAction: .sendMessage)
             }
         ]
+        
+        if nyutagCanSchedule {
+            state.nyutagCanSchedule = true
+            nyutagScheduledStore.messages(sessionID: roomProxy.ownUserID, roomID: roomProxy.id)
+                .weakAssign(to: \.state.nyutagScheduled, on: self)
+                .store(in: &cancellables)
+        }
         
         roomProxy.infoPublisher
             .map(\.isEncrypted)
@@ -264,6 +275,12 @@ final class ComposerToolbarViewModel: ComposerToolbarViewModelType, ComposerTool
             } else {
                 context.plainComposerText = NSAttributedString(string: wysiwygViewModel.attributedContent.text.string)
             }
+        case .nyutagSchedule(let date):
+            nyutagSchedule(at: date)
+        case .nyutagScheduledSendNow(let id):
+            nyutagScheduledStore.sendNow(id: id)
+        case .nyutagScheduledDelete(let id):
+            nyutagScheduledStore.delete(id: id)
         }
     }
     
@@ -470,6 +487,26 @@ final class ComposerToolbarViewModel: ComposerToolbarViewModelType, ComposerTool
         actionsSubject.send(.sendMessage(plain: plainComposerContent.text, html: nil,
                                          mode: state.composerMode,
                                          intentionalMentions: .init(userIDs: plainComposerContent.mentionedUserIDs, atRoom: plainComposerContent.containsAtRoomMention)))
+    }
+    
+    private func nyutagSchedule(at date: Date) {
+        guard state.nyutagCanScheduleNow, date > .now else {
+            MXLog.warning("Nyutag scheduled: ignoring schedule (mode or time not allowed)")
+            return
+        }
+        let message = if context.composerFormattingEnabled {
+            NyutagScheduledMessage(sessionID: roomProxy.ownUserID, roomID: roomProxy.id,
+                                   body: wysiwygViewModel.content.markdown, html: wysiwygViewModel.content.html,
+                                   intentionalMentions: wysiwygViewModel.getMentionsState().toIntentionalMentions(), sendAt: date)
+        } else {
+            NyutagScheduledMessage(sessionID: roomProxy.ownUserID, roomID: roomProxy.id,
+                                   body: plainComposerContent.text, html: nil,
+                                   intentionalMentions: .init(userIDs: plainComposerContent.mentionedUserIDs,
+                                                              atRoom: plainComposerContent.containsAtRoomMention),
+                                   sendAt: date)
+        }
+        nyutagScheduledStore.schedule(message)
+        set(text: "")
     }
     
     private func cancelEdit() {

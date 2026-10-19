@@ -29,6 +29,7 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
     private let flowParameters: CommonFlowParameters
     // periphery:ignore - retaining purpose
     private let presenceService: PresenceService
+    private let nyutagScheduledSender: NyutagScheduledSender
     
     private var userSession: UserSessionProtocol {
         flowParameters.userSession
@@ -87,6 +88,7 @@ class UserSessionFlowCoordinator: FlowCoordinatorProtocol {
         self.flowParameters = flowParameters
         presenceService = PresenceService(clientProxy: flowParameters.userSession.clientProxy,
                                           appSettings: flowParameters.appSettings)
+        nyutagScheduledSender = NyutagScheduledSender(clientProxy: flowParameters.userSession.clientProxy)
         
         navigationTabCoordinator = NavigationTabCoordinator()
         navigationRootCoordinator.setRootCoordinator(navigationTabCoordinator)

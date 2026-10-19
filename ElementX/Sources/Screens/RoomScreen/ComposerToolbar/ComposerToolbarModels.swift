@@ -57,6 +57,10 @@ enum ComposerToolbarViewAction {
     case plainComposerTextChanged
     case didToggleFormattingOptions
     case selectedTextChanged
+    
+    case nyutagSchedule(Date)
+    case nyutagScheduledSendNow(id: String)
+    case nyutagScheduledDelete(id: String)
 }
 
 enum ComposerAttachmentType {
@@ -78,6 +82,10 @@ struct ComposerToolbarViewState: BindableState {
     
     var isRoomEncrypted: Bool
     var isLocationSharingEnabled: Bool
+    
+    /// Нютаг: отложенные сообщения — только в основной ленте чата, не в ветке.
+    var nyutagCanSchedule = false
+    var nyutagScheduled: [NyutagScheduledMessage] = []
     
     var keyCommands: [WysiwygKeyCommand] = []
     
@@ -131,6 +139,12 @@ struct ComposerToolbarViewState: BindableState {
         }
     }
     
+    /// Как в Telegram, откладывается обычное сообщение — не ответ и не правка.
+    var nyutagCanScheduleNow: Bool {
+        guard nyutagCanSchedule, !sendButtonDisabled, case .default = composerMode else { return false }
+        return true
+    }
+    
     var isVoiceMessageModeActivated: Bool {
         switch composerMode {
         case .recordVoiceMessage, .previewVoiceMessage:
@@ -149,6 +163,8 @@ struct ComposerToolbarViewStateBindings {
     var formatItems: [FormatItem] = .init()
     var alertInfo: AlertInfo<UUID>?
     var selectedRange = NSRange(location: 0, length: 0)
+    var nyutagSchedulePickerShown = false
+    var nyutagScheduledListShown = false
     
     var presendCallback: (() -> Void)?
 }
